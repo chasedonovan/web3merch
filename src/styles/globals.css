@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* merch */
+@layer base {
+  body {
+    @apply h-screen w-screen flex flex-col bg-black bg-cover bg-center text-white ; 
+  }
+}
+#__next {
+  @apply  w-full h-full min-h-min flex flex-col mx-auto scrollbar-hide;
+}
