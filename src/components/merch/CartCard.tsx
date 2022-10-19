@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 type Item = {
   name: string;
   price: number;
+  original_price: number;
   image: string;
   images: string[];
   description: string;
@@ -48,12 +49,12 @@ const CartCard = (props: Props) => {
     <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33] ">
       <div className="flex flex-row items-center gap-2 md:gap-6">
         <div className="flex flex-col items-center min-w-max">
-        <img
-          src={props.item.image}
-          alt="item"
-          className="w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm"
-        />
-      </div>
+          <img
+            src={props.item.image}
+            alt="item"
+            className="w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm"
+          />
+        </div>
         <div className="flex flex-col font-quicksand justify-start">
           <p className=" mb-2 max-w-[164px] 2xl:max-w-[212px]">
             {props.item.name}
@@ -86,20 +87,18 @@ const CartCard = (props: Props) => {
         </div>
       </div>
       <div className="flex flex-col justify-between text-right ml-4 2xl:ml-12 font-quicksand pt-3 min-w-max">
-        {2 + 2 === 4 ? (
-          <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
-            <p className="self-end text-right text-gray-200 opacity-75 line-through">
-              {props.item.price} ₳
+        <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
+          {props.item.original_price !== props.item.price ? (
+            <p className="self-end text-right text-gray-200 line-through opacity-75">
+              {props.item.original_price} ₳
             </p>
-            <p className="self-end text-right text-gray-200 ">
-              {props.item.price * 0.86} ₳
-            </p>
-          </div>
-        ) : (
-          <p className="self-end text-right text-gray-200">
+          ) : (
+            ""
+          )}
+          <p className="self-end text-right text-gray-200 ">
             {props.item.price} ₳
           </p>
-        )}{" "}
+        </div>
         <svg
           onClick={removeItem}
           xmlns="http://www.w3.org/2000/svg"

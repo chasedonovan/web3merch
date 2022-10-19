@@ -11,6 +11,7 @@ interface IFormInput {
 type Item = {
   name: string;
   price: number;
+  original_price: number;
   image: string;
   images: string[];
   description: string;
@@ -27,6 +28,7 @@ type Props = {
   cartItems: Array<{
     name: string;
     price: number;
+    original_price: number;
     image: string;
     images: string[];
     description: string;
@@ -66,6 +68,7 @@ const ItemCard = (props: Props) => {
       {
         name: props.item.name,
         price: props.item.price,
+        original_price: props.item.original_price,
         image: props.item.image,
         images: props.item.images,
         description: props.item.description,
@@ -91,20 +94,18 @@ const ItemCard = (props: Props) => {
         <p className="text-lg font-quicksand font-semibold max-w-[184px] md:max-w-[212px]">
           {props.item.name}
         </p>
-        {2 + 2 === 4 ? (
-          <div className="flex flex-col-reverse sm:flex-row gap-2 items-center">
+        <div className="flex flex-col-reverse sm:flex-row gap-2 items-center">
+          {props.item.original_price !== props.item.price ? (
             <p className="self-end text-right text-gray-200 line-through opacity-75">
-              {props.item.price} ₳
+              {props.item.original_price} ₳
             </p>
-            <p className="self-end text-right text-gray-200 ">
-              {props.item.price * 0.86} ₳
-            </p>
-          </div>
-        ) : (
-          <p className="self-end text-right text-gray-200">
+          ) : (
+            ""
+          )}
+          <p className="self-end text-right text-gray-200 ">
             {props.item.price} ₳
           </p>
-        )}
+        </div>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}

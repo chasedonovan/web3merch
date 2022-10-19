@@ -28,22 +28,13 @@ export type PoolInfo = {
   epochFee: number;
 };
 
-export type Collection = {
-  collection_id: number;
-  project_name: string;
-  blockchain: string;
-  current_vote: string;
-};
-
 type GlobalContextProps = {
   protocolParameters: ProtocolParameters;
-  collections: Collection[];
   poolInfo: PoolInfo;
 };
 
 const GlobalContext = createContext<GlobalContextProps>({
   protocolParameters: {} as ProtocolParameters,
-  collections: {} as Collection[],
   poolInfo: {} as PoolInfo,
 });
 
@@ -53,50 +44,12 @@ export const GlobalContextProvider = ({ children }: ProviderProps) => {
   const [protocolParameters, setTheProtocolParameters] =
     useState<ProtocolParameters>({} as ProtocolParameters);
 
-  const [collections, setTheCollections] = useState<Collection[]>(
-    {} as Collection[]
-  );
-
   const [poolInfo, setThePoolInfo] = useState<PoolInfo>({} as PoolInfo);
 
   useEffect(() => {
     console.log("GlobalContextProvider useEffect");
     getProtocolParams();
-    getCollections();
-    getPoolInfo();
   }, []);
-
-  const getCollections = async () => {
-    if (!collections || !collections[0]) {
-      await fetch("/api/collections", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("getCollections", data);
-          setTheCollections(data as Array<Collection>);
-        });
-    }
-  };
-
-  const getPoolInfo = async () => {
-    if (!poolInfo || !poolInfo.epoch) {
-      await fetch("/api/poolinfo", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("getPoolInfo", data);
-          setThePoolInfo(data as PoolInfo);
-        });
-    }
-  };
 
   const getProtocolParams = async () => {
     if (!protocolParameters || !protocolParameters.coins_per_utxo_word) {
@@ -130,7 +83,6 @@ export const GlobalContextProvider = ({ children }: ProviderProps) => {
     <GlobalContext.Provider
       value={{
         protocolParameters,
-        collections,
         poolInfo,
       }}
     >

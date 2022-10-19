@@ -6,12 +6,13 @@ import MobileCart from "components/merch/MobileCart";
 import CheckoutModal from "components/merch/CheckoutModal";
 import { useWalletContext } from "../hooks/useWalletContext";
 import { MerchConnectBtn } from "components/merch/MerchConnectBtn";
+import { GlobalContextProvider } from "../hooks/useGlobalContext";
 
 const merchItems = [
   {
     name: "GOAT Tribe Merchandise Bundle",
     price: 240 /*82*/,
-    previous_price: 280,
+    original_price: 280,
     image: "/merch/goat/1-bundle1.png",
     images: ["/merch/goat/1-bundle1.png"],
     description:
@@ -23,6 +24,7 @@ const merchItems = [
   {
     name: "GOAT Tribe x Bella + Canvas Hoodie",
     price: 165 /*57*/,
+    original_price: 165,
     image: "/merch/goat/2-hoodie1.jpg",
     images: [
       "/merch/goat/2-hoodie1.jpg",
@@ -40,6 +42,7 @@ const merchItems = [
   {
     name: "Logo Retro Trucker Hat",
     price: 75,
+    original_price: 75,
     image: "/merch/goat/3-hat.png",
     images: ["/merch/goat/3-hat.png"],
     description:
@@ -51,6 +54,7 @@ const merchItems = [
   {
     name: "Think Freud Retro Trucker Hat",
     price: 75,
+    original_price: 75,
     image: "/merch/goat/4-hat.png",
     images: ["/merch/goat/4-hat.png"],
     description:
@@ -63,6 +67,7 @@ const merchItems = [
   {
     name: "Vinyl Sticker Collection 1",
     price: 20,
+    original_price: 20,
     image: "/merch/goat/5-sticker1.png",
     images: [
       "/merch/goat/5-sticker1.png",
@@ -83,6 +88,7 @@ const merchItems = [
   {
     name: "Vinyl Sticker Collection 2",
     price: 20,
+    original_price: 20,
     image: "/merch/goat/6-sticker1.png",
     images: [
       "/merch/goat/6-sticker1.png",
@@ -107,6 +113,7 @@ type Props = {};
 type CartItem = {
   name: string;
   price: number;
+  original_price: number;
   image: string;
   images: string[];
   description: string;
@@ -143,76 +150,85 @@ const GoatTribe = (props: Props) => {
         cartCount={cartCount}
       />
       {isConnected && (
-        <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
-          <div className="w-full h-full flex flex-row items-center divide-x divide-[#2C2D33]">
-            <div className=" sm:w-full h-full flex flex-col overflow-scroll scrollbar-hide min-w-[66%]">
-              <div className="">
-              <img
-                src="/goat-logo.png"
-                className=" sm:h-[164px] my-4 sm:my-12 mx-auto"
-              />
-              </div>
-              <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
-                {merchItems.map((item, i) => (
-                  <ItemCard
-                    key={i}
-                    item={item}
-                    itemId={itemId}
-                    setItemId={setItemId}
-                    cartItems={cartItems}
-                    setCartItems={setCartItems}
+        <GlobalContextProvider>
+          <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
+            <div className="w-full h-full flex flex-row items-center divide-x divide-[#2C2D33]">
+              <div className=" sm:w-full h-full flex flex-col overflow-scroll scrollbar-hide min-w-[66%]">
+                <div className="">
+                  <img
+                    src="/goat-logo.png"
+                    className=" sm:h-[164px] my-4 sm:my-12 mx-auto"
                   />
-                ))}
-              </div>
-            </div>
-            {showCart && (
-              <div className="hidden lg:flex flex-col w-[34%] h-full min-w-min">
-                <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]">
-                  <div className="flex flex-col px-4 py-4 min-w-max">
-                    <p className="text-xl font-saira">Subtotal:</p>
-                    <p className="text-xl">{total} ADA</p>
-                    <p className="text-gray-300 text-sm">+shipping (30 ADA)</p>
-                  </div>
-                  <div className="flex flex-col px-4 py-4">
-                    <button
-                      disabled={cartItems.length === 0}
-                      className={`font-quicksand border border-white text-white px-8 py-4 rounded-md m-4 mx-2 ${
-                        cartItems.length === 0 && "opacity-50 cursor-default"
-                      }`}
-                      onClick={() => {
-                        setShowModal(true);
-                      }}
-                    >
-                      Checkout
-                    </button>
-                  </div>
                 </div>
-                <div className="flex flex-col w-full overflow-scroll scrollbar-hide">
-                  {cartItems.length !== 0 &&
-                    cartItems.map((item, i) => (
-                      <CartCard
-                        key={i}
-                        item={item}
-                        cartItems={cartItems}
-                        setCartItems={setCartItems}
-                      />
-                    ))}
+                <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
+                  {merchItems.map((item, i) => (
+                    <ItemCard
+                      key={i}
+                      item={item}
+                      itemId={itemId}
+                      setItemId={setItemId}
+                      cartItems={cartItems}
+                      setCartItems={setCartItems}
+                    />
+                  ))}
                 </div>
               </div>
-            )}
+              {showCart && (
+                <div className="hidden lg:flex flex-col w-[34%] h-full min-w-min">
+                  <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]">
+                    <div className="flex flex-col px-4 py-4 min-w-max">
+                      <p className="text-xl font-saira">Subtotal:</p>
+                      <p className="text-xl">{total} ADA</p>
+                      <p className="text-gray-300 text-sm">+shipping 30 ADA</p>
+                    </div>
+                    <div className="flex flex-col px-4 py-4">
+                      <button
+                        disabled={cartItems.length === 0}
+                        className={`font-quicksand border border-white text-white px-8 py-4 rounded-md m-4 mx-2 ${
+                          cartItems.length === 0 && "opacity-50 cursor-default"
+                        }`}
+                        onClick={() => {
+                          setShowModal(true);
+                        }}
+                      >
+                        Checkout
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col w-full overflow-scroll scrollbar-hide">
+                    {cartItems.length !== 0 &&
+                      cartItems.map((item, i) => (
+                        <CartCard
+                          key={i}
+                          item={item}
+                          cartItems={cartItems}
+                          setCartItems={setCartItems}
+                        />
+                      ))}
+                  </div>
+                </div>
+              )}
 
-            {cartOpen && (
-              <MobileCart
-                setCartOpen={setCartOpen}
-                cartOpen={cartOpen}
-                cartItems={cartItems}
-                setCartItems={setCartItems}
-                total={total}
-                setShowModal={setShowModal}
-              />
-            )}
+              {cartOpen && (
+                <MobileCart
+                  setCartOpen={setCartOpen}
+                  cartOpen={cartOpen}
+                  cartItems={cartItems}
+                  setCartItems={setCartItems}
+                  total={total}
+                  setShowModal={setShowModal}
+                />
+              )}
+            </div>
           </div>
-        </div>
+          {showModal && (
+            <CheckoutModal
+              setShowModal={setShowModal}
+              showModal={showModal}
+              cartItems={cartItems}
+            />
+          )}
+        </GlobalContextProvider>
       )}
 
       {!isConnected && (
@@ -223,14 +239,6 @@ const GoatTribe = (props: Props) => {
           />
           <MerchConnectBtn />
         </div>
-      )}
-
-      {showModal && (
-        <CheckoutModal
-          setShowModal={setShowModal}
-          showModal={showModal}
-          cartItems={cartItems}
-        />
       )}
     </div>
   );

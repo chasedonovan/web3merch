@@ -8,6 +8,7 @@ type Props = {
   cartItems: Array<{
     name: string;
     price: number;
+    original_price: number;
     image: string;
     images: string[];
     description: string;
@@ -101,12 +102,13 @@ export default function MobileCart({
                     <div className="relative flex-1 px-4 sm:px-6">
                       {/* <!-- Replace w/ content --> */}
                       <div className="flex flex-col w-1/3 h-full p-2 pr-0 min-w-max">
-
                         <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]">
                           <div className="flex flex-col py-4">
                             <p className="text-xl font-saira">Subtotal:</p>
                             <p className="text-xl">{total} ADA</p>
-                            <p className="text-gray-300 text-sm">+shipping (30 ADA)</p>
+                            <p className="text-gray-300 text-sm">
+                              +shipping (30 ADA)
+                            </p>
                           </div>
                           <div className="flex flex-col pl-4 py-4">
                             <button

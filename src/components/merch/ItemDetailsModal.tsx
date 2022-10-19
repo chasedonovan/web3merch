@@ -67,6 +67,7 @@ export default function ItemDetailsModal({
       {
         name: item.name,
         price: item.price,
+        original_price: item.original_price,
         image: item.image,
         images: item.images,
         description: item.description,
@@ -223,7 +224,12 @@ export default function ItemDetailsModal({
                           </button>
                         )}
                         {showAdditionalInfo && (
-                                <div className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2" dangerouslySetInnerHTML={{ __html: item.additional_info }} />
+                          <div
+                            className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2"
+                            dangerouslySetInnerHTML={{
+                              __html: item.additional_info,
+                            }}
+                          />
                         )}
                       </div>
                     )}
@@ -232,20 +238,16 @@ export default function ItemDetailsModal({
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col justify-start sm:gap-2 items-center sm:py-2 min-w-max"
                   >
-                    {2 + 2 === 4 ? (
-                      <div className="flex gap-2 justify-end self-end pb-2">
-                        <p className="self-end text-right text-gray-200 line-through opacity-75">
-                          {item.price} ₳
-                        </p>
-                        <p className="self-end text-right text-gray-200 ">
-                          {item.price * 0.86} ₳
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="self-end text-right text-gray-200 pb-2">
-                        {item.price} ₳
+                    {item.original_price !== item.price ? (
+                      <p className="self-end text-right text-gray-200 line-through opacity-75">
+                        {item.original_price} ₳
                       </p>
+                    ) : (
+                      ""
                     )}
+                    <p className="self-end text-right text-gray-200 ">
+                      {item.price} ₳
+                    </p>
                     <div className="flex flex-col lg:flex-row justify-end ">
                       <select
                         autoFocus
@@ -280,7 +282,6 @@ export default function ItemDetailsModal({
                     </div>
                   </form>
                 </div>
-
 
                 <div className="w-full px-6 pb-6 xl:flex flex-col justify-between hidden">
                   <div className="flex justify-end pt-3 pb-2">
@@ -366,20 +367,17 @@ export default function ItemDetailsModal({
                         onSubmit={handleSubmit(onSubmit)}
                         className="flex flex-col justify-start sm:gap-2 items-center sm:py-2 min-w-max"
                       >
-                        {2 + 2 === 4 ? (
-                          <div className="flex gap-2 justify-end self-end pb-2">
-                            <p className="self-end text-right text-gray-200 line-through opacity-75">
-                              {item.price} ₳
-                            </p>
-                            <p className="self-end text-right text-gray-200 ">
-                              {item.price * 0.86} ₳
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="self-end text-right text-gray-200 pb-2">
-                            {item.price} ₳
+                        {item.original_price !== item.price ? (
+                          <p className="self-end text-right text-gray-200 line-through opacity-75">
+                            {item.original_price} ₳
                           </p>
+                        ) : (
+                          ""
                         )}
+                        <p className="self-end text-right text-gray-200 ">
+                          {item.price} ₳
+                        </p>
+
                         <div className="flex flex-col xl:flex-row self-end mt-4">
                           <select
                             autoFocus
@@ -421,7 +419,12 @@ export default function ItemDetailsModal({
                         {item.additional_info && (
                           <div className="mt-4">
                             Additional Info{" "}
-                                <div className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2" dangerouslySetInnerHTML={{ __html: item.additional_info }} />
+                            <div
+                              className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2"
+                              dangerouslySetInnerHTML={{
+                                __html: item.additional_info,
+                              }}
+                            />
                           </div>
                         )}
                       </div>
