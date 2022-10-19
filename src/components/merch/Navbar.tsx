@@ -25,7 +25,7 @@ export default function Navbar(props: Props) {
         <img
           src={"/uniscroll-full.webp"}
           alt=""
-          className="self-center sm:w-[124px]"
+          className="self-center"
         />
         {/* <img
           src="/goat-logo.png"

@@ -15,6 +15,7 @@ type Props = {
   cartItems: Array<any>;
   itemId: number;
   setItemId: (itemId: number) => void;
+  setShowCart: (showCart: boolean) => void;
 };
 
 export default function ItemDetailsModal({
@@ -25,6 +26,7 @@ export default function ItemDetailsModal({
   item,
   itemId,
   setItemId,
+  setShowCart,
 }: Props) {
   const cancelButtonRef = useRef(null);
   const [imgIndex, setImgIndex] = useState(0);
@@ -78,8 +80,12 @@ export default function ItemDetailsModal({
         itemId: itemId,
       },
     ]);
+
     setItemId(itemId + 1);
     setTimeout(() => {
+      if (cartItems.length === 0) {
+        setShowCart(true);
+      };
       setShowModal(false);
     }, 300);
   };

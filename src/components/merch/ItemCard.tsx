@@ -25,6 +25,7 @@ type Props = {
   itemId: number;
   setItemId: (itemId: number) => void;
   setCartItems: (cartItems: any) => void;
+  setShowCart: (showCart: boolean) => void;
   cartItems: Array<{
     name: string;
     price: number;
@@ -79,6 +80,9 @@ const ItemCard = (props: Props) => {
         itemId: props.itemId,
       },
     ]);
+    if (props.cartItems.length === 0) {
+      props.setShowCart(true);
+    }
     props.setItemId(props.itemId + 1);
   };
 
@@ -151,6 +155,7 @@ const ItemCard = (props: Props) => {
           cartItems={props.cartItems}
           setItemId={props.setItemId}
           itemId={props.itemId}
+          setShowCart={props.setShowCart}
         />
       )}
     </div>

@@ -128,7 +128,7 @@ const GoatTribe = (props: Props) => {
   const { isConnected } = useWalletContext();
   const [cartOpen, setCartOpen] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
-  const [showCart, setShowCart] = React.useState(true);
+  const [showCart, setShowCart] = React.useState(false);
   const [total, setTotal] = React.useState(0);
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [itemId, setItemId] = React.useState(0);
@@ -157,7 +157,7 @@ const GoatTribe = (props: Props) => {
                 <div className="">
                   <img
                     src="/goat-logo.png"
-                    className=" sm:h-[164px] my-4 sm:my-12 mx-auto"
+                    className=" sm:h-[98px] 2xl:h-[164px] my-4 sm:my-12 mx-auto"
                   />
                 </div>
                 <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
@@ -169,6 +169,7 @@ const GoatTribe = (props: Props) => {
                       setItemId={setItemId}
                       cartItems={cartItems}
                       setCartItems={setCartItems}
+                      setShowCart={setShowCart}
                     />
                   ))}
                 </div>
