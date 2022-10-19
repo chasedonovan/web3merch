@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Navbar from "components/merch/Navbar";
 import ItemCard from "components/merch/ItemCard";
 import CartCard from "components/merch/CartCard";
@@ -133,6 +133,8 @@ const GoatTribe = (props: Props) => {
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [itemId, setItemId] = React.useState(0);
   const [cartCount, setCartCount] = React.useState(0);
+  const productSection = useRef<null | HTMLDivElement>(null); 
+
 
   useEffect(() => {
     if (cartItems) {
@@ -141,8 +143,15 @@ const GoatTribe = (props: Props) => {
     setCartCount(cartItems.length);
   }, [cartItems]);
 
+  //make product section scroll to top when rendered
+  useEffect(() => {
+    if (isConnected && productSection.current) {
+      productSection.current.scrollIntoView();
+    }
+  }, [isConnected]);
+
   return (
-    <div className="w-full h-full flex flex-col overflow-scroll scrollbar-hide">
+    <div className="w-full h-full flex flex-col overflow-scroll scrollbar-hide min-h-max">
       <Navbar
         setCartOpen={setCartOpen}
         showCart={showCart}
@@ -152,12 +161,16 @@ const GoatTribe = (props: Props) => {
       {isConnected && (
         <GlobalContextProvider>
           <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
-            <div className="w-full h-full flex flex-row items-center divide-x divide-[#2C2D33]">
-              <div className=" sm:w-full h-full flex flex-col overflow-scroll scrollbar-hide min-w-[66%]">
-                <div className="">
+            <div className="w-full h-full flex flex-row divide-x divide-[#2C2D33]">
+              <div className=" sm:w-full h-full flex flex-col overflow-scroll scrollbar-hide min-w-[66%] justify-start"
+              >
+                <div className=""
+                ref={productSection}>
                   <img
+                    id='logo'
                     src="/goat-logo.png"
-                    className=" sm:h-[98px] 2xl:h-[164px] my-4 sm:my-12 mx-auto"
+                    className=" sm:h-[98px] 2xl:h-[164px] my-6 sm:my-12 mx-auto"
+                    
                   />
                 </div>
                 <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
@@ -233,10 +246,10 @@ const GoatTribe = (props: Props) => {
       )}
 
       {!isConnected && (
-        <div className="flex-1 text-white w-full h-full flex flex-col items-center justify-center pb-[20%]">
+        <div className="min-h-max flex-1 text-white w-full h-full flex flex-col items-center justify-center pb-[20%]">
           <img
             src="/goat-logo.png"
-            className=" h-16 sm:h-[124px] mb-2 sm:mb-12 mx-auto"
+            className=" h-16 md:h-[124px] mb-2 sm:mb-12 mx-auto sm:mt-16 self-center" 
           />
           <MerchConnectBtn />
         </div>
