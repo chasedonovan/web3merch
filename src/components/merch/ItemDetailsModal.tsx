@@ -78,6 +78,7 @@ export default function ItemDetailsModal({
         sizes: item.sizes,
         size: data.size,
         itemId: itemId,
+        quantity: 1,
       },
     ]);
 
@@ -87,7 +88,7 @@ export default function ItemDetailsModal({
         setShowCart(true);
       };
       setShowModal(false);
-    }, 300);
+    }, 100);
   };
 
   return (

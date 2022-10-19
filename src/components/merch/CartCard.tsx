@@ -12,6 +12,7 @@ type Item = {
   sizes: string[];
   itemId: number;
   size: string;
+  quantity: number;
 };
 
 type Props = {
@@ -22,6 +23,7 @@ type Props = {
 
 const CartCard = (props: Props) => {
   const [size, setSize] = React.useState("");
+  const [quantity, setQuantity] = React.useState(1);
 
   useEffect(() => {
     setSize(props.item.size);
@@ -45,6 +47,18 @@ const CartCard = (props: Props) => {
     );
   };
 
+  const handleQuantityChange = (e: any) => {
+    setQuantity(e.target.value);
+    props.setCartItems(
+      props.cartItems.map((item) => {
+        if (item.itemId === props.item.itemId) {
+          item.quantity = e.target.value;
+        }
+        return item;
+      })
+    );
+  };
+
   return (
     <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33] ">
       <div className="flex flex-row items-center gap-2 md:gap-6">
@@ -59,30 +73,56 @@ const CartCard = (props: Props) => {
           <p className=" mb-2 max-w-[164px] 2xl:max-w-[212px]">
             {props.item.name}
           </p>
-          <div className="flex flex-row">
-            <div className="pr-2 py-2">Size</div>
-            <select
-              autoFocus
-              disabled={props.item.sizes[0] === "OneSize"}
-              className={`pr-2 mb-2 mt-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none `}
-              value={size}
-              onChange={handleSizeChange}
-            >
-              {props.item.sizes[0] === "OneSize" ? (
-                <option value="OneSize">One Size</option>
-              ) : (
-                <>
-                  <option value="" disabled selected>
-                    Size
-                  </option>
-                  {props.item.sizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
+          <div className="flex flex-col">
+            <div className="flex flex-row">
+              <div className="pr-2 self-center text-sm">Size</div>
+              <select
+                autoFocus
+                disabled={props.item.sizes[0] === "OneSize"}
+                className={`self-center bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+                value={size}
+                onChange={handleSizeChange}
+              >
+                {props.item.sizes[0] === "OneSize" ? (
+                  <option value="OneSize">One Size</option>
+                ) : (
+                  <>
+                    <option value="" disabled selected>
+                      Size
                     </option>
-                  ))}
+                    {props.item.sizes.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+            </div>
+            <div className="flex flex-row">
+              <div className="pr-2 text-sm">Quantity</div>
+              <select
+                autoFocus
+                className={`pl-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+                value={quantity}
+                onChange={handleQuantityChange}
+              >
+                <>
+                  <option value="1" selected>
+                    1
+                  </option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
                 </>
-              )}
-            </select>
+              </select>
+            </div>
           </div>
         </div>
       </div>

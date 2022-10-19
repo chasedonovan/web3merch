@@ -122,6 +122,7 @@ type CartItem = {
   sizes: string[];
   itemId: number;
   size: string;
+  quantity: number;
 };
 
 const GoatTribe = (props: Props) => {
@@ -138,7 +139,7 @@ const GoatTribe = (props: Props) => {
 
   useEffect(() => {
     if (cartItems) {
-      setTotal(cartItems.reduce((acc, item) => acc + item.price, 0));
+      setTotal(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0));
     }
     setCartCount(cartItems.length);
   }, [cartItems]);

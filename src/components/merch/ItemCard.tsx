@@ -18,6 +18,7 @@ type Item = {
   additional_info: string;
   weight: string;
   sizes: string[];
+
 };
 
 type Props = {
@@ -78,6 +79,7 @@ const ItemCard = (props: Props) => {
         sizes: props.item.sizes,
         size: data.size,
         itemId: props.itemId,
+        quantity: 1,
       },
     ]);
     if (props.cartItems.length === 0) {
