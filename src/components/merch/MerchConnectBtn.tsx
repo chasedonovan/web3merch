@@ -14,7 +14,6 @@ const walletList = [
 ];
 
 export const MerchConnectBtn: FunctionComponent = () => {
-  const [showProfile, setShowProfile] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const {
@@ -26,10 +25,6 @@ export const MerchConnectBtn: FunctionComponent = () => {
     setLoading,
     connectedWallet,
     setConnectedWallet,
-    user,
-    setUser,
-    setDelegation,
-    setRewards,
     validateSignedPayload,
   } = useWalletContext();
 
@@ -123,16 +118,9 @@ export const MerchConnectBtn: FunctionComponent = () => {
     // }, 1000);
   };
 
-  const handleProfile = () => {
-    setShowProfile(true);
-  };
-
   const handleDisconnect = () => {
     setConnected(false);
     setConnectedWallet({} as WalletInfo);
-    setUser({} as any);
-    setDelegation({} as any);
-    setRewards([]);
   };
 
   useEffect(() => {
@@ -214,16 +202,16 @@ export const MerchConnectBtn: FunctionComponent = () => {
                   />
                 </div>
                 <div className="group self-center flex flex-col items-center justify-center h-full rounded-lg w-full">
-                <p className="hidden md:flex self-center md:min-w-[98px] pl-2  ">
-                  {connectedWallet.balance
-                    ? `${connectedWallet.balance.toFixed(2)} ADA`
-                    : 0.0}
-                </p>
-                <p className="md:hidden self-center md:min-w-[98px] pl-2  ">
-                  {connectedWallet.balance
-                    ? `${Math.floor(connectedWallet.balance)} ADA`
-                    : 0.0}
-                </p>
+                  <p className="hidden md:flex self-center md:min-w-[98px] pl-2  ">
+                    {connectedWallet.balance
+                      ? `${connectedWallet.balance.toFixed(2)} ADA`
+                      : 0.0}
+                  </p>
+                  <p className="md:hidden self-center md:min-w-[98px] pl-2  ">
+                    {connectedWallet.balance
+                      ? `${Math.floor(connectedWallet.balance)} ADA`
+                      : 0.0}
+                  </p>
                 </div>
               </div>
               <div className="invisible group group-hover:visible hover:visible absolute z-40 rounded-md h-max text-center flex flex-col text-sm  border border-[#2C2D33] divide-y divide-[#2C2D33] top-[54px] w-max bg-[#0d0d0d]">
