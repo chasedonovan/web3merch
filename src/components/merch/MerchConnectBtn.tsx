@@ -3,6 +3,7 @@ import { useWalletContext, WalletInfo } from "../../hooks/useWalletContext";
 import CardanoWalletAPI from "../../client/CardanoWalletAPI";
 import Image from "next/image";
 import AlertModal from "./../AlertModal";
+import NoGoatsAlertModal from "./NoGoatAlertModal";
 
 const walletList = [
   { name: "Nami", icon: "/nami.svg", displayName: "Nami" },
@@ -15,6 +16,7 @@ const walletList = [
 
 export const MerchConnectBtn: FunctionComponent = () => {
   const [showModal, setShowModal] = useState(false);
+  const [noGoats, setNoGoats] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const {
     isConnected,
@@ -134,6 +136,13 @@ export const MerchConnectBtn: FunctionComponent = () => {
           message={modalMessage}
           setShowModal={setShowModal}
           showModal={showModal}
+        />
+      )}
+            {noGoats && (
+        <NoGoatsAlertModal
+          message={modalMessage}
+          setNoGoats={setNoGoats}
+          noGoats={noGoats}
         />
       )}
       {!isLoading && (
