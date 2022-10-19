@@ -100,7 +100,7 @@ const ItemCard = (props: Props) => {
         <p className="text-lg font-quicksand font-semibold max-w-[184px] md:max-w-[212px]">
           {props.item.name}
         </p>
-        <div className="flex flex-col-reverse sm:flex-row gap-2 items-center">
+        <div className="flex flex-col-reverse sm:flex-row sm:gap-2 items-center">
           {props.item.original_price !== props.item.price ? (
             <p className="self-end text-right text-gray-200 line-through opacity-75">
               {props.item.original_price} ₳
