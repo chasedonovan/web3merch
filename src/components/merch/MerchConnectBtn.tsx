@@ -63,48 +63,73 @@ export const MerchConnectBtn: FunctionComponent = () => {
         console.log(providerapi);
 
         if (providerapi) {
-          let walletSignature;
-          if (name === "Nami") {
-            walletSignature = await CardanoWalletAPI.signDataNami(providerapi);
-          } else {
-            walletSignature = await CardanoWalletAPI.signData(providerapi);
-          }
 
-          console.log(walletSignature);
+          const walletAddress = await CardanoWalletAPI.getAddress(
+            providerapi
+          );
+          const walletBalance = await CardanoWalletAPI.getBalance(
+            providerapi
+          );
+          const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
+            providerapi
+          );
 
-          if (walletSignature) {
-            const walletAddress = await CardanoWalletAPI.getAddress(
-              providerapi
-            );
-            // console.log("Address:");
-            // console.log(walletAddress);
-            const walletBalance = await CardanoWalletAPI.getBalance(
-              providerapi
-            );
-            // console.log("Balance:");
-            // console.log(walletBalance);
-            const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
-              providerapi
-            );
+          setConnectedWallet({
+            name: matchingWallet.name,
+            icon: matchingWallet.icon,
+            provider: matchingWallet.provider,
+            providerapi: providerapi,
+            balance: walletBalance,
+            address: walletAddress,
+            stakeAddress: stakeAddress,
+          } as WalletInfo);
+          setConnected(true);
+          setLoading(false);
+          return;
 
-            const isValid = validateSignedPayload(
-              walletSignature.signature,
-              stakeAddress ?? ""
-            );
 
-            setConnectedWallet({
-              name: matchingWallet.name,
-              icon: matchingWallet.icon,
-              provider: matchingWallet.provider,
-              providerapi: providerapi,
-              balance: walletBalance,
-              address: walletAddress,
-              stakeAddress: stakeAddress,
-            } as WalletInfo);
-            setConnected(true);
-            setLoading(false);
-            return;
-          }
+          // let walletSignature;
+          // if (name === "Nami") {
+          //   walletSignature = await CardanoWalletAPI.signDataNami(providerapi);
+          // } else {
+          //   walletSignature = await CardanoWalletAPI.signData(providerapi);
+          // }
+
+          // console.log(walletSignature);
+
+          // if (walletSignature) {
+          //   const walletAddress = await CardanoWalletAPI.getAddress(
+          //     providerapi
+          //   );
+          //   // console.log("Address:");
+          //   // console.log(walletAddress);
+          //   const walletBalance = await CardanoWalletAPI.getBalance(
+          //     providerapi
+          //   );
+          //   // console.log("Balance:");
+          //   // console.log(walletBalance);
+          //   const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
+          //     providerapi
+          //   );
+
+          //   const isValid = validateSignedPayload(
+          //     walletSignature.signature,
+          //     stakeAddress ?? ""
+          //   );
+
+          //   setConnectedWallet({
+          //     name: matchingWallet.name,
+          //     icon: matchingWallet.icon,
+          //     provider: matchingWallet.provider,
+          //     providerapi: providerapi,
+          //     balance: walletBalance,
+          //     address: walletAddress,
+          //     stakeAddress: stakeAddress,
+          //   } as WalletInfo);
+          //   setConnected(true);
+          //   setLoading(false);
+          //   return;
+          // }
         }
       } catch (e: any) {
         setLoading(false);
@@ -146,11 +171,11 @@ export const MerchConnectBtn: FunctionComponent = () => {
         />
       )}
       {!isLoading && (
-        <div className="ml-2 w-[138px] md:w-[224px] flex flex-row border border-opacity-[.75] border-[#2C2D33] rounded-lg self center h-14 self-center">
+        <div className="ml-2 w-[138px] md:w-[224px] min-h-[56px] flex flex-row border border-opacity-[.75] border-[#2C2D33] rounded-lg self center h-14 self-center">
           {!isLoading && !isConnected && (
             <div className="relative group flex w-full">
               <div
-                className="group w-full h-full flex justify-center bg-opacity-75 rounded-lg cursor-pointer border  border-[#2C2D33] "
+                className="group w-full h-full flex justify-center bg-opacity-75 rounded-lg cursor-pointer border  border-[#2C2D33] min-h-max "
                 onMouseOver={handleEnabledWallets}
               >
                 <p className="self-center font-quicksand">Connect Wallet</p>

@@ -158,10 +158,10 @@ const GoatTribe = (props: Props) => {
       )}
 
       {!isConnected && (
-        <div className="min-h-max flex-1 text-white w-full h-full flex flex-col items-center justify-center pb-[20%]">
+        <div className="min-h-[298px] flex-1 text-white w-full h-full flex flex-col items-center justify-center px-[5%] pb-[10%] ">
           <img
             src="/goat-logo.png"
-            className=" h-16 md:h-[124px] mb-2 sm:mb-12 mx-auto sm:mt-16 self-center" 
+            className=" h-16 md:h-[124px] mb-2 sm:mb-12 mx-auto sm:mt-24 self-center" 
           />
           <MerchConnectBtn />
         </div>
