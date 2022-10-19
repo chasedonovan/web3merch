@@ -16,26 +16,14 @@ export type ProtocolParameters = {
   coins_per_utxo_word: string;
 };
 
-export type PoolInfo = {
-  poolId: string;
-  poolTicker: string;
-  poolName: string;
-  epoch: string;
-  epochEndDate: string;
-  live_stake: number;
-  active_stake: number;
-  variable_fee: number;
-  epochFee: number;
-};
+
 
 type GlobalContextProps = {
   protocolParameters: ProtocolParameters;
-  poolInfo: PoolInfo;
 };
 
 const GlobalContext = createContext<GlobalContextProps>({
   protocolParameters: {} as ProtocolParameters,
-  poolInfo: {} as PoolInfo,
 });
 
 type ProviderProps = {} & PropsWithChildren<{}>;
@@ -44,7 +32,6 @@ export const GlobalContextProvider = ({ children }: ProviderProps) => {
   const [protocolParameters, setTheProtocolParameters] =
     useState<ProtocolParameters>({} as ProtocolParameters);
 
-  const [poolInfo, setThePoolInfo] = useState<PoolInfo>({} as PoolInfo);
 
   useEffect(() => {
     console.log("GlobalContextProvider useEffect");
@@ -83,7 +70,6 @@ export const GlobalContextProvider = ({ children }: ProviderProps) => {
     <GlobalContext.Provider
       value={{
         protocolParameters,
-        poolInfo,
       }}
     >
       {children}
