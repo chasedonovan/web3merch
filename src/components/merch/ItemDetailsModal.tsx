@@ -98,7 +98,7 @@ export default function ItemDetailsModal({
     <Transition.Root show={showModal} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-50"
+        className="relative z-50 "
         initialFocus={cancelButtonRef}
         onClose={setShowModal}
       >
@@ -114,7 +114,7 @@ export default function ItemDetailsModal({
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-hide">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -261,28 +261,31 @@ export default function ItemDetailsModal({
                     <div className="flex flex-col lg:flex-row justify-end ">
                       {item.variants[0].size === "OneSize" && (
                         <div className="flex flex-row">
-                          <div className="pr-2 font-quicksand">Quantity</div>
+                          <div className="pr-2 mb-2 font-quicksand self-center">Quantity</div>
                           <select
                             autoFocus
-                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2`}
+                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 mr-2 self-center`}
                             value={quantity}
                             onChange={(e) =>
                               setQuantity(parseInt(e.target.value))
                             }
                           >
                             <>
-                              <option value="1" selected>
-                                1
-                              </option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              <option value="10">10</option>
+                              {Array.from(
+                                {
+                                  length: Math.min(
+                                    item.variants[0].stock,
+                                    10
+                                  ),
+                                },
+                                (_, i) => i + 1
+                              ).map((num) => (
+                                <option key={num} value={num}>
+                                  {num === item.variants[0].stock
+                                    ? num + " left"
+                                    : `${num}`}
+                                </option>
+                              ))}
                             </>
                           </select>
                         </div>
@@ -305,7 +308,11 @@ export default function ItemDetailsModal({
                               Size
                             </option>
                             {item.variants.map((variant: any) => (
-                              <option key={variant.size} value={variant.size} disabled={variant.stock === 0}>
+                              <option
+                                key={variant.size}
+                                value={variant.size}
+                                disabled={variant.stock === 0}
+                              >
                                 {variant.size}
                               </option>
                             ))}
@@ -315,7 +322,7 @@ export default function ItemDetailsModal({
                       <button
                         disabled={errors.size ? true : false}
                         type="submit"
-                        className="border border-white mb-2 rounded-md self-center w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
+                        className="border border-white mb-2 rounded-md self-end w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
                       >
                         Add to cart
                       </button>
@@ -433,18 +440,21 @@ export default function ItemDetailsModal({
                                 }
                               >
                                 <>
-                                  <option value="1" selected>
-                                    1
-                                  </option>
-                                  <option value="2">2</option>
-                                  <option value="3">3</option>
-                                  <option value="4">4</option>
-                                  <option value="5">5</option>
-                                  <option value="6">6</option>
-                                  <option value="7">7</option>
-                                  <option value="8">8</option>
-                                  <option value="9">9</option>
-                                  <option value="10">10</option>
+                                  {Array.from(
+                                    {
+                                      length: Math.min(
+                                        item.variants[0].stock,
+                                        10
+                                      ),
+                                    },
+                                    (_, i) => i + 1
+                                  ).map((num) => (
+                                    <option key={num} value={num}>
+                                      {num === item.variants[0].stock
+                                        ? num + " left"
+                                        : `${num}`}
+                                    </option>
+                                  ))}
                                 </>
                               </select>
                             </div>

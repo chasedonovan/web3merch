@@ -136,7 +136,7 @@ const CartCard = (props: Props) => {
               (_, i) => i + 1
             ).map((num) => (
               <option key={num} value={num}>
-                {num}
+                 {num === props.item.variant.stock ?  num + " left" : `${num}`}
               </option>
             ))}
                 </>
