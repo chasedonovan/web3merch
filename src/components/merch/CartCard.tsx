@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
 
+type Variant = {
+  variant_id: string;
+  size: string;
+  stock: number;
+};
+
 type Item = {
   name: string;
   price: number;
@@ -9,9 +15,9 @@ type Item = {
   description: string;
   additional_info: string;
   weight: string;
-  sizes: string[];
+  variants: Variant[];
   itemId: number;
-  size: string;
+  variant: Variant;
   quantity: number;
 };
 
@@ -26,8 +32,12 @@ const CartCard = (props: Props) => {
   const [quantity, setQuantity] = React.useState(1);
 
   useEffect(() => {
-    setSize(props.item.size);
+    setSize(props.item.variant.size);
   }, []);
+
+  useEffect(() => {
+    setQuantity(props.item.quantity);
+  }, [props.item.quantity]);
 
   const removeItem = () => {
     props.setCartItems(
@@ -40,7 +50,7 @@ const CartCard = (props: Props) => {
     props.setCartItems(
       props.cartItems.map((item) => {
         if (item.itemId === props.item.itemId) {
-          item.size = e.target.value;
+          item.variant.size = e.target.value;
         }
         return item;
       })
@@ -78,21 +88,21 @@ const CartCard = (props: Props) => {
               <div className="pr-2 self-center text-sm">Size</div>
               <select
                 autoFocus
-                disabled={props.item.sizes[0] === "OneSize"}
+                disabled={props.item.variants[0].size === "OneSize"}
                 className={`self-center bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
                 value={size}
                 onChange={handleSizeChange}
               >
-                {props.item.sizes[0] === "OneSize" ? (
+                {props.item.variants[0].size === "OneSize" ? (
                   <option value="OneSize">One Size</option>
                 ) : (
                   <>
                     <option value="" disabled selected>
                       Size
                     </option>
-                    {props.item.sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
+                    {props.item.variants.map((variant) => (
+                      <option key={variant.size} value={variant.size}>
+                        {variant.size}
                       </option>
                     ))}
                   </>

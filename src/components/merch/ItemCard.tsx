@@ -8,6 +8,12 @@ interface IFormInput {
   size: string;
 }
 
+type Variant = {
+  variant_id: string;
+  size: string;
+  stock: number;
+};
+
 type Item = {
   name: string;
   price: number;
@@ -17,8 +23,7 @@ type Item = {
   description: string;
   additional_info: string;
   weight: string;
-  sizes: string[];
-
+  variants: Variant[];
 };
 
 type Props = {
@@ -36,9 +41,10 @@ type Props = {
     description: string;
     additional_info: string;
     weight: string;
-    sizes: string[];
     itemId: number;
-    size: string;
+    variants: Variant[];
+    variant: Variant;
+    quantity: number;
   }>;
 };
 
@@ -57,14 +63,29 @@ const ItemCard = (props: Props) => {
   });
 
   useEffect(() => {
-    if (props.item.sizes[0] === "OneSize") {
-      setValue("size", props.item.sizes[0]);
+    if (props.item.variants[0].size === "OneSize") {
+      setValue("size", props.item.variants[0].size);
     }
-  }, [props.item.sizes, setValue]);
+  }, [props.item.variants, setValue]);
 
   const onSubmit = (data: IFormInput) => {
     console.log(data);
 
+    // Check if item variant is already in car, if so, increase quantity
+    const itemInCart = props.cartItems.find(
+      (item) => item.variant.size === data.size && item.name === props.item.name
+    );
+
+    if (itemInCart) {
+      props.setCartItems(
+        props.cartItems.map((item) => {
+          if (item.name === props.item.name && item.variant.size === data.size) {
+            item.quantity += 1;
+          }
+          return item;
+        })
+      );
+    } else {
     props.setCartItems([
       ...props.cartItems,
       {
@@ -76,12 +97,15 @@ const ItemCard = (props: Props) => {
         description: props.item.description,
         additional_info: props.item.additional_info,
         weight: props.item.weight,
-        sizes: props.item.sizes,
-        size: data.size,
+        variants: props.item.variants,
+        variant: props.item.variants.filter(
+          (variant) => variant.size === data.size
+          )[0],
         itemId: props.itemId,
         quantity: 1,
       },
     ]);
+  }
     if (props.cartItems.length === 0) {
       props.setShowCart(true);
     }
@@ -119,22 +143,22 @@ const ItemCard = (props: Props) => {
       >
         <select
           autoFocus
-          disabled={props.item.sizes[0] === "OneSize"}
+          disabled={props.item.variants[0].size === "OneSize"}
           className={`pr-4 mb-2 py-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none ${
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
         >
-          {props.item.sizes[0] === "OneSize" ? (
+          {props.item.variants[0].size === "OneSize" ? (
             <option value="OneSize">One Size</option>
           ) : (
             <>
               <option value="" disabled selected>
                 Size
               </option>
-              {props.item.sizes.map((size) => (
-                <option key={size} value={size}>
-                  {size}
+              {props.item.variants.map((variant) => (
+                <option key={variant.size} value={variant.size}>
+                  {variant.size}
                 </option>
               ))}
             </>

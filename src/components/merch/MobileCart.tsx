@@ -2,6 +2,13 @@ import React, { useState, useMemo, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import CartCard from "./CartCard";
 
+type Variant = {
+  variant_id: string;
+  size: string;
+  stock: number;
+};
+
+
 type Props = {
   setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
   cartOpen: boolean;
@@ -14,9 +21,10 @@ type Props = {
     description: string;
     additional_info: string;
     weight: string;
-    sizes: string[];
+    variants: Variant[];
     itemId: number;
-    size: string;
+    variant: Variant;
+    quantity: number;
   }>;
   setCartItems: (cartItems: any) => void;
   total: number;

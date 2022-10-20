@@ -7,6 +7,12 @@ import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
 import { NumericKeys } from "react-hook-form/dist/types/path/common";
 
+type Variant = {
+  variant_id: string;
+  size: string;
+  stock: number;
+};
+
 type Props = {
   setShowModal: (showModal: boolean) => void;
   showModal: boolean;
@@ -19,10 +25,11 @@ type Props = {
     description: string;
     additional_info: string;
     weight: string;
-    sizes: string[];
+    variants: Variant[];
     itemId: number;
-    size: string;
+    variant: Variant;
   }>;
+  total: number;
 };
 
 type CheckoutForm = {
@@ -38,6 +45,7 @@ export default function CheckoutModal({
   showModal,
   setShowModal,
   cartItems,
+  total,
 }: Props) {
   const cancelButtonRef = useRef(null);
   const [subTotal, setSubTotal] = useState(0);
@@ -221,7 +229,8 @@ export default function CheckoutModal({
                             type="submit"
                             className=" mt-3 inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                           >
-                            PAY {subTotal + 30} ADA
+                            {/* PAY {subTotal + 30} ADA */}
+                            PAY {total + 30} ADA
                           </button>
                         </div>
                       </form>

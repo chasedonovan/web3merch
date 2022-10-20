@@ -11,6 +11,13 @@ import { GlobalContextProvider } from "../hooks/useGlobalContext";
 
 type Props = {};
 
+type Variant = {
+  variant_id: string;
+  size: string;
+  stock: number;
+};
+
+
 type CartItem = {
   name: string;
   price: number;
@@ -20,9 +27,9 @@ type CartItem = {
   description: string;
   additional_info: string;
   weight: string;
-  sizes: string[];
+  variants: Variant[];
   itemId: number;
-  size: string;
+  variant: Variant;
   quantity: number;
 };
 
@@ -152,6 +159,7 @@ const GoatTribe = (props: Props) => {
               setShowModal={setShowModal}
               showModal={showModal}
               cartItems={cartItems}
+              total={total}
             />
           )}
         </GlobalContextProvider>
