@@ -50,6 +50,7 @@ type Props = {
 
 const ItemCard = (props: Props) => {
   const [showDetails, setShowDetails] = React.useState(false);
+  const [quantity, setQuantity] = React.useState(1);
   const validationSchema = Yup.object().shape({
     size: Yup.string().required("Size is required"),
   });
@@ -102,13 +103,14 @@ const ItemCard = (props: Props) => {
           (variant) => variant.size === data.size
           )[0],
         itemId: props.itemId,
-        quantity: 1,
+        quantity: quantity,
       },
     ]);
   }
     if (props.cartItems.length === 0) {
       props.setShowCart(true);
     }
+    setQuantity(1);
     props.setItemId(props.itemId + 1);
   };
 
@@ -141,10 +143,36 @@ const ItemCard = (props: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-row justify-end gap-6 items-center py-2"
       >
+        {props.item.variants[0].size === "OneSize" && (
+          <div className="flex flex-row">
+          <div className="pr-2 font-quicksand">Quantity</div>
+          <select
+            autoFocus
+            className={`pl-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value))}
+          >
+            <>
+              <option value="1" selected>
+                1
+              </option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </>
+          </select>
+        </div>
+        )}
         <select
           autoFocus
           disabled={props.item.variants[0].size === "OneSize"}
-          className={`pr-4 mb-2 py-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none ${
+          className={`${props.item.variants[0].size === "OneSize" && 'hidden'} pr-4 mb-2 py-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none ${
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}

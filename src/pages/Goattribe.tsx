@@ -47,12 +47,13 @@ const GoatTribe = (props: Props) => {
 
 
 
-
+  //count all items in cart with quantity
   useEffect(() => {
-    if (cartItems) {
-      setTotal(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0));
-    }
-    setCartCount(cartItems.length);
+    let count = 0;
+    cartItems.forEach((item) => {
+      count += item.quantity;
+    });
+    setCartCount(count);
   }, [cartItems]);
 
   useEffect(() => {

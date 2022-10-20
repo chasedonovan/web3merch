@@ -31,6 +31,7 @@ export default function ItemDetailsModal({
   const cancelButtonRef = useRef(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const validationSchema = Yup.object().shape({
     size: Yup.string().required("Size is required"),
@@ -45,10 +46,10 @@ export default function ItemDetailsModal({
   });
 
   useEffect(() => {
-    if (item.sizes[0] === "OneSize") {
-      setValue("size", item.sizes[0]);
+    if (item.variants[0].size === "OneSize") {
+      setValue("size", item.variants[0].size);
     }
-  }, [item.sizes, setValue]);
+  }, [item.variants, setValue]);
 
   const handleRightClick = () => {
     if (imgIndex < item.images.length - 1) {
@@ -75,10 +76,12 @@ export default function ItemDetailsModal({
         description: item.description,
         additional_info: item.additional_info,
         weight: item.weight,
-        sizes: item.sizes,
-        size: data.size,
+        variants: item.variants,
+        variant: item.variants.filter(
+          (variant: any) => variant.size === data.size
+        )[0],
         itemId: itemId,
-        quantity: 1,
+        quantity: quantity,
       },
     ]);
 
@@ -86,7 +89,7 @@ export default function ItemDetailsModal({
     setTimeout(() => {
       if (cartItems.length === 0) {
         setShowCart(true);
-      };
+      }
       setShowModal(false);
     }, 100);
   };
@@ -256,24 +259,54 @@ export default function ItemDetailsModal({
                       {item.price} ₳
                     </p>
                     <div className="flex flex-col lg:flex-row justify-end ">
+                      {item.variants[0].size === "OneSize" && (
+                        <div className="flex flex-row">
+                          <div className="pr-2 font-quicksand">Quantity</div>
+                          <select
+                            autoFocus
+                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2`}
+                            value={quantity}
+                            onChange={(e) =>
+                              setQuantity(parseInt(e.target.value))
+                            }
+                          >
+                            <>
+                              <option value="1" selected>
+                                1
+                              </option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                              <option value="7">7</option>
+                              <option value="8">8</option>
+                              <option value="9">9</option>
+                              <option value="10">10</option>
+                            </>
+                          </select>
+                        </div>
+                      )}
                       <select
                         autoFocus
-                        disabled={item.sizes[0] === "OneSize"}
-                        className={`pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-end lg:mr-4 ${
+                        disabled={item.variants[0].size === "OneSize"}
+                        className={`${
+                          item.variants[0].size === "OneSize" && "hidden "
+                        } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-end lg:mr-4 ${
                           errors.size && " rounded-lg text-red-400"
                         }`}
                         {...register("size")}
                       >
-                        {item.sizes[0] === "OneSize" ? (
+                        {item.variants[0].size === "OneSize" ? (
                           <option value="OneSize">One Size</option>
                         ) : (
                           <>
                             <option value="" disabled selected>
                               Size
                             </option>
-                            {item.sizes.map((size: string) => (
-                              <option key={size} value={size}>
-                                {size}
+                            {item.variants.map((variant: any) => (
+                              <option key={variant.size} value={variant.size}>
+                                {variant.size}
                               </option>
                             ))}
                           </>
@@ -386,24 +419,59 @@ export default function ItemDetailsModal({
                         </p>
 
                         <div className="flex flex-col xl:flex-row self-end mt-4">
+                          {item.variants[0].size === "OneSize" && (
+                            <div className="flex flex-row pr-4">
+                              <div className="pr-2 font-quicksand self-center">
+                                Quantity
+                              </div>
+                              <select
+                                autoFocus
+                                className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+                                value={quantity}
+                                onChange={(e) =>
+                                  setQuantity(parseInt(e.target.value))
+                                }
+                              >
+                                <>
+                                  <option value="1" selected>
+                                    1
+                                  </option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                  <option value="5">5</option>
+                                  <option value="6">6</option>
+                                  <option value="7">7</option>
+                                  <option value="8">8</option>
+                                  <option value="9">9</option>
+                                  <option value="10">10</option>
+                                </>
+                              </select>
+                            </div>
+                          )}
                           <select
                             autoFocus
-                            disabled={item.sizes[0] === "OneSize"}
-                            className={`pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-center sm:mr-4 ${
+                            disabled={item.variants[0].size === "OneSize"}
+                            className={`${
+                              item.variants[0].size === "OneSize" && "hidden "
+                            } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-center sm:mr-4 ${
                               errors.size && " rounded-lg text-red-400"
                             }`}
                             {...register("size")}
                           >
-                            {item.sizes[0] === "OneSize" ? (
+                            {item.variants[0].size === "OneSize" ? (
                               <option value="OneSize">One Size</option>
                             ) : (
                               <>
                                 <option value="" disabled selected>
                                   Size
                                 </option>
-                                {item.sizes.map((size: string) => (
-                                  <option key={size} value={size}>
-                                    {size}
+                                {item.variants.map((variant: any) => (
+                                  <option
+                                    key={variant.size}
+                                    value={variant.size}
+                                  >
+                                    {variant.size}
                                   </option>
                                 ))}
                               </>
