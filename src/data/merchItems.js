@@ -9,7 +9,7 @@ export const merchItems = [
       "A discounted bundle of the finest GOAT Tribe merchandise including our signature Bella + Canvas hoodie, logo dad hat and sticker packs.",
     additional_info: "",
     weight: "0.75kg",
-    sizes: ["M", "L", "XL", "XXL"],
+    variants: [ {variant_id: 1, size:"M", stock:4}, {variant_id: 2, size:"L", stock:4}, {variant_id: 3, size:"XL", stock:0}, {variant_id: 4, size:"XXL", stock:2}],
   },
   {
     name: "GOAT Tribe x Bella + Canvas Hoodie",
@@ -27,7 +27,7 @@ export const merchItems = [
     additional_info:
       "<p>The GOAT Tribe hoodie is a remarkably soft unisex pullover hoodie with a loose fit, made by the impeccable Bella + Canvas. Spun from plush polycotton, the hoodie features an up-to-date fit, hood with black drawcords, kangaroo pocket, ribbed cuffs and waistband.</p> <p>Fabrication: 52% Airlume combed and ring-spun cotton, 48% polyester fleece, 32 single 8.0 oz.</p>  <p>For sizing and more information, visit the Bella + Canvas product page here.</p>",
     weight: "0.45kg",
-    sizes: ["M", "L", "XL", "XXL"],
+    variants: [ {variant_id: 1, size:"M", stock:10}, {variant_id: 2, size:"L", stock:8}, {variant_id: 3, size:"XL", stock:0}, {variant_id: 4, size:"XXL", stock:2}],
   },
   {
     name: "Logo Retro Trucker Hat",
@@ -39,7 +39,7 @@ export const merchItems = [
       "A high quality black Yupoong 6606 retro trucker hat featuring the GOAT Tribe logo lovingly embroidered on the front.",
     additional_info: "",
     weight: "0.18kg",
-    sizes: ["OneSize"],
+    variants: [{variant_id: 1, size:"OneSize", stock:10}],
   },
   {
     name: "Think Freud Retro Trucker Hat",
@@ -50,9 +50,8 @@ export const merchItems = [
     description:
       "A high quality black Yupoong 6606 retro trucker hat featuring the GOAT Tribe ‘Think Freud’ logo lovingly embroidered on the front.",
     additional_info: "",
-
     weight: "0.18kg",
-    sizes: ["OneSize"],
+    variants: [{variant_id: 2, size:"OneSize", stock:10}],
   },
   {
     name: "Vinyl Sticker Collection 1",
@@ -73,7 +72,7 @@ export const merchItems = [
     additional_info: "",
 
     weight: "0.05kg",
-    sizes: ["OneSize"],
+    variants: [{variant_id: 1, size:"OneSize", stock:20}],
   },
   {
     name: "Vinyl Sticker Collection 2",
@@ -92,8 +91,6 @@ export const merchItems = [
     description:
       "A set of 5 die-cut gloss vinyl stickers featuring exclusive GOATs.",
     additional_info: "",
-
-    weight: "0.05kg",
-    sizes: ["OneSize"],
+    variants: [{variant_id: 1, size:"OneSize", stock:4}],
   },
 ];
