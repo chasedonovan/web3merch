@@ -41,7 +41,7 @@ export default function Navbar(props: Props) {
             props.setShowCart(!props.showCart);
           }}
           className="hover:cursor-pointer absolute bg-white border border-gray-500 shadow-md shadow-gray-400 left-[28px] w-5 h-5 rounded-full text-black text-sm">
-            {props.cartCount}
+            {props.cartCount }
           </div>
           )}
           <svg

@@ -71,7 +71,11 @@ const CartCard = (props: Props) => {
     props.setCartItems(
       props.cartItems.map((item) => {
         if (item.itemId === props.item.itemId) {
-          item.quantity = e.target.value;
+          //parse to int
+          return {
+            ...item,
+            quantity: parseInt(e.target.value),
+          };
         }
         return item;
       })
