@@ -48,12 +48,19 @@ const GoatTribe = (props: Props) => {
 
 
   //count all items in cart with quantity
+  //set total to sum of all items in cart
   useEffect(() => {
     let count = 0;
     cartItems.forEach((item) => {
       count += item.quantity;
     });
     setCartCount(count);
+    let sum = 0;
+    cartItems.forEach((item) => {
+      sum += item.price * item.quantity;
+    }
+    );
+    setTotal(sum);
   }, [cartItems]);
 
   useEffect(() => {

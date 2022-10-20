@@ -30,9 +30,11 @@ type Props = {
 const CartCard = (props: Props) => {
   const [size, setSize] = React.useState("");
   const [quantity, setQuantity] = React.useState(1);
+  const [stock, setStock] = React.useState(10);
 
   useEffect(() => {
     setSize(props.item.variant.size);
+    setStock(props.item.variant.stock);
   }, []);
 
   useEffect(() => {
@@ -46,15 +48,22 @@ const CartCard = (props: Props) => {
   };
 
   const handleSizeChange = (e: any) => {
-    setSize(e.target.value);
+
     props.setCartItems(
       props.cartItems.map((item) => {
-        if (item.itemId === props.item.itemId) {
-          item.variant.size = e.target.value;
+        if (item.variant.size === size && item.itemId === props.item.itemId) {
+          return {
+            ...item,
+            variant: item.variants.find((variant) => variant.size === e.target.value),
+            quantity: 1,
+          };
         }
         return item;
       })
     );
+    setSize(e.target.value);
+    console.log(props.cartItems);
+
   };
 
   const handleQuantityChange = (e: any) => {
@@ -101,7 +110,7 @@ const CartCard = (props: Props) => {
                       Size
                     </option>
                     {props.item.variants.map((variant) => (
-                      <option key={variant.size} value={variant.size}>
+                      <option key={variant.size} value={variant.size} disabled={variant.stock === 0}>
                         {variant.size}
                       </option>
                     ))}
@@ -118,18 +127,14 @@ const CartCard = (props: Props) => {
                 onChange={handleQuantityChange}
               >
                 <>
-                  <option value="1" selected>
-                    1
-                  </option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
+                {Array.from(
+              { length: Math.min(props.item.variant.stock, 10) },
+              (_, i) => i + 1
+            ).map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
                 </>
               </select>
             </div>

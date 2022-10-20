@@ -305,7 +305,7 @@ export default function ItemDetailsModal({
                               Size
                             </option>
                             {item.variants.map((variant: any) => (
-                              <option key={variant.size} value={variant.size}>
+                              <option key={variant.size} value={variant.size} disabled={variant.stock === 0}>
                                 {variant.size}
                               </option>
                             ))}
@@ -470,6 +470,7 @@ export default function ItemDetailsModal({
                                   <option
                                     key={variant.size}
                                     value={variant.size}
+                                    disabled={variant.stock === 0}
                                   >
                                     {variant.size}
                                   </option>

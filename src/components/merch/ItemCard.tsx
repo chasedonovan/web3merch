@@ -70,7 +70,7 @@ const ItemCard = (props: Props) => {
   }, [props.item.variants, setValue]);
 
   const onSubmit = (data: IFormInput) => {
-    console.log(data);
+    // console.log(data);
 
     // Check if item variant is already in car, if so, increase quantity
     const itemInCart = props.cartItems.find(
@@ -153,18 +153,14 @@ const ItemCard = (props: Props) => {
             onChange={(e) => setQuantity(parseInt(e.target.value))}
           >
             <>
-              <option value="1" selected>
-                1
+            {Array.from(
+              { length: Math.min(props.item.variants[0].stock, 10) },
+              (_, i) => i + 1
+            ).map((num) => (
+              <option key={num} value={num} >
+                {num}
               </option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
+            ))}
             </>
           </select>
         </div>
@@ -185,7 +181,7 @@ const ItemCard = (props: Props) => {
                 Size
               </option>
               {props.item.variants.map((variant) => (
-                <option key={variant.size} value={variant.size}>
+                <option key={variant.size} value={variant.size} disabled={variant.stock === 0}>
                   {variant.size}
                 </option>
               ))}
