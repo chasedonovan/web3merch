@@ -299,12 +299,14 @@ export default function ItemDetailsModal({
                           errors.size && " rounded-lg text-red-400"
                         }`}
                         {...register("size")}
+                        defaultValue=""
+
                       >
                         {item.variants[0].size === "OneSize" ? (
                           <option value="OneSize">One Size</option>
                         ) : (
                           <>
-                            <option value="" disabled selected>
+                            <option value="" disabled >
                               Size
                             </option>
                             {item.variants.map((variant: any) => (
@@ -468,12 +470,14 @@ export default function ItemDetailsModal({
                               errors.size && " rounded-lg text-red-400"
                             }`}
                             {...register("size")}
+                            defaultValue=""
+
                           >
                             {item.variants[0].size === "OneSize" ? (
                               <option value="OneSize">One Size</option>
                             ) : (
                               <>
-                                <option value="" disabled selected>
+                                <option value="" disabled >
                                   Size
                                 </option>
                                 {item.variants.map((variant: any) => (

@@ -62,8 +62,6 @@ const CartCard = (props: Props) => {
       })
     );
     setSize(e.target.value);
-    console.log(props.cartItems);
-
   };
 
   const handleQuantityChange = (e: any) => {
@@ -110,7 +108,7 @@ const CartCard = (props: Props) => {
                   <option value="OneSize">One Size</option>
                 ) : (
                   <>
-                    <option value="" disabled selected>
+                    <option value="" disabled >
                       Size
                     </option>
                     {props.item.variants.map((variant) => (

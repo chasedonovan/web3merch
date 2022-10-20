@@ -6,6 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
 import { NumericKeys } from "react-hook-form/dist/types/path/common";
+import emailjs from 'emailjs-com';
+
 
 type Variant = {
   variant_id: string;
@@ -28,6 +30,7 @@ type Props = {
     variants: Variant[];
     itemId: number;
     variant: Variant;
+    quantity: number;
   }>;
   total: number;
 };
@@ -67,7 +70,6 @@ export default function CheckoutModal({
   });
 
   useEffect(() => {
-    console.log(cartItems);
     // get subTotal of cart items
     setSubTotal(
       cartItems.reduce((acc, item) => {
@@ -78,6 +80,38 @@ export default function CheckoutModal({
 
   const onSubmit = (data: CheckoutForm) => {
     console.log(data);
+
+    // get item name, quantity, price, and total price of each item and combine into string
+    const items = cartItems.reduce((acc, item) => {
+      return (
+        acc + `${item.name} x ${item.quantity} @ $${item.price} = $${
+          item.price * item.quantity
+        }, \n `
+      );
+    }, "");
+    emailjs.send( `service_ra0p0dz`, `template_5j3q9s6`, {
+    // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
+      to_name: data.firstName + " " + data.lastName,
+      to_email: data.email,
+      from_name: "GoatTribe x Uniscroll",
+      address: data.address,
+      postal_code: data.postalCode,
+      country: data.country,
+      items: items,
+      subTotal: `${total}`,
+      shipping: `30`,
+      total: `${total + 30}` ,
+      date_time: new Date().toLocaleString(),
+      reply_to: data.email,
+    // }, `${process.env.EMAIL_PUBLIC_KEY}`)
+  }, `nHKdN2eeVxPRtvKoF`)
+      .then((result) => {
+          console.log(result.text);
+      } 
+      , (error) => {
+          console.log(error.text);
+      }
+    );
   };
 
   return (

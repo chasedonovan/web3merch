@@ -181,12 +181,13 @@ const ItemCard = (props: Props) => {
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
+          defaultValue=""
         >
           {props.item.variants[0].size === "OneSize" ? (
             <option value="OneSize">One Size</option>
           ) : (
             <>
-              <option value="" disabled selected>
+              <option value="" disabled >
                 Size
               </option>
               {props.item.variants.map((variant) => (

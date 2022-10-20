@@ -61,7 +61,6 @@ const GoatTribe = (props: Props) => {
     }
     );
     setTotal(sum);
-    console.log("cartItems", cartCount);
   }, [cartItems]);
 
   useEffect(() => {
