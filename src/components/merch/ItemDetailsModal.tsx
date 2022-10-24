@@ -427,7 +427,7 @@ export default function ItemDetailsModal({
                         <div className="flex flex-col xl:flex-row self-end mt-4">
                           {item.variants[0].size === "OneSize" && (
                             <div className="flex flex-row pr-4">
-                              <div className="pr-2 font-quicksand self-center">
+                              <div className="pr-2 font-quicksand self-center hidden">
                                 Quantity
                               </div>
                               <select
