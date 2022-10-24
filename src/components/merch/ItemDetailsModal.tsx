@@ -252,21 +252,21 @@ export default function ItemDetailsModal({
                       {item.price} ₳
                     </p>
                     {item.original_price !== item.price ? (
-                      <p className="self-end text-right text-gray-200 line-through opacity-75 mb-2">
+                      <p className="self-end text-right text-gray-200 line-through opacity-75">
                         {item.original_price} ₳
                       </p>
                     ) : (
                       ""
                     )}
-                    <div className="flex flex-col lg:flex-row justify-end ">
+                    <div className="flex flex-col lg:flex-row justify-end mt-2 ">
                       {item.variants[0].size === "OneSize" && (
-                        <div className="flex flex-row">
-                          <div className="pr-2 mb-2 font-quicksand self-center">
+                        <div className="flex flex-row justify-end">
+                          <div className="pr-2 mb-2 font-quicksand self-center hidden ">
                             Quantity
                           </div>
                           <select
                             autoFocus
-                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 mr-2 self-center`}
+                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 lg:mr-2 self-center`}
                             value={quantity}
                             onChange={(e) =>
                               setQuantity(parseInt(e.target.value))
