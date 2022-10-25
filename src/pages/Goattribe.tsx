@@ -33,6 +33,7 @@ const GoatTribe = (props: Props) => {
   const [total, setTotal] = React.useState(0);
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
   const [itemId, setItemId] = React.useState(0);
+  const [cartUuid, setCartUuid] = React.useState("");
   const [cartCount, setCartCount] = React.useState(0);
   const [merchItems, setMerchItems] = React.useState<any[]>([]);
   const productSection = useRef<null | HTMLDivElement>(null);
@@ -97,6 +98,8 @@ const GoatTribe = (props: Props) => {
                       cartItems={cartItems}
                       setCartItems={setCartItems}
                       setShowCart={setShowCart}
+                      cartUuid={cartUuid}
+                      setCartUuid={setCartUuid}
                     />
                   ))}
                 </div>
@@ -155,6 +158,8 @@ const GoatTribe = (props: Props) => {
               showModal={showModal}
               cartItems={cartItems}
               total={total}
+              setCartUuid={setCartUuid}
+              cartUuid={cartUuid}
             />
           )}
         </GlobalContextProvider>

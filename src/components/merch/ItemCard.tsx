@@ -29,9 +29,11 @@ type Item = {
 type Props = {
   item: Item;
   itemId: number;
+  cartUuid: string;
   setItemId: (itemId: number) => void;
   setCartItems: (cartItems: any) => void;
   setShowCart: (showCart: boolean) => void;
+  setCartUuid: (cartUuid: string) => void;
   cartItems: Array<{
     name: string;
     price: number;

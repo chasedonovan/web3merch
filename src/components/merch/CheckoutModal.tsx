@@ -6,8 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
 import { NumericKeys } from "react-hook-form/dist/types/path/common";
-import emailjs from 'emailjs-com';
-
+import emailjs from "emailjs-com";
+import { useWalletContext } from "hooks/useWalletContext";
 
 type Variant = {
   variant_id: string;
@@ -17,7 +17,9 @@ type Variant = {
 
 type Props = {
   setShowModal: (showModal: boolean) => void;
+  setCartUuid: (cartUuid: string) => void;
   showModal: boolean;
+  cartUuid: string;
   cartItems: Array<{
     name: string;
     price: number;
@@ -49,6 +51,8 @@ export default function CheckoutModal({
   setShowModal,
   cartItems,
   total,
+  cartUuid,
+  setCartUuid,
 }: Props) {
   const cancelButtonRef = useRef(null);
   const [subTotal, setSubTotal] = useState(0);
@@ -60,6 +64,18 @@ export default function CheckoutModal({
     country: Yup.string().required("country is required"),
     email: Yup.string().required("email is required"),
   });
+  const {
+    isConnected,
+    setConnected,
+    enabledWallets,
+    setEnabledWallets,
+    isLoading,
+    setLoading,
+    connectedWallet,
+    setConnectedWallet,
+    validateSignedPayload,
+  } = useWalletContext();
+
   const {
     register,
     handleSubmit,
@@ -78,6 +94,36 @@ export default function CheckoutModal({
     );
   }, [cartItems]);
 
+  useEffect(() => {
+    fetch("/api/cart/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cart: {
+          uuid: cartUuid,
+          price: total,
+          shipping: 30,
+          stake_key: connectedWallet.stakeAddress,
+          //TODO: get proper cartitems
+          cartItems: [
+            { variant_id: 5, quantity: 2, price: 75 },
+            { variant_id: 6, quantity: 1, price: 75 },
+          ],
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //TODO: handle response from cart
+        setCartUuid(data.uuid);
+        setSubTotal(data.price);
+        total = data.price + data.shipping_price;
+        console.log("Update cart", data);
+      });
+  }, []);
+
   const onSubmit = (data: CheckoutForm) => {
     console.log(data);
 
@@ -91,36 +137,43 @@ export default function CheckoutModal({
 
     const items = cartItems.reduce((acc, item) => {
       return (
-        acc + `<p>${item.name} x ${item.quantity} @ $${item.price} = $${
+        acc +
+        `<p>${item.name} x ${item.quantity} @ $${item.price} = $${
           item.price * item.quantity
         }</p> `
       );
     }, "");
 
-
-    emailjs.send( `service_ra0p0dz`, `template_5j3q9s6`, {
-    // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
-      to_name: data.firstName + " " + data.lastName,
-      to_email: data.email,
-      from_name: "GoatTribe x Uniscroll",
-      address: data.address,
-      postal: data.postalCode,
-      country: data.country,
-      items: items,
-      subtotal: `${total}`,
-      shipping: `30`,
-      total: `${total + 30}` ,
-      date_time: new Date().toLocaleString(),
-      reply_to: data.email,
-    // }, `${process.env.EMAIL_PUBLIC_KEY}`)
-  }, `nHKdN2eeVxPRtvKoF`)
-      .then((result) => {
+    emailjs
+      .send(
+        `service_ra0p0dz`,
+        `template_5j3q9s6`,
+        {
+          // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
+          to_name: data.firstName + " " + data.lastName,
+          to_email: data.email,
+          from_name: "GoatTribe x Uniscroll",
+          address: data.address,
+          postal: data.postalCode,
+          country: data.country,
+          items: items,
+          subtotal: `${total}`,
+          shipping: `30`,
+          total: `${total + 30}`,
+          date_time: new Date().toLocaleString(),
+          reply_to: data.email,
+          // }, `${process.env.EMAIL_PUBLIC_KEY}`)
+        },
+        `nHKdN2eeVxPRtvKoF`
+      )
+      .then(
+        (result) => {
           console.log(result.text);
-      } 
-      , (error) => {
+        },
+        (error) => {
           console.log(error.text);
-      }
-    );
+        }
+      );
   };
 
   return (

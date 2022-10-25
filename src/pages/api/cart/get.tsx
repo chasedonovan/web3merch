@@ -13,19 +13,10 @@ export default async function handler(
 ) {
   try {
     const cart = req.body.cart;
-    const info = req.body.info;
-    const externalResponse = await fetch(`${process.env.API_URL}/checkout`, {
-      headers: {
-        Authorization: `Bearer ${process.env.API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({cart, info}),
-    });
-
-    // res.status(200).send(externalResponse);
-    res.status(200).send({cart, info});
-
+    const externalResponse = await fetch(
+      `${process.env.API_URL}/merch/cart/get`
+    );
+    res.status(200).send(externalResponse);
   } catch (e) {
     res.status(500).send({ error: e });
   }

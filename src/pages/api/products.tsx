@@ -13,23 +13,17 @@ export default async function handler(
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
           "Content-Type": "application/json",
+          "cache-control": "max-age=10, s-maxage=30, stale-while-revalidate=59",
         },
         method: "GET",
       }
     );
     let externalResponseData = await externalResponse.json();
     if (externalResponseData) {
+      //fix images as json string
       externalResponseData.forEach((elem: { images: string }) => {
         elem.images = JSON.parse(elem.images);
       });
-      // let variants = new Array<Variant>();
-      // externalResponseData.forEach((elem: { variants: [] }) => {
-      //   elem.variants.forEach((v) => {
-      //     const vVariant = v as Variant;
-      //     variants.push(vVariant);
-      //   });
-      // });
-      // externalResponseData.vaiants = variants;
     }
     res.status(200).json(externalResponseData);
   } catch (e) {

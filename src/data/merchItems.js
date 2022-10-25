@@ -1,8 +1,8 @@
 export const merchItems = [
   {
     name: "GOAT Tribe Merchandise Bundle",
-    price: 240 /*82*/,
-    original_price: 280,
+    price: 240000000 /*82*/,
+    original_price: 280000000,
     image: "/merch/goat/1-bundle1.png",
     images: ["/merch/goat/1-bundle1.png"],
     description:
@@ -13,8 +13,8 @@ export const merchItems = [
   },
   {
     name: "GOAT Tribe x Bella + Canvas Hoodie",
-    price: 165 /*57*/,
-    original_price: 165,
+    price: 165000000 /*57*/,
+    original_price: 165000000,
     image: "/merch/goat/2-hoodie1.jpg",
     images: [
       "/merch/goat/2-hoodie1.jpg",
@@ -31,8 +31,8 @@ export const merchItems = [
   },
   {
     name: "Logo Retro Trucker Hat",
-    price: 75,
-    original_price: 75,
+    price: 75000000,
+    original_price: 75000000,
     image: "/merch/goat/3-hat.png",
     images: ["/merch/goat/3-hat.png"],
     description:
@@ -43,8 +43,8 @@ export const merchItems = [
   },
   {
     name: "Think Freud Retro Trucker Hat",
-    price: 75,
-    original_price: 75,
+    price: 75000000,
+    original_price: 75000000,
     image: "/merch/goat/4-hat.png",
     images: ["/merch/goat/4-hat.png"],
     description:
@@ -55,8 +55,8 @@ export const merchItems = [
   },
   {
     name: "Vinyl Sticker Collection 1",
-    price: 20,
-    original_price: 20,
+    price: 20000000,
+    original_price: 20000000,
     image: "/merch/goat/5-sticker1.png",
     images: [
       "/merch/goat/5-sticker1.png",
@@ -76,8 +76,8 @@ export const merchItems = [
   },
   {
     name: "Vinyl Sticker Collection 2",
-    price: 20,
-    original_price: 20,
+    price: 20000000,
+    original_price: 20000000,
     image: "/merch/goat/6-sticker1.png",
     images: [
       "/merch/goat/6-sticker1.png",
