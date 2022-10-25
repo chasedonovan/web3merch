@@ -9,7 +9,7 @@ export default async function handler(
 ) {
   try {
     const externalResponse = await fetch(
-      `${process.env.API_URL}/products`,
+      `${process.env.API_URL}/merch/products`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
@@ -19,8 +19,7 @@ export default async function handler(
       }
     );
     let externalResponseData = await externalResponse.json();
-
-    res.status(200).json(merchItems);
+    res.status(200).json(externalResponseData);
   } catch (e) {
     res.status(500).send({ error: e });
   }

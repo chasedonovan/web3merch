@@ -64,7 +64,11 @@ const ItemCard = (props: Props) => {
   });
 
   useEffect(() => {
-    if (props.item.variants[0].size === "OneSize") {
+    if (
+      props.item &&
+      props.item.variants &&
+      props.item.variants[0].size === "OneSize"
+    ) {
       setValue("size", props.item.variants[0].size);
     }
   }, [props.item.variants, setValue]);
@@ -85,7 +89,7 @@ const ItemCard = (props: Props) => {
             item.variant.size === data.size
           ) {
             if (item.quantity < item.variant.stock) {
-            item.quantity += 1;
+              item.quantity += 1;
             }
           }
           return item;
@@ -148,57 +152,70 @@ const ItemCard = (props: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-row justify-end gap-6 items-center py-2"
       >
-        {props.item.variants[0].size === "OneSize" && (
-          <div className="flex flex-row">
-            <div className="pr-2 font-quicksand">Quantity</div>
-            <select
-              autoFocus
-              className={`pl-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
-            >
-              <>
-                {Array.from(
-                  { length: Math.min(props.item.variants[0].stock, 10) },
-                  (_, i) => i + 1
-                ).map((num) => (
-                  <option key={num} value={num}>
-                    {num === props.item.variants[0].stock
-                      ? num + " left"
-                      : `${num}`}
-                  </option>
-                ))}
-              </>
-            </select>
-          </div>
-        )}
+        {props.item &&
+          props.item.variants &&
+          props.item.variants[0].size === "OneSize" && (
+            <div className="flex flex-row">
+              <div className="pr-2 font-quicksand">Quantity</div>
+              <select
+                autoFocus
+                className={`pl-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
+              >
+                <>
+                  {Array.from(
+                    { length: Math.min(props.item.variants[0].stock, 10) },
+                    (_, i) => i + 1
+                  ).map((num) => (
+                    <option key={num} value={num}>
+                      {num === props.item.variants[0].stock
+                        ? num + " left"
+                        : `${num}`}
+                    </option>
+                  ))}
+                </>
+              </select>
+            </div>
+          )}
         <select
           autoFocus
-          disabled={props.item.variants[0].size === "OneSize"}
+          disabled={
+            props.item &&
+            props.item.variants &&
+            props.item.variants[0].size === "OneSize"
+          }
           className={`${
-            props.item.variants[0].size === "OneSize" && "hidden"
+            props.item &&
+            props.item.variants &&
+            props.item.variants[0].size === "OneSize" &&
+            "hidden"
           } pr-4 mb-2 py-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none ${
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
           defaultValue=""
         >
-          {props.item.variants[0].size === "OneSize" ? (
+          {props.item &&
+          props.item.variants &&
+          props.item.variants[0].size === "OneSize" ? (
             <option value="OneSize">One Size</option>
           ) : (
             <>
-              <option value="" disabled >
+              <option value="" disabled>
                 Size
               </option>
-              {props.item.variants.map((variant) => (
-                <option
-                  key={variant.size}
-                  value={variant.size}
-                  disabled={variant.stock === 0}
-                >
-                  {variant.size}
-                </option>
-              ))}
+              {props.item &&
+                props.item.variants &&
+                props.item.variants.map((variant) => (
+                  <option
+                    key={variant.size}
+                    value={variant.size}
+                    disabled={variant.stock === 0}
+                  >
+                    {variant.size}
+                  </option>
+                ))}
             </>
           )}
         </select>
