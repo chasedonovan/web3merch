@@ -2,12 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Error from "next/error";
 import { merchItems } from "../../data/merchItems.js";
 
-type Variant = {
-  variant_id: string;
-  size: string;
-  stock: number;
-};
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
