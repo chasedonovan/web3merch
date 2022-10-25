@@ -125,7 +125,7 @@ export default function ItemDetailsModal({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="ease-in duration-300 min-w-min min-h-min relative transform overflow-hidden rounded-md bg-[#0D0D0D] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-[75%] border border-gray-600">
+              <Dialog.Panel className="ease-in duration-300 min-w-min min-h-min relative transform overflow-hidden rounded-md bg-[#0D0D0D] text-left shadow-xl transition-all sm:my-8 w-min sm:w-full sm:max-w-[80%] md:max-w-[60%] border border-gray-600">
                 <div className="bg-[#0D0D0D] px-0 pt-2  pb-2 xl:hidden">
                   <div className=" text-center sm:mt-0 sm:text-left">
                     <div className="flex justify-between px-3 pt-3 pb-2">
@@ -246,8 +246,11 @@ export default function ItemDetailsModal({
                   </div>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col justify-start sm:gap-2 items-center sm:py-2 min-w-max"
+                    className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                   >
+                    <p className="self-end text-right text-gray-200 ">
+                      {item.price} ₳
+                    </p>
                     {item.original_price !== item.price ? (
                       <p className="self-end text-right text-gray-200 line-through opacity-75">
                         {item.original_price} ₳
@@ -255,16 +258,15 @@ export default function ItemDetailsModal({
                     ) : (
                       ""
                     )}
-                    <p className="self-end text-right text-gray-200 ">
-                      {item.price} ₳
-                    </p>
-                    <div className="flex flex-col lg:flex-row justify-end ">
+                    <div className="flex flex-col lg:flex-row justify-end mt-2 ">
                       {item.variants[0].size === "OneSize" && (
-                        <div className="flex flex-row">
-                          <div className="pr-2 mb-2 font-quicksand self-center">Quantity</div>
+                        <div className="flex flex-row justify-end">
+                          <div className="pr-2 mb-2 font-quicksand self-center hidden ">
+                            Quantity
+                          </div>
                           <select
                             autoFocus
-                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 mr-2 self-center`}
+                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 lg:mr-2 self-center`}
                             value={quantity}
                             onChange={(e) =>
                               setQuantity(parseInt(e.target.value))
@@ -273,10 +275,7 @@ export default function ItemDetailsModal({
                             <>
                               {Array.from(
                                 {
-                                  length: Math.min(
-                                    item.variants[0].stock,
-                                    10
-                                  ),
+                                  length: Math.min(item.variants[0].stock, 10),
                                 },
                                 (_, i) => i + 1
                               ).map((num) => (
@@ -300,13 +299,12 @@ export default function ItemDetailsModal({
                         }`}
                         {...register("size")}
                         defaultValue=""
-
                       >
                         {item.variants[0].size === "OneSize" ? (
                           <option value="OneSize">One Size</option>
                         ) : (
                           <>
-                            <option value="" disabled >
+                            <option value="" disabled>
                               Size
                             </option>
                             {item.variants.map((variant: any) => (
@@ -408,29 +406,28 @@ export default function ItemDetailsModal({
                     <div className="flex flex-col max-w-1/3">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg self-end text-right font-medium leading-6 text-white w-max mb-"
+                        className="text-lg self-end text-right font-medium leading-6 text-white mb-"
                       >
                         {item.name}
                       </Dialog.Title>{" "}
                       <form
                         onSubmit={handleSubmit(onSubmit)}
-                        className="flex flex-col justify-start sm:gap-2 items-center sm:py-2 min-w-max"
+                        className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                       >
+                        <p className="self-end text-right text-gray-200 ">
+                          {item.price} ₳
+                        </p>
                         {item.original_price !== item.price ? (
-                          <p className="self-end text-right text-gray-200 line-through opacity-75">
+                          <p className="self-end text-right text-gray-200 line-through opacity-75 mb-2">
                             {item.original_price} ₳
                           </p>
                         ) : (
                           ""
                         )}
-                        <p className="self-end text-right text-gray-200 ">
-                          {item.price} ₳
-                        </p>
-
                         <div className="flex flex-col xl:flex-row self-end mt-4">
                           {item.variants[0].size === "OneSize" && (
                             <div className="flex flex-row pr-4">
-                              <div className="pr-2 font-quicksand self-center">
+                              <div className="pr-2 font-quicksand self-center hidden">
                                 Quantity
                               </div>
                               <select
@@ -471,13 +468,12 @@ export default function ItemDetailsModal({
                             }`}
                             {...register("size")}
                             defaultValue=""
-
                           >
                             {item.variants[0].size === "OneSize" ? (
                               <option value="OneSize">One Size</option>
                             ) : (
                               <>
-                                <option value="" disabled >
+                                <option value="" disabled>
                                   Size
                                 </option>
                                 {item.variants.map((variant: any) => (
