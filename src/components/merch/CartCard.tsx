@@ -154,13 +154,13 @@ const CartCard = (props: Props) => {
         <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
           {props.item.original_price !== props.item.price ? (
             <p className="self-end text-right text-gray-200 line-through opacity-75">
-              {props.item.original_price} ₳
+              {props.item.original_price / 1000000} ₳
             </p>
           ) : (
             ""
           )}
           <p className="self-end text-right text-gray-200 ">
-            {props.item.price} ₳
+            {props.item.price / 1000000} ₳
           </p>
         </div>
         <svg

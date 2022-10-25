@@ -25,8 +25,11 @@ export default async function handler(
         elem.images = JSON.parse(elem.images);
       });
     }
-    res.status(200).json(externalResponseData);
+    // res.status(200).json(externalResponseData);
+    res.status(200).json(merchItems);
   } catch (e) {
-    res.status(500).send({ error: e });
+    res.status(500).send(merchItems);
+
+    // res.status(500).send({ error: e });
   }
 }

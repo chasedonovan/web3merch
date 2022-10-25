@@ -249,11 +249,11 @@ export default function ItemDetailsModal({
                     className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                   >
                     <p className="self-end text-right text-gray-200 ">
-                      {item.price} ₳
+                      {item.price / 1000000} ₳
                     </p>
                     {item.original_price !== item.price ? (
                       <p className="self-end text-right text-gray-200 line-through opacity-75">
-                        {item.original_price} ₳
+                        {item.original_price / 1000000} ₳
                       </p>
                     ) : (
                       ""
@@ -433,11 +433,11 @@ export default function ItemDetailsModal({
                         className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                       >
                         <p className="self-end text-right text-gray-200 ">
-                          {item.price} ₳
+                          {item.price / 1000000} ₳
                         </p>
                         {item.original_price !== item.price ? (
                           <p className="self-end text-right text-gray-200 line-through opacity-75 mb-2">
-                            {item.original_price} ₳
+                            {item.original_price / 1000000} ₳
                           </p>
                         ) : (
                           ""

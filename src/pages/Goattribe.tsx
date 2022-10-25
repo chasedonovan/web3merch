@@ -7,6 +7,8 @@ import CheckoutModal from "components/merch/CheckoutModal";
 import { useWalletContext } from "../hooks/useWalletContext";
 import { MerchConnectBtn } from "components/merch/MerchConnectBtn";
 import { GlobalContextProvider } from "../hooks/useGlobalContext";
+import { MerchContextProvider } from "hooks/useMerchContext";
+import { useMerchContext } from "hooks/useMerchContext";
 
 type Props = {};
 
@@ -35,11 +37,9 @@ const GoatTribe = (props: Props) => {
   const [itemId, setItemId] = React.useState(0);
   const [cartUuid, setCartUuid] = React.useState("");
   const [cartCount, setCartCount] = React.useState(0);
-  const [merchItems, setMerchItems] = React.useState<any[]>([]);
   const productSection = useRef<null | HTMLDivElement>(null);
+  const { products, cart, setCart  } = useMerchContext();
 
-  //count all items in cart with quantity
-  //set total to sum of all items in cart
   useEffect(() => {
     let count = 0;
     cartItems.forEach((item) => {
@@ -50,23 +50,16 @@ const GoatTribe = (props: Props) => {
     cartItems.forEach((item) => {
       sum += item.price * item.quantity;
     });
-    setTotal(sum);
+    setTotal(sum / 1000000);
   }, [cartItems]);
 
   useEffect(() => {
-    if (isConnected && productSection.current) {
-      productSection.current.scrollIntoView();
-    }
-  }, [isConnected]);
+      if (products.length > 0 && productSection.current) {
+        productSection.current.scrollIntoView();
+      }
+  }, [products]);
 
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Get products", data);
-        setMerchItems(data);
-      });
-  }, []);
+  console.log(cart, 'c')
 
   return (
     <div className="w-full h-full flex flex-col overflow-scroll scrollbar-hide min-h-max">
@@ -76,7 +69,7 @@ const GoatTribe = (props: Props) => {
         setShowCart={setShowCart}
         cartCount={cartCount}
       />
-      {isConnected && (
+      {products.length > 0 && (
         <GlobalContextProvider>
           <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
             <div className="w-full h-full flex flex-row divide-x divide-[#2C2D33]/50">
@@ -89,7 +82,7 @@ const GoatTribe = (props: Props) => {
                   />
                 </div>
                 <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
-                  {merchItems.map((item, i) => (
+                  {products.map((item, i) => (
                     <ItemCard
                       key={i}
                       item={item}

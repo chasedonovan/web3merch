@@ -5,7 +5,7 @@ import { WalletContextProvider } from "../hooks/useWalletContext";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WalletContextProvider>
-      <Component {...pageProps} />
+        <Component {...pageProps} />
     </WalletContextProvider>
   );
 }

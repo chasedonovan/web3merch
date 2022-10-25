@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ItemDetailsModal from "./ItemDetailsModal";
+import { useMerchContext } from "hooks/useMerchContext";
 
 interface IFormInput {
   size: string;
@@ -51,6 +52,7 @@ type Props = {
 };
 
 const ItemCard = (props: Props) => {
+  const { cart, setCart } = useMerchContext();
   const [showDetails, setShowDetails] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const validationSchema = Yup.object().shape({
@@ -143,13 +145,13 @@ const ItemCard = (props: Props) => {
         <div className="flex flex-col-reverse sm:flex-row sm:gap-2 items-center">
           {props.item.original_price !== props.item.price ? (
             <p className="self-end text-right text-gray-200 line-through opacity-75">
-              {props.item.original_price} ₳
+              {props.item.original_price / 1000000} ₳
             </p>
           ) : (
             ""
           )}
           <p className="self-end text-right text-gray-200 ">
-            {props.item.price} ₳
+            {props.item.price / 1000000} ₳
           </p>
         </div>
       </div>
