@@ -63,13 +63,8 @@ export const MerchConnectBtn: FunctionComponent = () => {
         console.log(providerapi);
 
         if (providerapi) {
-
-          const walletAddress = await CardanoWalletAPI.getAddress(
-            providerapi
-          );
-          const walletBalance = await CardanoWalletAPI.getBalance(
-            providerapi
-          );
+          const walletAddress = await CardanoWalletAPI.getAddress(providerapi);
+          const walletBalance = await CardanoWalletAPI.getBalance(providerapi);
           const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
             providerapi
           );
@@ -86,7 +81,6 @@ export const MerchConnectBtn: FunctionComponent = () => {
           setConnected(true);
           setLoading(false);
           return;
-
 
           // let walletSignature;
           // if (name === "Nami") {
@@ -163,7 +157,7 @@ export const MerchConnectBtn: FunctionComponent = () => {
           showModal={showModal}
         />
       )}
-            {noGoats && (
+      {noGoats && (
         <NoGoatsAlertModal
           message={modalMessage}
           setNoGoats={setNoGoats}
@@ -171,7 +165,7 @@ export const MerchConnectBtn: FunctionComponent = () => {
         />
       )}
       {!isLoading && (
-        <div className="ml-2 w-[138px] md:w-[224px] min-h-[56px] flex flex-row border border-opacity-[.75] border-[#2C2D33] rounded-lg self center h-14 self-center">
+        <div className="ml-2 w-[138px] md:w-[224px] min-h-[56px] flex flex-row border border-opacity-[.75] border-[#2C2D33]/50 rounded-lg self center h-14 self-center">
           {!isLoading && !isConnected && (
             <div className="relative group flex w-full">
               <div

@@ -78,7 +78,7 @@ const GoatTribe = (props: Props) => {
       {isConnected && (
         <GlobalContextProvider>
           <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
-            <div className="w-full h-full flex flex-row divide-x divide-[#2C2D33]">
+            <div className="w-full h-full flex flex-row divide-x divide-[#2C2D33]/50">
               <div className=" sm:w-full h-full flex flex-col overflow-scroll scrollbar-hide min-w-[66%] justify-start">
                 <div className="" ref={productSection}>
                   <img
@@ -103,7 +103,7 @@ const GoatTribe = (props: Props) => {
               </div>
               {showCart && (
                 <div className="hidden lg:flex flex-col w-[34%] h-full min-w-min">
-                  <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]">
+                  <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                     <div className="flex flex-col px-4 py-4 min-w-max">
                       <p className="text-xl font-saira">Subtotal:</p>
                       <p className="text-xl">{total} ADA</p>

@@ -48,13 +48,14 @@ const CartCard = (props: Props) => {
   };
 
   const handleSizeChange = (e: any) => {
-
     props.setCartItems(
       props.cartItems.map((item) => {
         if (item.variant.size === size && item.itemId === props.item.itemId) {
           return {
             ...item,
-            variant: item.variants.find((variant) => variant.size === e.target.value),
+            variant: item.variants.find(
+              (variant) => variant.size === e.target.value
+            ),
             quantity: 1,
           };
         }
@@ -81,7 +82,7 @@ const CartCard = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33] ">
+    <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33]/50 ">
       <div className="flex flex-row items-center gap-2 md:gap-6">
         <div className="flex flex-col items-center min-w-max">
           <img
@@ -108,11 +109,15 @@ const CartCard = (props: Props) => {
                   <option value="OneSize">One Size</option>
                 ) : (
                   <>
-                    <option value="" disabled >
+                    <option value="" disabled>
                       Size
                     </option>
                     {props.item.variants.map((variant) => (
-                      <option key={variant.size} value={variant.size} disabled={variant.stock === 0}>
+                      <option
+                        key={variant.size}
+                        value={variant.size}
+                        disabled={variant.stock === 0}
+                      >
                         {variant.size}
                       </option>
                     ))}
@@ -129,14 +134,16 @@ const CartCard = (props: Props) => {
                 onChange={handleQuantityChange}
               >
                 <>
-                {Array.from(
-              { length: Math.min(props.item.variant.stock, 10) },
-              (_, i) => i + 1
-            ).map((num) => (
-              <option key={num} value={num}>
-                 {num === props.item.variant.stock ?  num + " left" : `${num}`}
-              </option>
-            ))}
+                  {Array.from(
+                    { length: Math.min(props.item.variant.stock, 10) },
+                    (_, i) => i + 1
+                  ).map((num) => (
+                    <option key={num} value={num}>
+                      {num === props.item.variant.stock
+                        ? num + " left"
+                        : `${num}`}
+                    </option>
+                  ))}
                 </>
               </select>
             </div>

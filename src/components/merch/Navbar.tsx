@@ -14,19 +14,15 @@ export default function Navbar(props: Props) {
 
   return (
     <div
-      className={`relative z-30 w-full h-20 min-h-max border-b dark:bg-black border-[#2C2D33] flex flex-row text-center content-center p-2 ${
+      className={`relative z-30 w-full h-20 min-h-max border-b dark:bg-black border-[#2C2D33]/50 flex flex-row text-center content-center p-2 ${
         isConnected ? "justify-between" : "justify-center"
       }`}
     >
       {/* <div
-      className={`relative z-30 w-full h-20 min-h-max border-b dark:bg-[#0D0D0D] border-[#2C2D33] flex flex-row text-center content-center p-2 justify-between`}
+      className={`relative z-30 w-full h-20 min-h-max border-b dark:bg-[#0D0D0D] border-[#2C2D33]/50 flex flex-row text-center content-center p-2 justify-between`}
     > */}
       <div className="self-center flex flex-row p-2 min-w-min gap-4 divide-x">
-        <img
-          src={"/uniscroll-full.webp"}
-          alt=""
-          className="self-center"
-        />
+        <img src={"/uniscroll-full.webp"} alt="" className="self-center" />
         {/* <img
           src="/goat-logo.png"
           className="pl-2 h-12 sm:h-16 my-2 mx-auto self-center"
@@ -35,14 +31,15 @@ export default function Navbar(props: Props) {
       {isConnected && (
         <div className="relative flex flex-row self-center">
           {props.cartCount > 0 && (
-          <div 
-          onClick={() => {
-            props.setCartOpen(true);
-            props.setShowCart(!props.showCart);
-          }}
-          className="hover:cursor-pointer absolute bg-white border border-gray-500 shadow-md shadow-gray-400 left-[28px] w-5 h-5 rounded-full text-black text-sm">
-            {props.cartCount }
-          </div>
+            <div
+              onClick={() => {
+                props.setCartOpen(true);
+                props.setShowCart(!props.showCart);
+              }}
+              className="hover:cursor-pointer absolute bg-white border border-gray-500 shadow-md shadow-gray-400 left-[28px] w-5 h-5 rounded-full text-black text-sm"
+            >
+              {props.cartCount}
+            </div>
           )}
           <svg
             xmlns="http://www.w3.org/2000/svg"
