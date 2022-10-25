@@ -23,7 +23,7 @@ type Item = {
   description: string;
   additional_info: string;
   weight: string;
-  variants: Variant[];
+  variants: any[];
 };
 
 type Props = {
@@ -131,9 +131,10 @@ const ItemCard = (props: Props) => {
         className="w-64 h-64 sm:w-96 sm:h-96 object-cover rounded-t-sm self-center cursor-pointer"
         onClick={() => setShowDetails(true)}
       />
-      <div className="py-2 w-full flex flex-row items-center justify-between h-16 hover:cursor-pointer"
-              onClick={() => setShowDetails(true)}
-              >
+      <div
+        className="py-2 w-full flex flex-row items-center justify-between h-16 hover:cursor-pointer"
+        onClick={() => setShowDetails(true)}
+      >
         <p className="text-lg font-quicksand font-semibold max-w-[184px] md:max-w-[212px]">
           {props.item.name}
         </p>

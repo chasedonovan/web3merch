@@ -46,7 +46,7 @@ export default function ItemDetailsModal({
   });
 
   useEffect(() => {
-    if (item.variants[0].size === "OneSize") {
+    if (item && item.variants && item.variants[0].size === "OneSize") {
       setValue("size", item.variants[0].size);
     }
   }, [item.variants, setValue]);
@@ -259,63 +259,81 @@ export default function ItemDetailsModal({
                       ""
                     )}
                     <div className="flex flex-col lg:flex-row justify-end mt-2 ">
-                      {item.variants[0].size === "OneSize" && (
-                        <div className="flex flex-row justify-end">
-                          <div className="pr-2 mb-2 font-quicksand self-center hidden ">
-                            Quantity
+                      {item &&
+                        item.variants &&
+                        item.variants[0].size === "OneSize" && (
+                          <div className="flex flex-row justify-end">
+                            <div className="pr-2 mb-2 font-quicksand self-center hidden ">
+                              Quantity
+                            </div>
+                            <select
+                              autoFocus
+                              className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 lg:mr-2 self-center`}
+                              value={quantity}
+                              onChange={(e) =>
+                                setQuantity(parseInt(e.target.value))
+                              }
+                            >
+                              <>
+                                {Array.from(
+                                  {
+                                    length: Math.min(
+                                      item.variants[0].stock,
+                                      10
+                                    ),
+                                  },
+                                  (_, i) => i + 1
+                                ).map((num) => (
+                                  <option key={num} value={num}>
+                                    {item &&
+                                    item.variants &&
+                                    num === item.variants[0].stock
+                                      ? num + " left"
+                                      : `${num}`}
+                                  </option>
+                                ))}
+                              </>
+                            </select>
                           </div>
-                          <select
-                            autoFocus
-                            className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 lg:mr-2 self-center`}
-                            value={quantity}
-                            onChange={(e) =>
-                              setQuantity(parseInt(e.target.value))
-                            }
-                          >
-                            <>
-                              {Array.from(
-                                {
-                                  length: Math.min(item.variants[0].stock, 10),
-                                },
-                                (_, i) => i + 1
-                              ).map((num) => (
-                                <option key={num} value={num}>
-                                  {num === item.variants[0].stock
-                                    ? num + " left"
-                                    : `${num}`}
-                                </option>
-                              ))}
-                            </>
-                          </select>
-                        </div>
-                      )}
+                        )}
                       <select
                         autoFocus
-                        disabled={item.variants[0].size === "OneSize"}
+                        disabled={
+                          item &&
+                          item.variants &&
+                          item.variants[0].size === "OneSize"
+                        }
                         className={`${
-                          item.variants[0].size === "OneSize" && "hidden "
+                          item &&
+                          item.variants &&
+                          item.variants[0].size === "OneSize" &&
+                          "hidden "
                         } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-end lg:mr-4 ${
                           errors.size && " rounded-lg text-red-400"
                         }`}
                         {...register("size")}
                         defaultValue=""
                       >
-                        {item.variants[0].size === "OneSize" ? (
+                        {item &&
+                        item.variants &&
+                        item.variants[0].size === "OneSize" ? (
                           <option value="OneSize">One Size</option>
                         ) : (
                           <>
                             <option value="" disabled>
                               Size
                             </option>
-                            {item.variants.map((variant: any) => (
-                              <option
-                                key={variant.size}
-                                value={variant.size}
-                                disabled={variant.stock === 0}
-                              >
-                                {variant.size}
-                              </option>
-                            ))}
+                            {item &&
+                              item.variants &&
+                              item.variants.map((variant: any) => (
+                                <option
+                                  key={variant.size}
+                                  value={variant.size}
+                                  disabled={variant.stock === 0}
+                                >
+                                  {variant.size}
+                                </option>
+                              ))}
                           </>
                         )}
                       </select>
@@ -425,66 +443,81 @@ export default function ItemDetailsModal({
                           ""
                         )}
                         <div className="flex flex-col xl:flex-row self-end mt-4">
-                          {item.variants[0].size === "OneSize" && (
-                            <div className="flex flex-row pr-4">
-                              <div className="pr-2 font-quicksand self-center hidden">
-                                Quantity
+                          {item &&
+                            item.variants &&
+                            item.variants[0].size === "OneSize" && (
+                              <div className="flex flex-row pr-4">
+                                <div className="pr-2 font-quicksand self-center hidden">
+                                  Quantity
+                                </div>
+                                <select
+                                  autoFocus
+                                  className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
+                                  value={quantity}
+                                  onChange={(e) =>
+                                    setQuantity(parseInt(e.target.value))
+                                  }
+                                >
+                                  <>
+                                    {Array.from(
+                                      {
+                                        length: Math.min(
+                                          item.variants[0].stock,
+                                          10
+                                        ),
+                                      },
+                                      (_, i) => i + 1
+                                    ).map((num) => (
+                                      <option key={num} value={num}>
+                                        {item &&
+                                        item.variants &&
+                                        num === item.variants[0].stock
+                                          ? num + " left"
+                                          : `${num}`}
+                                      </option>
+                                    ))}
+                                  </>
+                                </select>
                               </div>
-                              <select
-                                autoFocus
-                                className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
-                                value={quantity}
-                                onChange={(e) =>
-                                  setQuantity(parseInt(e.target.value))
-                                }
-                              >
-                                <>
-                                  {Array.from(
-                                    {
-                                      length: Math.min(
-                                        item.variants[0].stock,
-                                        10
-                                      ),
-                                    },
-                                    (_, i) => i + 1
-                                  ).map((num) => (
-                                    <option key={num} value={num}>
-                                      {num === item.variants[0].stock
-                                        ? num + " left"
-                                        : `${num}`}
-                                    </option>
-                                  ))}
-                                </>
-                              </select>
-                            </div>
-                          )}
+                            )}
                           <select
                             autoFocus
-                            disabled={item.variants[0].size === "OneSize"}
+                            disabled={
+                              item &&
+                              item.variants &&
+                              item.variants[0].size === "OneSize"
+                            }
                             className={`${
-                              item.variants[0].size === "OneSize" && "hidden "
+                              item &&
+                              item.variants &&
+                              item.variants[0].size === "OneSize" &&
+                              "hidden "
                             } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-center sm:mr-4 ${
                               errors.size && " rounded-lg text-red-400"
                             }`}
                             {...register("size")}
                             defaultValue=""
                           >
-                            {item.variants[0].size === "OneSize" ? (
+                            {item &&
+                            item.variants &&
+                            item.variants[0].size === "OneSize" ? (
                               <option value="OneSize">One Size</option>
                             ) : (
                               <>
                                 <option value="" disabled>
                                   Size
                                 </option>
-                                {item.variants.map((variant: any) => (
-                                  <option
-                                    key={variant.size}
-                                    value={variant.size}
-                                    disabled={variant.stock === 0}
-                                  >
-                                    {variant.size}
-                                  </option>
-                                ))}
+                                {item &&
+                                  item.variants &&
+                                  item.variants.map((variant: any) => (
+                                    <option
+                                      key={variant.size}
+                                      value={variant.size}
+                                      disabled={variant.stock === 0}
+                                    >
+                                      {variant.size}
+                                    </option>
+                                  ))}
                               </>
                             )}
                           </select>
