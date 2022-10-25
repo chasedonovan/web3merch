@@ -23,7 +23,7 @@ type Item = {
   description: string;
   additional_info: string;
   weight: string;
-  variants: any[];
+  variants: Variant[];
 };
 
 type Props = {

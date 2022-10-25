@@ -10,12 +10,6 @@ import { GlobalContextProvider } from "../hooks/useGlobalContext";
 
 type Props = {};
 
-type Variant = {
-  variant_id: string;
-  size: string;
-  stock: number;
-};
-
 type CartItem = {
   name: string;
   price: number;
@@ -25,9 +19,9 @@ type CartItem = {
   description: string;
   additional_info: string;
   weight: string;
-  variants: Variant[];
+  variants: any[];
   itemId: number;
-  variant: Variant;
+  variant: any;
   quantity: number;
 };
 
