@@ -360,7 +360,7 @@ export default function ItemDetailsModal({
                                   disabled={variant.stock === 0}
                                 >
                                   {variant.size}{" "}
-                                  {variant.stock === 0 && "sold out"}
+                                  {variant.stock === 0 && "(sold out)"}
                                 </option>
                               ))}
                           </>

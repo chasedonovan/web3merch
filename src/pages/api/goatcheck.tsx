@@ -27,8 +27,8 @@ export default async function handler(
     // res.status(200).json(externalResponseData);
     res.status(200).json(true);
   } catch (e) {
-    //change to true to access merch
-    res.status(500).send(false);
+    //change to false to see modal
+    res.status(500).send(true);
     // res.status(500).send({ error: false });
   }
 }
