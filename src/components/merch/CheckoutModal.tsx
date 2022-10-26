@@ -8,6 +8,8 @@ import TextField from "@mui/material/TextField";
 import emailjs from "emailjs-com";
 import { useWalletContext } from "hooks/useWalletContext";
 import { useMerchContext } from "hooks/useMerchContext";
+import { useGlobalContext } from "hooks/useGlobalContext";
+import CardanoWalletAPI from "client/CardanoWalletAPI";
 
 type Variant = {
   variant_id: string;
@@ -40,6 +42,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     country: Yup.string().required("country is required"),
     email: Yup.string().required("email is required"),
   });
+  const { protocolParameters } = useGlobalContext();
+
   const {
     isConnected,
     setConnected,
@@ -99,7 +103,88 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       });
   }, []);
 
-  const onSubmit = (data: CheckoutForm) => {
+  const handlePayment = async () => {
+    if (isConnected) {
+      await CardanoWalletAPI.pay(
+        connectedWallet.providerapi,
+        protocolParameters,
+        cart.payToAddress,
+        cart.totalPrice
+      )
+        .then((res) => {
+          console.log("Handle payment", res);
+          if (!res.success) throw res;
+
+          fetch("/api/cart/checkout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              cart_uuid: cart.cartUuid,
+              transaction_id: res.transactionId,
+            }),
+          }).then((res2) => {
+            if (res2.status !== 200) {
+              console.log(res2);
+              throw {
+                success: false,
+                message:
+                  "Failed to update your order, save the transaction id and contact Uniscroll.",
+                transactionId: "",
+              };
+            }
+          });
+          setLoading(false);
+
+          emailjs
+            .send(
+              `service_ra0p0dz`,
+              `template_5j3q9s6`,
+              {
+                // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
+                to_name: orderAddress.firstName + " " + orderAddress.lastName,
+                to_email: orderAddress.email,
+                from_name: "GoatTribe x Uniscroll",
+                address: orderAddress.streetAddress,
+                postal: orderAddress.postalCode,
+                country: orderAddress.country,
+                // items: items,
+                subtotal: `${cart.subTotalPrice / 1000000}`,
+                shipping: `${cart.shippingPrice / 1000000}`,
+                total: `${cart.totalPrice / 1000000}`,
+                date_time: new Date().toLocaleString(),
+                reply_to: orderAddress.email,
+                // }, `${process.env.EMAIL_PUBLIC_KEY}`)
+              },
+              `nHKdN2eeVxPRtvKoF`
+            )
+            .then(
+              (result) => {
+                console.log(result.text);
+              },
+              (error) => {
+                console.log(error.text);
+              }
+            );
+          // setShowSuccess(true);
+          // setSuccessMessage("" + res.message + " " + res.transactionId);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          // setShowErr2(true);
+          // setErrMessage2(err?.message);
+        });
+    } else {
+      setLoading(false);
+      // props.setErrMessage("Please connect your wallet");
+      // props.setShowErr(true);
+      // props.setShowModal(false);
+    }
+  };
+
+  const onSubmit = async (data: CheckoutForm) => {
     console.log("submit address", data);
 
     setAddress({
@@ -114,7 +199,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       state: "", //TODO (not required)
     });
 
-    fetch("/api/cart/address", {
+    await fetch("/api/cart/address", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -133,39 +218,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           email: data.email,
         },
       }),
-    }).then(() =>
-      //TODO: create transaction and move this to successful transaction
-      emailjs
-        .send(
-          `service_ra0p0dz`,
-          `template_5j3q9s6`,
-          {
-            // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
-            to_name: data.firstName + " " + data.lastName,
-            to_email: data.email,
-            from_name: "GoatTribe x Uniscroll",
-            address: data.address,
-            postal: data.postalCode,
-            country: data.country,
-            // items: items,
-            subtotal: `${cart.subTotalPrice / 1000000}`,
-            shipping: `${cart.shippingPrice / 1000000}`,
-            total: `${cart.totalPrice / 1000000}`,
-            date_time: new Date().toLocaleString(),
-            reply_to: data.email,
-            // }, `${process.env.EMAIL_PUBLIC_KEY}`)
-          },
-          `nHKdN2eeVxPRtvKoF`
-        )
-        .then(
-          (result) => {
-            console.log(result.text);
-          },
-          (error) => {
-            console.log(error.text);
-          }
-        )
-    );
+    }).then(async () => await handlePayment());
   };
 
   return (

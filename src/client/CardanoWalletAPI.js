@@ -1,3 +1,4 @@
+import { CoinSelectionStrategyCIP2 } from "@dcspark/cardano-multiplatform-lib-browser";
 import { Buffer } from "buffer";
 import CardanoLoader from './CardanoLoader';
 
@@ -205,32 +206,22 @@ class CardanoWalletAPI {
       const cardano = await CardanoLoader.Cardano();
       const raw = await walletProviderApi.getRewardAddresses();
       const rawFirst = raw[0];
-      const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
+      const rewardAddressHex = cardano.Address.from_bech32(Buffer.from(rawFirst, "hex")).to_bech32()
       return rewardAddressHex;
     } catch (err) {
       console.log(err)
     }
   }
 
-  async delegate(walletProviderApi, protocolParameters, delegateInfo){
+  async pay(walletProviderApi, protocolParameters, outputAddress, paymentAmountLovelace){
     try{
-      //check current delegation (if already delegated to UNI1: return)
-      if(delegateInfo && delegateInfo.poolTicker){
-        if(delegateInfo.poolTicker === "UNI1"){
-          return {
-            success: true,
-            message: "You are already delegated to Unipool (UNI1).",
-            transactionId: ""
-          };  
-        }
-      }
-
       const cardano = await CardanoLoader.Cardano();
-      console.log('delegate', walletProviderApi);
-      const poolId = "pool1ps2yl6axlh5uzzst99xzkk7x0fhlmr7x033j7cmmm82x2a9n8lj"; //UNI1
-      const rewardAddressRaw = await this.private_getRewardAddressRaw(walletProviderApi);
+      console.log('pay', walletProviderApi);
       const paymentAddressRaw = await this.private_getPaymentAddressRaw(walletProviderApi);
-      
+      console.log('paymentAddressRaw', paymentAddressRaw);
+      console.log('outputAddress', outputAddress);
+      console.log('paymentAmountLovelace', paymentAmountLovelace);
+
       if(!protocolParameters || !protocolParameters.min_fee_a){
         return {
           success: false,
@@ -240,13 +231,14 @@ class CardanoWalletAPI {
       }
       const utxos = await this.private_getUTXOs(walletProviderApi);
       console.log(protocolParameters);
-      const delegationTransaction = await this.private_createDelegationTransaction(poolId, protocolParameters, rewardAddressRaw, paymentAddressRaw, utxos, cardano);
-      console.log(delegationTransaction);
+      const transaction = await this.private_createpaymentTransaction(
+        protocolParameters, paymentAddressRaw, utxos, cardano, outputAddress, paymentAmountLovelace);
+      console.log(transaction);
       const signedTransaction = await this.private_signTransaction(walletProviderApi,
-        delegationTransaction,
+        transaction,
         cardano
       );
-      console.log("Delegation transaction signed:", signedTransaction);
+      console.log("Transaction signed:", signedTransaction);
 
       return await this.private_submitTransaction(walletProviderApi,
         signedTransaction
@@ -264,7 +256,7 @@ class CardanoWalletAPI {
       throw {
         success: false,
         transactionId: "",
-        message: "Delegation failed. " + message
+        message: "Transaction failed. " + message
       };
     }
   }
@@ -277,7 +269,7 @@ class CardanoWalletAPI {
 
     return {
       success: true,
-      message: "Delegation transaction submitted successfully! https://cardanoscan.io/transaction/" + transId,
+      message: "Transaction submitted successfully! https://cardanoscan.io/transaction/" + transId,
       transactionId: transId
     };
   };
@@ -330,12 +322,10 @@ class CardanoWalletAPI {
       return rawAddress;
   }
 
-  async private_createDelegationTransaction(poolId, protocolParameters, rewardAddressRaw, paymentAddressRaw, utxos, cardano){
-    const paymentAddress = cardano.Address.from_bytes(Buffer.from(paymentAddressRaw, "hex"));
-    const rewardAddress = cardano.Address.from_bytes(Buffer.from(rewardAddressRaw, "hex"));
-    // console.log(paymentAddress);
-    // console.log(rewardAddress);
-    // console.log(cardano);
+  async private_createpaymentTransaction(protocolParameters, inputAddressRaw, utxos, cardano, outputAddressBech32, paymentAmountLovelace){
+    const inputAddress = cardano.Address.from_bytes(Buffer.from(inputAddressRaw, "hex"));
+    const outputAddress = cardano.Address.from_bech32(outputAddressBech32)
+    console.log("lovelace", paymentAmountLovelace);
     console.log("1. Configuring transaction");
     let txBuilderConfig = cardano.TransactionBuilderConfigBuilder.new();
 
@@ -355,60 +345,28 @@ class CardanoWalletAPI {
     .prefer_pure_change(true)
     .build();
 
-    // console.log("1.1. Configuring ExUnitPrices");
-
-    // const exUnitPrices = cardano.ExUnitPrices.new(
-    //     cardano.UnitInterval.new(cardano.BigNum.from_str("577"),cardano.BigNum.from_str("10000")),
-    //     cardano.UnitInterval.new(cardano.BigNum.from_str("721"),cardano.BigNum.from_str("10000000")));
-
-    // txBuilderConfig = txBuilderConfig.ex_unit_prices(exUnitPrices);
-    // console.log("1.2. Configuring collateral");
-    // txBuilderConfig = txBuilderConfig.collateral_percentage(0);
-    // txBuilderConfig = txBuilderConfig.max_collateral_inputs(1);
-
-    // console.log(txBuilderConfig);
     const txBuilder = cardano.TransactionBuilder.new(txBuilderConfig);
-    // console.log(txBuilder);
 
     console.log("2. Adding inputs to transaction");
-    //txBuilder.add_utxo(utxos);
     txBuilder.add_inputs_from(utxos, cardano.CoinSelectionStrategyCIP2.LargestFirst);
 
-    console.log("3. Adding certificates");
-    const stakeCredential = cardano.RewardAddress.from_address(
-      rewardAddress
-    ).payment_cred();
-    const certificates = cardano.Certificates.new();
+    console.log("3. Adding outputs to transaction");
+    txBuilder.add_output(cardano.TransactionOutput.new(
+      outputAddress,
+      cardano.Value.new(cardano.BigNum.from_str(
+        //paymentAmountLovelace.toString()
+        '1131000'
+        ))    
+      ));
 
-    const delegation = {active:true}; //If you have an active delegation, you can reduce 2 ADA cost
-    if (!delegation.active)
-      certificates.add(
-        cardano.Certificate.new_stake_registration(
-          cardano.StakeRegistration.new(stakeCredential)
-        )
-      );
-
-    certificates.add(
-      cardano.Certificate.new_stake_delegation(
-        cardano.StakeDelegation.new(
-          stakeCredential,
-          cardano.Ed25519KeyHash.from_bech32(poolId)
-        )
-      )
-    );
-    txBuilder.set_certs(certificates);
     console.log("4. Add change");
-    txBuilder.add_change_if_needed(paymentAddress);
+    txBuilder.add_change_if_needed(outputAddress);
     console.log("5. Set witnesses");
     const transaction = cardano.Transaction.new(
       txBuilder.build(),
       cardano.TransactionWitnessSet.new()
     );
-    // console.log("11");
-    // const size = transaction.to_bytes().length * 2;
-    // console.log("12");
-    // if (size > protocolParameters.max_tx_size) throw "ERROR.txTooBig";
-    // console.log("13");
+
     return transaction;
   }
 
