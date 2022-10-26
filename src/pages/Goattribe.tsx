@@ -57,7 +57,7 @@ const GoatTribe = (props: Props) => {
         setShowCart={setShowCart}
         cartCount={cartCount}
       />
-      {products.length > 0 && (
+      {products.length > 0 && isConnected && (
         <GlobalContextProvider>
           <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
             <div className="w-full h-full flex flex-row divide-x divide-[#2C2D33]/50">
