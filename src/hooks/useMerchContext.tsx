@@ -29,15 +29,6 @@ type Item = {
 
 type CartItem = {
   name: string;
-  price: number;
-  original_price: number;
-  image: string;
-  images: string[];
-  description: string;
-  additional_info: string;
-  weight: string;
-  variants: any[];
-  itemId: number;
   variant: any;
   quantity: number;
 };
@@ -52,6 +43,7 @@ type MerchContextProps = {
   products: Item[];
   cart: Cart;
   setCart: (cart: Cart) => void;
+
 }
 
 const MerchContext = createContext<MerchContextProps>({
@@ -84,6 +76,21 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
         });
       }
     }, [isConnected]);
+    
+    //set subTotal when cartItems changes
+    useEffect(() => {
+      let subTotal = 0;
+      cart.cartItems.forEach((item) => {
+        const product = products.find((product) => product.name === item.name);
+        if (product) {
+          subTotal += (product.price * item.quantity) / 1000000;
+        }
+      });
+      setCart({ ...cart, subTotal });
+    }, [cart.cartItems]);
+
+
+    
 
   return (
     <MerchContext.Provider

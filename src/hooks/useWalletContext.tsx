@@ -3,7 +3,6 @@ import {
   PropsWithChildren,
   useState,
   useContext,
-  useEffect,
 } from "react";
 
 export type WalletInfo = {

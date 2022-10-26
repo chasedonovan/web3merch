@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
-import { NumericKeys } from "react-hook-form/dist/types/path/common";
 import emailjs from "emailjs-com";
 import { useWalletContext } from "hooks/useWalletContext";
+import { useMerchContext } from "hooks/useMerchContext";
 
 type Variant = {
   variant_id: string;
@@ -17,24 +17,7 @@ type Variant = {
 
 type Props = {
   setShowModal: (showModal: boolean) => void;
-  setCartUuid: (cartUuid: string) => void;
   showModal: boolean;
-  cartUuid: string;
-  cartItems: Array<{
-    name: string;
-    price: number;
-    original_price: number;
-    image: string;
-    images: string[];
-    description: string;
-    additional_info: string;
-    weight: string;
-    variants: Variant[];
-    itemId: number;
-    variant: Variant;
-    quantity: number;
-  }>;
-  total: number;
 };
 
 type CheckoutForm = {
@@ -49,13 +32,10 @@ type CheckoutForm = {
 export default function CheckoutModal({
   showModal,
   setShowModal,
-  cartItems,
-  total,
-  cartUuid,
-  setCartUuid,
 }: Props) {
+  const { cart, setCart } = useMerchContext();
+  const [total, setTotal] = useState(0);
   const cancelButtonRef = useRef(null);
-  const [subTotal, setSubTotal] = useState(0);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
     firstName: Yup.string().required("first name is required"),
@@ -86,15 +66,6 @@ export default function CheckoutModal({
   });
 
   useEffect(() => {
-    // get subTotal of cart items
-    setSubTotal(
-      cartItems.reduce((acc, item) => {
-        return acc + item.price;
-      }, 0)
-    );
-  }, [cartItems]);
-
-  useEffect(() => {
     fetch("/api/cart/update", {
       method: "POST",
       headers: {
@@ -102,8 +73,8 @@ export default function CheckoutModal({
       },
       body: JSON.stringify({
         cart: {
-          uuid: cartUuid,
-          price: total,
+          uuid: cart.cartUuid,
+          price: cart.cartItems,
           shipping: 30,
           stake_key: connectedWallet.stakeAddress,
           //TODO: get proper cartitems
@@ -117,9 +88,10 @@ export default function CheckoutModal({
       .then((res) => res.json())
       .then((data) => {
         //TODO: handle response from cart
-        setCartUuid(data.uuid);
-        setSubTotal(data.price);
-        total = data.price + data.shipping_price;
+        // setCart({...cart, cartUuid: data.uuid, subTotal: data.subTotal});
+        setCart({...cart, subTotal: cart.subTotal});
+        
+        setTotal(data.price + data.shipping_price)
         console.log("Update cart", data);
       });
   }, []);
@@ -135,14 +107,14 @@ export default function CheckoutModal({
     //   );
     // }, "");
 
-    const items = cartItems.reduce((acc, item) => {
-      return (
-        acc +
-        `<p>${item.name} x ${item.quantity} @ $${item.price} = $${
-          item.price * item.quantity
-        }</p> `
-      );
-    }, "");
+    // const items = cart.cartItems.reduce((acc, item) => {
+    //   return (
+    //     acc +
+    //     `<p>${item.name} x ${item.quantity} @ $${item.price} = $${
+    //       item.price * item.quantity
+    //     }</p> `
+    //   );
+    // }, "");
 
     emailjs
       .send(
@@ -156,10 +128,10 @@ export default function CheckoutModal({
           address: data.address,
           postal: data.postalCode,
           country: data.country,
-          items: items,
-          subtotal: `${total}`,
+          // items: items,
+          subtotal: `${cart.subTotal}`,
           shipping: `30`,
-          total: `${total + 30}`,
+          total: `${total}`,
           date_time: new Date().toLocaleString(),
           reply_to: data.email,
           // }, `${process.env.EMAIL_PUBLIC_KEY}`)
@@ -326,7 +298,7 @@ export default function CheckoutModal({
                             className=" mt-3 inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                           >
                             {/* PAY {subTotal + 30} ADA */}
-                            PAY {total + 30} ADA
+                            PAY {cart.subTotal + 30} ADA
                           </button>
                         </div>
                       </form>

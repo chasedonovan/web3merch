@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import CartCard from "./CartCard";
+import { useMerchContext } from "hooks/useMerchContext";
 
 type Variant = {
   variant_id: string;
@@ -11,33 +12,16 @@ type Variant = {
 type Props = {
   setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
   cartOpen: boolean;
-  cartItems: Array<{
-    name: string;
-    price: number;
-    original_price: number;
-    image: string;
-    images: string[];
-    description: string;
-    additional_info: string;
-    weight: string;
-    variants: Variant[];
-    itemId: number;
-    variant: Variant;
-    quantity: number;
-  }>;
-  setCartItems: (cartItems: any) => void;
-  total: number;
   setShowModal: (showModal: boolean) => void;
 };
 
 export default function MobileCart({
   setCartOpen,
   cartOpen,
-  cartItems,
-  setCartItems,
-  total,
   setShowModal,
 }: Props) {
+  const { cart, setCart } = useMerchContext();
+
   return (
     <Transition.Root show={cartOpen} as={Fragment}>
       <Dialog
@@ -112,16 +96,16 @@ export default function MobileCart({
                         <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                           <div className="flex flex-col py-4">
                             <p className="text-xl font-saira">Subtotal:</p>
-                            <p className="text-xl">{total} ADA</p>
+                            <p className="text-xl">{cart.subTotal} ADA</p>
                             <p className="text-gray-300 text-sm">
                               +shipping (30 ADA)
                             </p>
                           </div>
                           <div className="flex flex-col pl-4 py-4">
                             <button
-                              disabled={cartItems.length === 0}
+                              disabled={cart.cartItems.length === 0}
                               className={`font-quicksand border border-white text-white px-8 py-4 rounded-md m-4 ${
-                                cartItems.length === 0 &&
+                                cart.cartItems.length === 0 &&
                                 "opacity-50 cursor-default"
                               }`}
                               onClick={() => {
@@ -134,12 +118,10 @@ export default function MobileCart({
                         </div>
 
                         <div className="flex flex-col w-full overflow-scroll scrollbar-hide h-full">
-                          {cartItems.map((item, i) => (
+                          {cart.cartItems.map((item, i) => (
                             <CartCard
                               key={i}
                               item={item}
-                              cartItems={cartItems}
-                              setCartItems={setCartItems}
                             />
                           ))}
                         </div>

@@ -1,8 +1,6 @@
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+import { useMerchContext } from "hooks/useMerchContext";
 
 interface IFormInput {
   size: string;
@@ -11,45 +9,28 @@ type Props = {
   item: any;
   setShowModal: (showModal: boolean) => void;
   showModal: boolean;
-  setCartItems: (cartItems: any) => void;
-  cartItems: Array<any>;
-  itemId: number;
-  setItemId: (itemId: number) => void;
   setShowCart: (showCart: boolean) => void;
 };
 
 export default function ItemDetailsModal({
-  setCartItems,
-  cartItems,
   showModal,
   setShowModal,
   item,
-  itemId,
-  setItemId,
   setShowCart,
 }: Props) {
+  const { cart, setCart } = useMerchContext();
   const cancelButtonRef = useRef(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [quantity, setQuantity] = useState(1);
-
-  const validationSchema = Yup.object().shape({
-    size: Yup.string().required("Size is required"),
-  });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<IFormInput>({
-    resolver: yupResolver(validationSchema),
-  });
+  const [size, setSize] = useState("");
+  const [err, setErr] = useState(false);
 
   useEffect(() => {
     if (item && item.variants && item.variants[0].size === "OneSize") {
-      setValue("size", item.variants[0].size);
+      setSize(item.variants[0].size);
     }
-  }, [item.variants, setValue]);
+  }, [item.variants]);
 
   const handleRightClick = () => {
     if (imgIndex < item.images.length - 1) {
@@ -63,37 +44,63 @@ export default function ItemDetailsModal({
     }
   };
 
-  const onSubmit = (data: IFormInput) => {
-    console.log(data);
-    setCartItems([
-      ...cartItems,
-      {
-        name: item.name,
-        price: item.price,
-        original_price: item.original_price,
-        image: item.image,
-        images: item.images,
-        description: item.description,
-        additional_info: item.additional_info,
-        weight: item.weight,
-        variants: item.variants,
-        variant: item.variants.filter(
-          (variant: any) => variant.size === data.size
-        )[0],
-        itemId: itemId,
-        quantity: quantity,
-      },
-    ]);
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    // console.log(data);
+    if (size === "" && item.variants[0].size !== "OneSize") {
+      setErr(true);
+    } else {
+      const itemInCart = cart.cartItems.find(
+        (cartItem) =>
+          cartItem.variant.size === size && cartItem.name === item.name
+      );
 
-    setItemId(itemId + 1);
-    setTimeout(() => {
-      if (cartItems.length === 0) {
+      if (itemInCart) {
+        if (itemInCart.quantity < itemInCart.variant.stock) {
+          const newCartItems = cart.cartItems.map((item) => {
+            if (item.variant.size === size && item.name === item.name) {
+              return {
+                ...item,
+                quantity: item.quantity + quantity,
+              };
+            }
+            return item;
+          });
+          setCart({
+            ...cart,
+            cartItems: newCartItems,
+          });
+        }
+      } else {
+        // Add item to cart
+        const variant = item.variants.find(
+          (variant: any) => variant.size === size
+        );
+
+        const newCartItem = {
+          name: item.name,
+          variant: variant,
+          quantity: quantity,
+        };
+        setCart({
+          ...cart,
+          cartItems: [...cart.cartItems, newCartItem],
+        });
+      }
+      if (cart.cartItems.length === 0) {
         setShowCart(true);
       }
-      setShowModal(false);
-    }, 100);
+      setQuantity(1);
+      setTimeout(() => {
+        setShowModal(false);
+      }, 100);
+    }
   };
 
+  const handleSizeChange = (e: any) => {
+    setSize(e.target.value);
+    setErr(false);
+  };
   return (
     <Transition.Root show={showModal} as={Fragment}>
       <Dialog
@@ -245,7 +252,7 @@ export default function ItemDetailsModal({
                     )}
                   </div>
                   <form
-                    onSubmit={handleSubmit(onSubmit)}
+                    onSubmit={handleSubmit}
                     className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                   >
                     <p className="self-end text-right text-gray-200 ">
@@ -279,7 +286,7 @@ export default function ItemDetailsModal({
                                   {
                                     length: Math.min(
                                       item.variants[0].stock,
-                                      10
+                                      100
                                     ),
                                   },
                                   (_, i) => i + 1
@@ -299,20 +306,17 @@ export default function ItemDetailsModal({
                       <select
                         autoFocus
                         disabled={
-                          item &&
-                          item.variants &&
-                          item.variants[0].size === "OneSize"
+                          item?.variants && item.variants[0].size === "OneSize"
                         }
                         className={`${
-                          item &&
-                          item.variants &&
+                          item?.variants &&
                           item.variants[0].size === "OneSize" &&
                           "hidden "
                         } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-end lg:mr-4 ${
-                          errors.size && " rounded-lg text-red-400"
+                          err && "rounded-lg text-red-400"
                         }`}
-                        {...register("size")}
-                        defaultValue=""
+                        value={size}
+                        onChange={handleSizeChange}
                       >
                         {item &&
                         item.variants &&
@@ -331,14 +335,15 @@ export default function ItemDetailsModal({
                                   value={variant.size}
                                   disabled={variant.stock === 0}
                                 >
-                                  {variant.size}
+                                  {variant.size}{" "}
+                                  {variant.stock === 0 && "sold out"}
                                 </option>
                               ))}
                           </>
                         )}
                       </select>
                       <button
-                        disabled={errors.size ? true : false}
+                        disabled={err}
                         type="submit"
                         className="border border-white mb-2 rounded-md self-end w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
                       >
@@ -429,7 +434,7 @@ export default function ItemDetailsModal({
                         {item.name}
                       </Dialog.Title>{" "}
                       <form
-                        onSubmit={handleSubmit(onSubmit)}
+                        onSubmit={handleSubmit}
                         className="flex flex-col justify-start items-center sm:py-2 min-w-max"
                       >
                         <p className="self-end text-right text-gray-200 ">
@@ -493,10 +498,10 @@ export default function ItemDetailsModal({
                               item.variants[0].size === "OneSize" &&
                               "hidden "
                             } pr-4 py-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none self-center sm:mr-4 ${
-                              errors.size && " rounded-lg text-red-400"
+                              err && " rounded-lg text-red-400"
                             }`}
-                            {...register("size")}
-                            defaultValue=""
+                            value={size}
+                            onChange={handleSizeChange}
                           >
                             {item &&
                             item.variants &&
@@ -522,7 +527,7 @@ export default function ItemDetailsModal({
                             )}
                           </select>
                           <button
-                            disabled={errors.size ? true : false}
+                            disabled={err}
                             type="submit"
                             className="border border-white mb-2 rounded-md self-center w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
                           >

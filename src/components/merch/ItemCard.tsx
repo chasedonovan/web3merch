@@ -29,26 +29,7 @@ type Item = {
 
 type Props = {
   item: Item;
-  itemId: number;
-  cartUuid: string;
-  setItemId: (itemId: number) => void;
-  setCartItems: (cartItems: any) => void;
   setShowCart: (showCart: boolean) => void;
-  setCartUuid: (cartUuid: string) => void;
-  cartItems: Array<{
-    name: string;
-    price: number;
-    original_price: number;
-    image: string;
-    images: string[];
-    description: string;
-    additional_info: string;
-    weight: string;
-    itemId: number;
-    variants: Variant[];
-    variant: Variant;
-    quantity: number;
-  }>;
 };
 
 const ItemCard = (props: Props) => {
@@ -80,51 +61,71 @@ const ItemCard = (props: Props) => {
   const onSubmit = (data: IFormInput) => {
     // console.log(data);
 
-    // Check if item variant is already in car, if so, increase quantity
-    const itemInCart = props.cartItems.find(
+    const itemInCart = cart.cartItems.find(
       (item) => item.variant.size === data.size && item.name === props.item.name
     );
 
     if (itemInCart) {
-      props.setCartItems(
-        props.cartItems.map((item) => {
+      if (itemInCart.quantity < itemInCart.variant.stock - quantity) {
+        const newCartItems = cart.cartItems.map((item) => {
           if (
-            item.name === props.item.name &&
-            item.variant.size === data.size
+            item.variant.size === data.size &&
+            item.name === props.item.name
           ) {
-            if (item.quantity < item.variant.stock) {
-              item.quantity += 1;
-            }
+            return {
+              ...item,
+              quantity: item.quantity + quantity,
+            };
           }
           return item;
-        })
-      );
+        });
+        setCart({
+          ...cart,
+          cartItems: newCartItems,
+        });
+      } else {
+        const variant = props.item.variants.find(
+          (variant) => variant.size === data.size
+        );
+        if (variant) {
+          const newCartItems = cart.cartItems.map((item) => {
+            if (
+              item.variant.size === data.size &&
+              item.name === props.item.name
+            ) {
+              return {
+                ...item,
+                quantity: variant.stock,
+              };
+            }
+            return item;
+          });
+
+          setCart({
+            ...cart,
+            cartItems: newCartItems,
+          });
+        }
+      }
     } else {
-      props.setCartItems([
-        ...props.cartItems,
-        {
-          name: props.item.name,
-          price: props.item.price,
-          original_price: props.item.original_price,
-          image: props.item.image,
-          images: props.item.images,
-          description: props.item.description,
-          additional_info: props.item.additional_info,
-          weight: props.item.weight,
-          variants: props.item.variants,
-          variant: props.item.variants.filter(
-            (variant) => variant.size === data.size
-          )[0],
-          itemId: props.itemId,
-          quantity: quantity,
-        },
-      ]);
+      // Add item to cart
+      const variant = props.item.variants.find(
+        (variant) => variant.size === data.size
+      );
+      const newCartItem = {
+        name: props.item.name,
+        variant: variant,
+        quantity: quantity,
+      };
+      setCart({
+        ...cart,
+        cartItems: [...cart.cartItems, newCartItem],
+      });
     }
-    if (props.cartItems.length === 0) {
+    if (cart.cartItems.length === 0) {
       props.setShowCart(true);
     }
     setQuantity(1);
-    props.setItemId(props.itemId + 1);
   };
 
   return (
@@ -172,7 +173,7 @@ const ItemCard = (props: Props) => {
               >
                 <>
                   {Array.from(
-                    { length: Math.min(props.item.variants[0].stock, 10) },
+                    { length: Math.min(props.item.variants[0].stock, 100) },
                     (_, i) => i + 1
                   ).map((num) => (
                     <option key={num} value={num}>
@@ -220,7 +221,7 @@ const ItemCard = (props: Props) => {
                     value={variant.size}
                     disabled={variant.stock === 0}
                   >
-                    {variant.size}
+                    {variant.size} {variant.stock === 0 && "sold out"}
                   </option>
                 ))}
             </>
@@ -239,10 +240,6 @@ const ItemCard = (props: Props) => {
           setShowModal={setShowDetails}
           showModal={showDetails}
           item={props.item}
-          setCartItems={props.setCartItems}
-          cartItems={props.cartItems}
-          setItemId={props.setItemId}
-          itemId={props.itemId}
           setShowCart={props.setShowCart}
         />
       )}

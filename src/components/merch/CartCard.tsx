@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useMerchContext } from "hooks/useMerchContext";
 
 type Variant = {
   variant_id: string;
@@ -8,29 +9,39 @@ type Variant = {
 
 type Item = {
   name: string;
-  price: number;
-  original_price: number;
-  image: string;
-  images: string[];
-  description: string;
-  additional_info: string;
-  weight: string;
-  variants: Variant[];
-  itemId: number;
   variant: Variant;
   quantity: number;
 };
 
 type Props = {
   item: Item;
-  setCartItems: (cartItems: any) => void;
-  cartItems: Array<Item>;
+
 };
 
 const CartCard = (props: Props) => {
   const [size, setSize] = React.useState("");
   const [quantity, setQuantity] = React.useState(1);
   const [stock, setStock] = React.useState(10);
+  const { products, cart, setCart } = useMerchContext();
+  const [product, setProduct] = React.useState<any>({
+    name: "",
+    price: 0,
+    original_price: 0,
+    image: "",
+    images: [],
+    description: "",
+    additional_info: "",
+    weight: "",
+    variants: [],
+  } as any);
+
+  useEffect(() => {
+    const product = products.find((p) => p.name === props.item.name);
+    if (product) {
+      setProduct(product);
+    }
+  }, [products, props.item.name]);
+
 
   useEffect(() => {
     setSize(props.item.variant.size);
@@ -42,51 +53,50 @@ const CartCard = (props: Props) => {
   }, [props.item.quantity]);
 
   const removeItem = () => {
-    props.setCartItems(
-      props.cartItems.filter((item) => item.itemId !== props.item.itemId)
-    );
+    const newCart = cart.cartItems.filter((item) => item.name !== props.item.name);
+    setCart({ ...cart, cartItems: newCart });
   };
 
   const handleSizeChange = (e: any) => {
-    props.setCartItems(
-      props.cartItems.map((item) => {
-        if (item.variant.size === size && item.itemId === props.item.itemId) {
-          return {
-            ...item,
-            variant: item.variants.find(
-              (variant) => variant.size === e.target.value
-            ),
-            quantity: 1,
-          };
-        }
-        return item;
-      })
-    );
+    const newCart = cart.cartItems.map((item) => {
+      if (item.name === props.item.name) {
+        return {
+          ...item,
+          variant: product.variants.find((variant: any) => variant.size === e.target.value),
+          quantity: 1,
+        };
+      }
+      return item;
+    });
+    setCart({ ...cart, cartItems: newCart });
+
     setSize(e.target.value);
+
   };
 
   const handleQuantityChange = (e: any) => {
-    setQuantity(e.target.value);
-    props.setCartItems(
-      props.cartItems.map((item) => {
-        if (item.itemId === props.item.itemId) {
-          //parse to int
+    setCart({
+      ...cart,
+      cartItems: cart.cartItems.map((item) => {
+        if (item.variant.variant_id === props.item.variant.variant_id && item.name === props.item.name) {
           return {
             ...item,
-            quantity: parseInt(e.target.value),
+            quantity: Number(e.target.value),
           };
         }
         return item;
-      })
-    );
-  };
+      }
+      ),
+    });
+  }
+
 
   return (
     <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33]/50 ">
       <div className="flex flex-row items-center gap-2 md:gap-6">
         <div className="flex flex-col items-center min-w-max">
           <img
-            src={props.item.image}
+            src={product.image}
             alt="item"
             className="w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm"
           />
@@ -100,19 +110,19 @@ const CartCard = (props: Props) => {
               <div className="pr-2 self-center text-sm">Size</div>
               <select
                 autoFocus
-                disabled={props.item.variants[0].size === "OneSize"}
+                disabled={props.item.variant.size === "OneSize"}
                 className={`self-center bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
                 value={size}
                 onChange={handleSizeChange}
               >
-                {props.item.variants[0].size === "OneSize" ? (
+                {props.item.variant.size === "OneSize" ? (
                   <option value="OneSize">One Size</option>
                 ) : (
                   <>
                     <option value="" disabled>
                       Size
                     </option>
-                    {props.item.variants.map((variant) => (
+                    {product.variants.map((variant: any) => (
                       <option
                         key={variant.size}
                         value={variant.size}
@@ -135,7 +145,7 @@ const CartCard = (props: Props) => {
               >
                 <>
                   {Array.from(
-                    { length: Math.min(props.item.variant.stock, 10) },
+                    { length: Math.min(props.item.variant.stock, 100) },
                     (_, i) => i + 1
                   ).map((num) => (
                     <option key={num} value={num}>
@@ -152,15 +162,15 @@ const CartCard = (props: Props) => {
       </div>
       <div className="flex flex-col justify-between text-right ml-4 2xl:ml-12 font-quicksand pt-3 min-w-max">
         <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
-          {props.item.original_price !== props.item.price ? (
+          {product.original_price !== product.price ? (
             <p className="self-end text-right text-gray-200 line-through opacity-75">
-              {props.item.original_price / 1000000} ₳
+              {product.original_price / 1000000} ₳
             </p>
           ) : (
             ""
           )}
           <p className="self-end text-right text-gray-200 ">
-            {props.item.price / 1000000} ₳
+            {product.price / 1000000} ₳
           </p>
         </div>
         <svg

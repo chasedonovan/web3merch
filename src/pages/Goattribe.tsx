@@ -7,7 +7,6 @@ import CheckoutModal from "components/merch/CheckoutModal";
 import { useWalletContext } from "../hooks/useWalletContext";
 import { MerchConnectBtn } from "components/merch/MerchConnectBtn";
 import { GlobalContextProvider } from "../hooks/useGlobalContext";
-import { MerchContextProvider } from "hooks/useMerchContext";
 import { useMerchContext } from "hooks/useMerchContext";
 
 type Props = {};
@@ -32,34 +31,34 @@ const GoatTribe = (props: Props) => {
   const [cartOpen, setCartOpen] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const [showCart, setShowCart] = React.useState(false);
-  const [total, setTotal] = React.useState(0);
-  const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
-  const [itemId, setItemId] = React.useState(0);
-  const [cartUuid, setCartUuid] = React.useState("");
   const [cartCount, setCartCount] = React.useState(0);
   const productSection = useRef<null | HTMLDivElement>(null);
-  const { products, cart, setCart  } = useMerchContext();
+  const { products, cart, setCart } = useMerchContext();
 
   useEffect(() => {
     let count = 0;
-    cartItems.forEach((item) => {
+    cart.cartItems.forEach((item) => {
       count += item.quantity;
     });
     setCartCount(count);
-    let sum = 0;
-    cartItems.forEach((item) => {
-      sum += item.price * item.quantity;
-    });
-    setTotal(sum / 1000000);
-  }, [cartItems]);
+
+    //find sum of each item by matching w product and set subtotal in cart
+    // let subTotal = 0;
+    // cart.cartItems.forEach((item) => {
+    //   const product = products.find((product) => product.name === item.name);
+    //   if (product) {
+    //     subTotal += (product.price * item.quantity) / 1000000;
+    //   }
+    // });
+    // setCart({ ...cart, subTotal });
+    // console.log(cart);
+  }, [cart.cartItems]);
 
   useEffect(() => {
-      if (products.length > 0 && productSection.current) {
-        productSection.current.scrollIntoView();
-      }
+    if (products.length > 0 && productSection.current) {
+      productSection.current.scrollIntoView();
+    }
   }, [products]);
-
-  console.log(cart, 'c')
 
   return (
     <div className="w-full h-full flex flex-col overflow-scroll scrollbar-hide min-h-max">
@@ -83,17 +82,7 @@ const GoatTribe = (props: Props) => {
                 </div>
                 <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
                   {products.map((item, i) => (
-                    <ItemCard
-                      key={i}
-                      item={item}
-                      itemId={itemId}
-                      setItemId={setItemId}
-                      cartItems={cartItems}
-                      setCartItems={setCartItems}
-                      setShowCart={setShowCart}
-                      cartUuid={cartUuid}
-                      setCartUuid={setCartUuid}
-                    />
+                    <ItemCard key={i} item={item} setShowCart={setShowCart} />
                   ))}
                 </div>
               </div>
@@ -102,14 +91,15 @@ const GoatTribe = (props: Props) => {
                   <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                     <div className="flex flex-col px-4 py-4 min-w-max">
                       <p className="text-xl font-saira">Subtotal:</p>
-                      <p className="text-xl">{total} ADA</p>
+                      <p className="text-xl">{cart.subTotal} ADA</p>
                       <p className="text-gray-300 text-sm">+shipping 30 ADA</p>
                     </div>
                     <div className="flex flex-col px-4 py-4">
                       <button
-                        disabled={cartItems.length === 0}
+                        disabled={cart.cartItems.length === 0}
                         className={`font-quicksand border border-white text-white px-8 py-4 rounded-md m-4 mx-2 ${
-                          cartItems.length === 0 && "opacity-50 cursor-default"
+                          cart.cartItems.length === 0 &&
+                          "opacity-50 cursor-default"
                         }`}
                         onClick={() => {
                           setShowModal(true);
@@ -120,14 +110,9 @@ const GoatTribe = (props: Props) => {
                     </div>
                   </div>
                   <div className="flex flex-col w-full overflow-scroll scrollbar-hide">
-                    {cartItems.length !== 0 &&
-                      cartItems.map((item, i) => (
-                        <CartCard
-                          key={i}
-                          item={item}
-                          cartItems={cartItems}
-                          setCartItems={setCartItems}
-                        />
+                    {cart.cartItems.length !== 0 &&
+                      cart.cartItems.map((item, i) => (
+                        <CartCard key={i} item={item} />
                       ))}
                   </div>
                 </div>
@@ -137,23 +122,13 @@ const GoatTribe = (props: Props) => {
                 <MobileCart
                   setCartOpen={setCartOpen}
                   cartOpen={cartOpen}
-                  cartItems={cartItems}
-                  setCartItems={setCartItems}
-                  total={total}
                   setShowModal={setShowModal}
                 />
               )}
             </div>
           </div>
           {showModal && (
-            <CheckoutModal
-              setShowModal={setShowModal}
-              showModal={showModal}
-              cartItems={cartItems}
-              total={total}
-              setCartUuid={setCartUuid}
-              cartUuid={cartUuid}
-            />
+            <CheckoutModal setShowModal={setShowModal} showModal={showModal} />
           )}
         </GlobalContextProvider>
       )}
