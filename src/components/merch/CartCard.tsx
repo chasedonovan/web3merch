@@ -52,9 +52,14 @@ const CartCard = (props: Props) => {
     setQuantity(props.item.quantity);
   }, [props.item.quantity]);
 
+  
   const removeItem = () => {
-    const newCart = cart.cartItems.filter((item) => item.name !== props.item.name);
+    //remove only selected item from cart and avoid removing all items with same name
+    const newCart = cart.cartItems.filter(
+      (item) => item.name !== props.item.name || item.variant.size !== size || item.variant.variant_id !== props.item.variant.variant_id
+    );
     setCart({ ...cart, cartItems: newCart });
+
   };
 
   const handleSizeChange = (e: any) => {
