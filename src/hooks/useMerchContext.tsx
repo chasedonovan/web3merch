@@ -36,22 +36,39 @@ type CartItem = {
 
 type Cart = {
   cartUuid: string;
+  transactionId: string;
+  payToAddress: string;
   cartItems: CartItem[];
   subTotalPrice: number;
   shippingPrice: number;
   totalPrice: number;
 };
 
+type Address = {
+  firstName: string;
+  lastName: string;
+  streetAddress: string;
+  postalCode: string;
+  country: string;
+  state: string;
+  email: string;
+  phone: string;
+};
+
 type MerchContextProps = {
   products: Item[];
   cart: Cart;
   setCart: (cart: Cart) => void;
+  orderAddress: Address;
+  setAddress: (address: Address) => void;
 };
 
 const MerchContext = createContext<MerchContextProps>({
   products: [] as Item[],
   cart: {} as Cart,
   setCart: () => {},
+  orderAddress: {} as Address,
+  setAddress: () => {},
 });
 
 type ProviderProps = {} & PropsWithChildren;
@@ -59,10 +76,22 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
   const [products, setTheProducts] = useState<Item[]>([]);
   const [cart, setTheCart] = useState<Cart>({
     cartUuid: "",
+    transactionId: "",
+    payToAddress: "",
     cartItems: [],
     subTotalPrice: 0,
     shippingPrice: 0,
     totalPrice: 0,
+  });
+  const [orderAddress, setTheAddress] = useState<Address>({
+    firstName: "",
+    lastName: "",
+    streetAddress: "",
+    postalCode: "",
+    country: "",
+    state: "",
+    email: "",
+    phone: "",
   });
   const { isConnected } = useWalletContext();
 
@@ -72,6 +101,10 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
 
   const setCart = (cart: Cart) => {
     setTheCart(cart);
+  };
+
+  const setAddress = (address: Address) => {
+    setTheAddress(address);
   };
 
   useEffect(() => {
@@ -97,7 +130,9 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
   }, [cart.cartItems]);
 
   return (
-    <MerchContext.Provider value={{ products, cart, setCart }}>
+    <MerchContext.Provider
+      value={{ products, cart, setCart, orderAddress, setAddress }}
+    >
       {children}
     </MerchContext.Provider>
   );

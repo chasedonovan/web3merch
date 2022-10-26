@@ -30,7 +30,7 @@ type CheckoutForm = {
 };
 
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
-  const { cart, setCart } = useMerchContext();
+  const { cart, setCart, orderAddress, setAddress } = useMerchContext();
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -70,76 +70,102 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       body: JSON.stringify({
         cart: {
           uuid: cart.cartUuid,
-          price: cart.cartItems,
           stake_key: connectedWallet.stakeAddress,
           cartItems: cart.cartItems,
+          address: {
+            first_name: orderAddress.firstName,
+            last_name: orderAddress.lastName,
+            street_address: orderAddress.streetAddress,
+            postal_code: orderAddress.postalCode,
+            country: orderAddress.country,
+            state: orderAddress.state,
+            phone: orderAddress.phone,
+            email: orderAddress.email,
+          },
         },
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("TODO: data", data);
         setCart({
           ...cart,
+          payToAddress: data.pay_to_address,
+          transactionId: data.transaction_id,
           subTotalPrice: data.subtotal_price,
           shippingPrice: data.shipping_price,
           totalPrice: data.total_price,
           cartUuid: data.uuid,
         });
-        console.log("TODO: Update cart", cart);
       });
   }, []);
 
   const onSubmit = (data: CheckoutForm) => {
-    console.log(data);
+    console.log("submit address", data);
 
-    // const items = cartItems.reduce((acc, item) => {
-    //   return (
-    //     acc + `${item.name} x ${item.quantity} @ $${item.price} = $${
-    //       item.price * item.quantity
-    //     }, \n `
-    //   );
-    // }, "");
+    setAddress({
+      ...orderAddress,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      streetAddress: data.address,
+      postalCode: data.postalCode,
+      country: data.country,
+      email: data.email,
+      phone: "", //TODO (not required)
+      state: "", //TODO (not required)
+    });
 
-    // const items = cart.cartItems.reduce((acc, item) => {
-    //   return (
-    //     acc +
-    //     `<p>${item.name} x ${item.quantity} @ $${item.price} = $${
-    //       item.price * item.quantity
-    //     }</p> `
-    //   );
-    // }, "");
-
-    emailjs
-      .send(
-        `service_ra0p0dz`,
-        `template_5j3q9s6`,
-        {
-          // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
-          to_name: data.firstName + " " + data.lastName,
-          to_email: data.email,
-          from_name: "GoatTribe x Uniscroll",
-          address: data.address,
-          postal: data.postalCode,
+    fetch("/api/cart/address", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cart_uuid: cart.cartUuid,
+        stake_key: connectedWallet.stakeAddress,
+        address: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          street_address: data.address,
+          postal_code: data.postalCode,
           country: data.country,
-          // items: items,
-          subtotal: `${cart.subTotalPrice}`,
-          shipping: `${cart.shippingPrice}`,
-          total: `${cart.totalPrice}`,
-          date_time: new Date().toLocaleString(),
-          reply_to: data.email,
-          // }, `${process.env.EMAIL_PUBLIC_KEY}`)
+          state: "",
+          phone: "",
+          email: data.email,
         },
-        `nHKdN2eeVxPRtvKoF`
-      )
-      .then(
-        (result) => {
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
+      }),
+    }).then(() =>
+      //TODO: create transaction and move this to successful transaction
+      emailjs
+        .send(
+          `service_ra0p0dz`,
+          `template_5j3q9s6`,
+          {
+            // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
+            to_name: data.firstName + " " + data.lastName,
+            to_email: data.email,
+            from_name: "GoatTribe x Uniscroll",
+            address: data.address,
+            postal: data.postalCode,
+            country: data.country,
+            // items: items,
+            subtotal: `${cart.subTotalPrice / 1000000}`,
+            shipping: `${cart.shippingPrice / 1000000}`,
+            total: `${cart.totalPrice / 1000000}`,
+            date_time: new Date().toLocaleString(),
+            reply_to: data.email,
+            // }, `${process.env.EMAIL_PUBLIC_KEY}`)
+          },
+          `nHKdN2eeVxPRtvKoF`
+        )
+        .then(
+          (result) => {
+            console.log(result.text);
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        )
+    );
   };
 
   return (
@@ -268,6 +294,12 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             {...register("email")}
                           />
                         </div>
+                        <div className="font-bold font-quicksand text-black mt-2">
+                          Sub total: {cart.subTotalPrice / 1000000} ADA
+                        </div>
+                        <div className="font-quicksand text-black">
+                          +Shipping: {cart.shippingPrice / 1000000} ADA
+                        </div>
                         <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                           <button
                             type="button"
@@ -291,7 +323,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             type="submit"
                             className=" mt-3 inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                           >
-                            PAY {cart.subTotalPrice} ADA
+                            PAY {cart.totalPrice / 1000000} ADA
                           </button>
                         </div>
                       </form>
