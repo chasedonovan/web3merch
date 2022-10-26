@@ -218,7 +218,7 @@ export default function ItemDetailsModal({
                   </div>
                 </div>
 
-                <div className="w-full px-4 pb-3 flex flex-row justify-between gap-2 xl:hidden">
+                <div className="w-full px-4 pb-3 flex flex-row justify-between gap-2 xl:hidden min-w-[298px]">
                   <div className=" sm:w-2/3 self-center pb-4 ">
                     Description
                     <p className="max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400">
@@ -276,6 +276,7 @@ export default function ItemDetailsModal({
                               Quantity
                             </div>
                             <select
+                              disabled={item.variants[0].stock === 0}
                               autoFocus
                               className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm mb-2 lg:mr-2 self-center`}
                               value={quantity}
@@ -283,7 +284,7 @@ export default function ItemDetailsModal({
                                 setQuantity(parseInt(e.target.value))
                               }
                             >
-                              <>
+                              {/* <>
                                 {Array.from(
                                   {
                                     length: Math.min(
@@ -301,7 +302,28 @@ export default function ItemDetailsModal({
                                       : `${num}`}
                                   </option>
                                 ))}
-                              </>
+                              </> */}
+                              {item.variants[0].stock > 0 ? (
+                                <>
+                                  {Array.from(
+                                    {
+                                      length: Math.min(
+                                        item.variants[0].stock,
+                                        100
+                                      ),
+                                    },
+                                    (_, i) => i + 1
+                                  ).map((num) => (
+                                    <option key={num} value={num}>
+                                      {num === item.variants[0].stock
+                                        ? num + " left"
+                                        : `${num}`}
+                                    </option>
+                                  ))}
+                                </>
+                              ) : (
+                                <option value={0}>Out of stock</option>
+                              )}
                             </select>
                           </div>
                         )}
@@ -345,7 +367,11 @@ export default function ItemDetailsModal({
                         )}
                       </select>
                       <button
-                        disabled={err}
+                        disabled={
+                          err ||
+                          (item.variants[0].stock === 0 &&
+                            item.variants[0].size === "OneSize")
+                        }
                         type="submit"
                         className="border border-white mb-2 rounded-md self-end w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
                       >
@@ -458,6 +484,7 @@ export default function ItemDetailsModal({
                                   Quantity
                                 </div>
                                 <select
+                                  disabled={item.variants[0].stock === 0}
                                   autoFocus
                                   className={`pl-2 bg-[#0d0d0d] hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
                                   value={quantity}
@@ -465,25 +492,27 @@ export default function ItemDetailsModal({
                                     setQuantity(parseInt(e.target.value))
                                   }
                                 >
-                                  <>
-                                    {Array.from(
-                                      {
-                                        length: Math.min(
-                                          item.variants[0].stock,
-                                          10
-                                        ),
-                                      },
-                                      (_, i) => i + 1
-                                    ).map((num) => (
-                                      <option key={num} value={num}>
-                                        {item &&
-                                        item.variants &&
-                                        num === item.variants[0].stock
-                                          ? num + " left"
-                                          : `${num}`}
-                                      </option>
-                                    ))}
-                                  </>
+                                  {item.variants[0].stock > 0 ? (
+                                    <>
+                                      {Array.from(
+                                        {
+                                          length: Math.min(
+                                            item.variants[0].stock,
+                                            100
+                                          ),
+                                        },
+                                        (_, i) => i + 1
+                                      ).map((num) => (
+                                        <option key={num} value={num}>
+                                          {num === item.variants[0].stock
+                                            ? num + " left"
+                                            : `${num}`}
+                                        </option>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <option value={0}>Out of stock</option>
+                                  )}
                                 </select>
                               </div>
                             )}
@@ -529,7 +558,11 @@ export default function ItemDetailsModal({
                             )}
                           </select>
                           <button
-                            disabled={err}
+                            disabled={
+                              err ||
+                              (item.variants[0].stock === 0 &&
+                                item.variants[0].size === "OneSize")
+                            }
                             type="submit"
                             className="border border-white mb-2 rounded-md self-center w-max px-2 text-white py-2 disabled:opacity-50 font-quicksand"
                           >

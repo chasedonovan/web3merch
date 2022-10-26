@@ -26,11 +26,11 @@ export default async function handler(
       });
     }
     res.status(200).json(externalResponseData);
-    //res.status(200).json(merchItems);
+    // res.status(200).json(merchItems);
   } catch (e) {
-    res.status(500).send(merchItems);
-    console.log(merchItems);
+    // res.status(500).send(merchItems);
+    // console.log(merchItems);
 
-    // res.status(500).send({ error: e });
+    res.status(500).send({ error: e });
   }
 }

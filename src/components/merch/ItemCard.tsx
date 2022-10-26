@@ -166,14 +166,16 @@ const ItemCard = (props: Props) => {
           props.item.variants &&
           props.item.variants[0].size === "OneSize" && (
             <div className="flex flex-row">
-              <div className="pr-2 font-quicksand">Quantity</div>
+              <div className={`pr-2 font-quicksand ${props.item.variants[0].stock === 0 && 'hidden'}`}>Quantity</div>
               <select
+                disabled={props.item.variants[0].stock === 0}
                 autoFocus
                 className={`pl-2 bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value))}
               >
-                <>
+                {props.item.variants[0].stock > 0 ? (
+                  <>
                   {Array.from(
                     { length: Math.min(props.item.variants[0].stock, 100) },
                     (_, i) => i + 1
@@ -184,7 +186,10 @@ const ItemCard = (props: Props) => {
                         : `${num}`}
                     </option>
                   ))}
-                </>
+                  </>
+                ) : (
+                  <option value={0}>Out of stock</option>
+                )}
               </select>
             </div>
           )}
@@ -230,7 +235,7 @@ const ItemCard = (props: Props) => {
           )}
         </select>
         <button
-          disabled={errors.size ? true : false}
+          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize")}
           type="submit"
           className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 disabled:opacity-50 font-quicksand"
         >
