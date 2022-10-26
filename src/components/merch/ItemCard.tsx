@@ -116,6 +116,8 @@ const ItemCard = (props: Props) => {
         name: props.item.name,
         variant: variant,
         quantity: quantity,
+        price: props.item.price,
+        variant_id: variant ? variant.variant_id : "",
       };
       setCart({
         ...cart,

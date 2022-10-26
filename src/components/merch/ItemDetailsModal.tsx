@@ -81,6 +81,8 @@ export default function ItemDetailsModal({
           name: item.name,
           variant: variant,
           quantity: quantity,
+          price: item.price,
+          variant_id: variant ? variant.variant_id : "",
         };
         setCart({
           ...cart,

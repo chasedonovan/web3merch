@@ -91,7 +91,7 @@ const GoatTribe = (props: Props) => {
                   <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                     <div className="flex flex-col px-4 py-4 min-w-max">
                       <p className="text-xl font-saira">Subtotal:</p>
-                      <p className="text-xl">{cart.subTotal} ADA</p>
+                      <p className="text-xl">{cart.subTotal / 1000000} ADA</p>
                       <p className="text-gray-300 text-sm">+shipping 30 ADA</p>
                     </div>
                     <div className="flex flex-col px-4 py-4">

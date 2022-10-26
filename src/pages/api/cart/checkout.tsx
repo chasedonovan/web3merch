@@ -12,22 +12,22 @@ export default async function handler(
   res: NextApiResponse<unknown>
 ) {
   try {
-    const cart = req.body.cart;
-    const info = req.body.info;
+    const transaction_id = req.body.transaction_id;
+    const cart_uuid = req.body.cart_uuid;
     const externalResponse = await fetch(
-      `${process.env.API_URL}/merch/cart/checkout`,
+      `${process.env.API_URL}/merch/cart/checkout/${cart_uuid}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
           "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify({ cart, info }),
+        body: JSON.stringify({ transaction_id: transaction_id }),
       }
     );
-
-    // res.status(200).send(externalResponse);
-    res.status(200).send({ cart, info });
+    const externalResponseData = await externalResponse.json();
+    console.log("checkout", externalResponseData);
+    res.status(200).json(externalResponseData);
   } catch (e) {
     res.status(500).send({ error: e });
   }

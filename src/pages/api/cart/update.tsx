@@ -24,9 +24,9 @@ export default async function handler(
         body: JSON.stringify(cart),
       }
     );
-
-    res.status(200).send(externalResponse);
-    //res.status(200).send(cart);
+    const externalResponseData = await externalResponse.json();
+    console.log("update cart", externalResponseData);
+    res.status(200).json(externalResponseData);
   } catch (e) {
     res.status(500).send({ error: e });
   }

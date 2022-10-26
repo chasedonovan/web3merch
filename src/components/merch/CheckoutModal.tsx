@@ -29,10 +29,7 @@ type CheckoutForm = {
   email: string;
 };
 
-export default function CheckoutModal({
-  showModal,
-  setShowModal,
-}: Props) {
+export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const { cart, setCart } = useMerchContext();
   const [total, setTotal] = useState(0);
   const cancelButtonRef = useRef(null);
@@ -75,24 +72,17 @@ export default function CheckoutModal({
         cart: {
           uuid: cart.cartUuid,
           price: cart.cartItems,
-          shipping: 30,
           stake_key: connectedWallet.stakeAddress,
-          //TODO: get proper cartitems
-          cartItems: [
-            { variant_id: 5, quantity: 2, price: 75 },
-            { variant_id: 6, quantity: 1, price: 75 },
-          ],
+          cartItems: cart.cartItems,
         },
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        //TODO: handle response from cart
-        // setCart({...cart, cartUuid: data.uuid, subTotal: data.subTotal});
-        setCart({...cart, subTotal: cart.subTotal});
-        
-        setTotal(data.price + data.shipping_price)
-        console.log("Update cart", data);
+        console.log("TODO: data", data);
+        setCart({ ...cart, subTotal: data.price, cartUuid: data.uuid });
+        setTotal(data.price + data.shipping_price);
+        console.log("TODO: Update cart", cart);
       });
   }, []);
 
