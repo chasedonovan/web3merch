@@ -96,10 +96,8 @@ export default function MobileCart({
                         <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                           <div className="flex flex-col py-4">
                             <p className="text-xl font-saira">Subtotal:</p>
-                            <p className="text-xl">{cart.subTotal} ADA</p>
-                            <p className="text-gray-300 text-sm">
-                              +shipping (30 ADA)
-                            </p>
+                            <p className="text-xl">{cart.subTotalPrice} ADA</p>
+                            <p className="text-gray-300 text-sm">+shipping</p>
                           </div>
                           <div className="flex flex-col pl-4 py-4">
                             <button
@@ -119,10 +117,7 @@ export default function MobileCart({
 
                         <div className="flex flex-col w-full overflow-scroll scrollbar-hide h-full">
                           {cart.cartItems.map((item, i) => (
-                            <CartCard
-                              key={i}
-                              item={item}
-                            />
+                            <CartCard key={i} item={item} />
                           ))}
                         </div>
                       </div>

@@ -37,7 +37,9 @@ type CartItem = {
 type Cart = {
   cartUuid: string;
   cartItems: CartItem[];
-  subTotal: number;
+  subTotalPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
 };
 
 type MerchContextProps = {
@@ -58,7 +60,9 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
   const [cart, setTheCart] = useState<Cart>({
     cartUuid: "",
     cartItems: [],
-    subTotal: 0,
+    subTotalPrice: 0,
+    shippingPrice: 0,
+    totalPrice: 0,
   });
   const { isConnected } = useWalletContext();
 
@@ -89,7 +93,7 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
         subTotal += product.price * item.quantity;
       }
     });
-    setCart({ ...cart, subTotal });
+    setCart({ ...cart, subTotalPrice: subTotal });
   }, [cart.cartItems]);
 
   return (

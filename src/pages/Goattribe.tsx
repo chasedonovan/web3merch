@@ -41,17 +41,6 @@ const GoatTribe = (props: Props) => {
       count += item.quantity;
     });
     setCartCount(count);
-
-    //find sum of each item by matching w product and set subtotal in cart
-    // let subTotal = 0;
-    // cart.cartItems.forEach((item) => {
-    //   const product = products.find((product) => product.name === item.name);
-    //   if (product) {
-    //     subTotal += (product.price * item.quantity) / 1000000;
-    //   }
-    // });
-    // setCart({ ...cart, subTotal });
-    // console.log(cart);
   }, [cart.cartItems]);
 
   useEffect(() => {
@@ -91,7 +80,9 @@ const GoatTribe = (props: Props) => {
                   <div className="w-full flex flex-row justify-between items-center border-b border-[#2C2D33]/50">
                     <div className="flex flex-col px-4 py-4 min-w-max">
                       <p className="text-xl font-saira">Subtotal:</p>
-                      <p className="text-xl">{cart.subTotal / 1000000} ADA</p>
+                      <p className="text-xl">
+                        {cart.subTotalPrice / 1000000} ADA
+                      </p>
                       <p className="text-gray-300 text-sm">+shipping 30 ADA</p>
                     </div>
                     <div className="flex flex-col px-4 py-4">

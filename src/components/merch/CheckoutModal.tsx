@@ -31,7 +31,6 @@ type CheckoutForm = {
 
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const { cart, setCart } = useMerchContext();
-  const [total, setTotal] = useState(0);
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -80,8 +79,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       .then((res) => res.json())
       .then((data) => {
         console.log("TODO: data", data);
-        setCart({ ...cart, subTotal: data.price, cartUuid: data.uuid });
-        setTotal(data.price + data.shipping_price);
+        setCart({
+          ...cart,
+          subTotalPrice: data.subtotal_price,
+          shippingPrice: data.shipping_price,
+          totalPrice: data.total_price,
+          cartUuid: data.uuid,
+        });
         console.log("TODO: Update cart", cart);
       });
   }, []);
@@ -119,9 +123,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           postal: data.postalCode,
           country: data.country,
           // items: items,
-          subtotal: `${cart.subTotal}`,
-          shipping: `30`,
-          total: `${total}`,
+          subtotal: `${cart.subTotalPrice}`,
+          shipping: `${cart.shippingPrice}`,
+          total: `${cart.totalPrice}`,
           date_time: new Date().toLocaleString(),
           reply_to: data.email,
           // }, `${process.env.EMAIL_PUBLIC_KEY}`)
@@ -287,8 +291,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             type="submit"
                             className=" mt-3 inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                           >
-                            {/* PAY {subTotal + 30} ADA */}
-                            PAY {cart.subTotal + 30} ADA
+                            PAY {cart.subTotalPrice} ADA
                           </button>
                         </div>
                       </form>
