@@ -36,18 +36,19 @@ const ItemCard = (props: Props) => {
   const { cart, setCart } = useMerchContext();
   const [showDetails, setShowDetails] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
-  const [oos, setOos] = React.useState(false);
   const validationSchema = Yup.object().shape({
     size: Yup.string().required("Size is required"),
   });
   const {
     register,
+    watch,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: yupResolver(validationSchema),
   });
+  const size = watch("size", "default");
 
   useEffect(() => {
     if (
@@ -61,16 +62,6 @@ const ItemCard = (props: Props) => {
 
   const onSubmit = (data: IFormInput) => {
     // console.log(data);
-    //set oos to true is stock is 0 for selected size
-    const variant = props.item.variants.find(
-      (v) => v.size === data.size
-    ) as Variant;
-    if (variant.stock === 0) {
-      setOos(true);
-      return;
-    } else {
-      setOos(false);
-    }
 
     const itemInCart = cart.cartItems.find(
       (item) => item.variant.size === data.size && item.name === props.item.name
@@ -140,6 +131,7 @@ const ItemCard = (props: Props) => {
     }
     setQuantity(1);
   };
+
 
   return (
     <div className="w-max h-max flex flex-col hover:scale-105 ease-in duration-300 mb-2 max-w-64 sm:min-w-[386px] ">
@@ -220,9 +212,7 @@ const ItemCard = (props: Props) => {
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
-          onChange={(e) => {
-            setOos(false);
-          }}
+
           defaultValue=""
         >
           {props.item &&
@@ -250,9 +240,9 @@ const ItemCard = (props: Props) => {
         </select>
        {/* If the item is out of stock at selected size, disable the button */}
         <button
-          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize") || oos}
+          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize") || props.item.variants.find((variant) => variant.size === size)?.stock === 0}
           type="submit"
-          className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 disabled:opacity-50 font-quicksand"
+          className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 px-1 min-w-max disabled:opacity-50 font-quicksand"
         >
           Add to cart
         </button>

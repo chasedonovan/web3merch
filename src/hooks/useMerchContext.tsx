@@ -124,7 +124,7 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
           setProducts(data);
         });
     }
-    }, 120000);
+    }, 60000);
     return () => clearInterval(interval);
 
   }, [isConnected]);

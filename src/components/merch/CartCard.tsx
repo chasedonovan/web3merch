@@ -98,27 +98,28 @@ const CartCard = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-row gap-2 w-full min-w-min justify-between py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33]/50 ">
+    <div className={`relative flex flex-col w-full py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33]/50 ${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && ' border-red-900'}`}>
+        {
+            //find matching product and if out of stock, render out of stock
+            product?.name === props.item.name &&
+              product?.variants.find((variant: any) => variant.size === size)
+                .stock === 0 && (
+                <p className=" top-1 self-center text-center text-xs md:text-sm pb-1 text-[#FF0000] min-w-max">
+                  Out of stock, please remove{product.variants.length > 1 && (<> or change item size</>)}.
+                </p>
+              )
+          }
+    <div className="flex flex-row gap-2 w-full min-w-min justify-between ">
       <div className="flex flex-row items-center gap-2 md:gap-6">
         <div className="flex flex-col items-center min-w-max">
           <img
             src={product?.image}
             alt="item"
-            className="w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm"
+            className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'opacity-50'} w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm`}
           />
         </div>
         <div className="flex flex-col font-quicksand justify-start">
-          {
-            //find matching product and if out of stock, render out of stock
-            product?.name === props.item.name &&
-              product?.variants.find((variant: any) => variant.size === size)
-                .stock === 0 && (
-                <p className="text-xs md:text-sm font-bold text-[#FF0000]">
-                  Out of stock, please remove {product.variants.length > 1 && (<> <br/>or change item size</>)}.
-                </p>
-              )
-          }
-          <p className=" mb-2 max-w-[164px] 2xl:max-w-[212px]">
+          <p className={`${product?.name === props.item.name && product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'text-gray-500'} mb-2 max-w-[164px] 2xl:max-w-[212px]`}>
             {props.item.name}
           </p>
           <div className="flex flex-col">
@@ -184,13 +185,13 @@ const CartCard = (props: Props) => {
       <div className="flex flex-col justify-between text-right ml-4 2xl:ml-12 font-quicksand pt-3 min-w-max">
         <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
           {product.original_price !== product.price ? (
-            <p className="self-end text-right text-gray-200 line-through opacity-75">
+            <p className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'text-gray-500'} self-end text-right text-gray-200 line-through opacity-75`}>
               {product.original_price / 1000000} ₳
             </p>
           ) : (
             ""
           )}
-          <p className="self-end text-right text-gray-200 ">
+          <p className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'text-gray-500'} self-end text-right text-gray-200 `}>
             {product.price / 1000000} ₳
           </p>
         </div>
@@ -210,6 +211,7 @@ const CartCard = (props: Props) => {
           />
         </svg>
       </div>
+    </div>
     </div>
   );
 };

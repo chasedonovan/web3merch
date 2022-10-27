@@ -33,7 +33,8 @@ const GoatTribe = (props: Props) => {
   const [showCart, setShowCart] = React.useState(false);
   const [cartCount, setCartCount] = React.useState(0);
   const productSection = useRef<null | HTMLDivElement>(null);
-  const { products, cart, setCart } = useMerchContext();
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const { products, cart } = useMerchContext();
 
   useEffect(() => {
     let count = 0;
@@ -44,10 +45,16 @@ const GoatTribe = (props: Props) => {
   }, [cart.cartItems]);
 
   useEffect(() => {
+    if (isConnected && products && !isLoaded) {
+      setIsLoaded(true);
+    }
+  }, [products]);
+
+  useEffect(() => {
     if (products.length > 0 && productSection.current) {
       productSection.current.scrollIntoView();
     }
-  }, [products]);
+  }, [isLoaded]);
 
   return (
     <div className="w-full h-full flex flex-col overflow-scroll scrollbar-hide min-h-max">
