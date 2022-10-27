@@ -6,11 +6,11 @@ import AlertModal from "./../AlertModal";
 import NoGoatsAlertModal from "./NoGoatAlertModal";
 
 const walletList = [
-  { name: "Nami", icon: "/nami.svg", displayName: "Nami" },
   { name: "eternl", icon: "/eternl.png", displayName: "Eternl" },
-  // { name: "Typhon Wallet", icon: "/typhon-light.svg", displayName: "Typhon" },
-  // { name: "Flint Wallet", icon: "/flint.svg", displayName: "Flint" },
-  // { name: "Gero", icon: "/gero.svg", displayName: "Gero" },
+  { name: "Flint Wallet", icon: "/flint.svg", displayName: "Flint" },
+  { name: "Nami", icon: "/nami.svg", displayName: "Nami" },
+  //{ name: "Typhon Wallet", icon: "/typhon.svg", displayName: "Typhon" },
+  //{ name: "Gero", icon: "/gero.svg", displayName: "Gero" },
   // { name: "Nufi", icon: "/nufi.svg", displayName: "Nufi" },
 ];
 
@@ -176,8 +176,8 @@ export const MerchConnectBtn: FunctionComponent = () => {
     }
     setLoading(false);
     setShowModal(true);
-    setModalMessage("No wallet found. Please enable a wallet and try again.");
-    console.log("Error: no wallet found");
+    setModalMessage("Please enable your wallet and try again.");
+    console.log("Error: wallet not found");
     // }, 1000);
   };
 

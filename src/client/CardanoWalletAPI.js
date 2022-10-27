@@ -7,6 +7,7 @@ class CardanoWalletAPI {
   async getEnabledWallets(){
       // console.log("getEnabledWallets:", window.cardano);
       let enabledWallets = [];
+      console.log(window.cardano);
       const nami = await window.cardano?.nami;
       const eternl = await window.cardano?.eternl;
       const typhon = await window.cardano?.typhon;
@@ -69,36 +70,36 @@ class CardanoWalletAPI {
   //added get getStakeAdress if usedAddresses is undefined
   async getAddress(walletProviderApi){
     const cardano = await CardanoLoader.Cardano();
-    const address = (await walletProviderApi.getUsedAddresses())[0];
-    // console.log("Address: " + address);
-    if (address && address !== undefined) {
-    return cardano.Address.from_bytes(
-      Buffer.from( address, "hex")
-    ).to_bech32() }
-
-//if undefined it runs this
-    if (address === undefined) {
-      console.log("Address is undefined, using stake");
-//try catch implemented but commented out (awaiting review)
-    // try {
-      const raw = await walletProviderApi.getRewardAddresses();
-      const rawFirst = raw[0];
-      const rewardAddress = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
-      // console.log("getRewardAddresses", rewardAddress);
-      return rewardAddress;
-    // } catch (err) {
-    //   console.log(err)
-    // }  
+    try{
+      const address = (await walletProviderApi.getUsedAddresses())[0];
+      // console.log("Address: " + address);
+      if (address && address !== undefined) {
+        return cardano.Address.from_bytes(
+          Buffer.from( address, "hex")
+        ).to_bech32();
+      }
+    }catch(e){
+      console.warn("getUsedAddresses not found");
     }
+
+    try {
+        return this.getRewardAddresses(walletProviderApi);
+      } catch (err) {
+        console.log(err);
+    }  
   }
 
   async getBalance(walletProviderApi){
     const cardano = await CardanoLoader.Cardano();
+    try{
     const balanceResponse = (await walletProviderApi.getBalance());
     const balance = cardano.Value.from_bytes(Buffer.from(balanceResponse, 'hex'));
     const lovelaces = balance.coin().to_str();
     if (lovelaces) {
       return lovelaces/1000000;
+    }
+    }catch(e){
+      console.warn("Balance not found");
     }
     return 0;
   }
@@ -193,6 +194,15 @@ class CardanoWalletAPI {
 
   async private_enableWallet(provider){
     try{
+      const isEnabledResponse = await provider.isEnabled();
+
+      if(isEnabledResponse){
+        console.log(isEnabledResponse.data)
+        if (isEnabledResponse.data == true){
+          return provider; //Typhon
+        }
+      }
+
       const providerapi = await provider.enable();
       return providerapi;
     }catch(e){
@@ -204,10 +214,16 @@ class CardanoWalletAPI {
 
     try {
       const cardano = await CardanoLoader.Cardano();
-      const raw = await walletProviderApi.getRewardAddresses();
-      const rawFirst = raw[0];
-      const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
-      return rewardAddressHex;
+      if(walletProviderApi.getRewardAddresses === "function"){
+        const raw = await walletProviderApi.getRewardAddresses();
+        const rawFirst = raw[0];
+        const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
+        return rewardAddressHex;
+      }
+      else if(walletProviderApi.getRewardAddress === "function"){
+        const raw = await walletProviderApi.getRewardAddress();
+        return raw.data;
+      }
     } catch (err) {
       console.log(err)
     }

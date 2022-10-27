@@ -23,7 +23,6 @@ export default async function handler(
     res.status(200).json(false);
   } catch (e) {
     //change to false to see modal
-    res.status(500).send(true);
-    // res.status(500).send({ error: false });
+    res.status(500).send(false);
   }
 }
