@@ -15,14 +15,17 @@ export default async function handler(
     const transaction_id = req.body.transaction_id;
     const cart_uuid = req.body.cart_uuid;
     const externalResponse = await fetch(
-      `${process.env.API_URL}/merch/cart/checkout/${cart_uuid}`,
+      `${process.env.API_URL}/merch/cart/checkout`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
           "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify({ transaction_id: transaction_id }),
+        body: JSON.stringify({
+          transaction_id: transaction_id,
+          cart_uuid: cart_uuid,
+        }),
       }
     );
     const externalResponseData = await externalResponse.json();

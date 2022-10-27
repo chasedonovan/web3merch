@@ -206,7 +206,7 @@ class CardanoWalletAPI {
       const cardano = await CardanoLoader.Cardano();
       const raw = await walletProviderApi.getRewardAddresses();
       const rawFirst = raw[0];
-      const rewardAddressHex = cardano.Address.from_bech32(Buffer.from(rawFirst, "hex")).to_bech32()
+      const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
       return rewardAddressHex;
     } catch (err) {
       console.log(err)
