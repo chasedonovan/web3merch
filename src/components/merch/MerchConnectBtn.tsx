@@ -389,7 +389,7 @@ export const MerchConnectBtn: FunctionComponent = () => {
         <div className="flex w-full">
           <p>
             No wallets found, please enable your wallet. Currently supported
-            wallets are: Nami, Eternl, Typhon, Flint, Gero and Card.
+            wallets are: Nami, Eternl, Flint and Gero
           </p>
         </div>
       )}

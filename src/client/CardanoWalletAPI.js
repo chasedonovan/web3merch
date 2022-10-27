@@ -5,16 +5,13 @@ import CardanoLoader from './CardanoLoader';
 class CardanoWalletAPI {
 
   async getEnabledWallets(){
-      // console.log("getEnabledWallets:", window.cardano);
       let enabledWallets = [];
-      console.log(window.cardano);
       const nami = await window.cardano?.nami;
       const eternl = await window.cardano?.eternl;
       const typhon = await window.cardano?.typhon;
-      const gero = await window.cardano?.gero;
+      const gero = await window.cardano?.gerowallet;
       const flint = await window.cardano?.flint;
       const nufi = await window.cardano?.nufi;
-
 
       if(nami){
         enabledWallets.push( { name: nami.name, icon: nami.icon, provider: nami } )
