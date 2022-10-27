@@ -7,25 +7,20 @@ export default async function handler(
   try {
     const stakeAddress = req.body.stakeAddress;
     const externalResponse = await fetch(
-      `${process.env.API_URL}/merch/goatCheck/${stakeAddress}`,
+      `${process.env.API_URL}/token_gate/${stakeAddress}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
           "Content-Type": "application/json",
-          "cache-control": "max-age=10, s-maxage=30, stale-while-revalidate=59",
         },
         method: "GET",
       }
     );
     let externalResponseData = await externalResponse.json();
     if (externalResponseData) {
-      //fix images as json string
-      externalResponseData.forEach((elem: { images: string }) => {
-        elem.images = JSON.parse(elem.images);
-      });
+      if (externalResponseData.gate_access == true) res.status(200).json(true);
     }
-    // res.status(200).json(externalResponseData);
-    res.status(200).json(true);
+    res.status(200).json(false);
   } catch (e) {
     //change to false to see modal
     res.status(500).send(true);
