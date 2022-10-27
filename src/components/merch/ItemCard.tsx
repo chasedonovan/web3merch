@@ -41,12 +41,14 @@ const ItemCard = (props: Props) => {
   });
   const {
     register,
+    watch,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: yupResolver(validationSchema),
   });
+  const size = watch("size", "default");
 
   useEffect(() => {
     if (
@@ -130,6 +132,7 @@ const ItemCard = (props: Props) => {
     setQuantity(1);
   };
 
+
   return (
     <div className="w-max h-max flex flex-col hover:scale-105 ease-in duration-300 mb-2 max-w-64 sm:min-w-[386px] ">
       <img
@@ -209,6 +212,7 @@ const ItemCard = (props: Props) => {
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
+
           defaultValue=""
         >
           {props.item &&
@@ -228,16 +232,17 @@ const ItemCard = (props: Props) => {
                     value={variant.size}
                     disabled={variant.stock === 0}
                   >
-                    {variant.size} {variant.stock === 0 && "sold out"}
+                    {variant.size} {variant.stock === 0 && "(sold out)"}
                   </option>
                 ))}
             </>
           )}
         </select>
+       {/* If the item is out of stock at selected size, disable the button */}
         <button
-          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize")}
+          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize") || props.item.variants.find((variant) => variant.size === size)?.stock === 0}
           type="submit"
-          className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 disabled:opacity-50 font-quicksand"
+          className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 px-1 min-w-max disabled:opacity-50 font-quicksand"
         >
           Add to cart
         </button>

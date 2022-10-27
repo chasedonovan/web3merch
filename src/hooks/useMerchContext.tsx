@@ -108,6 +108,7 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
   };
 
   useEffect(() => {
+    //get products from backend every 2 minutes
     if (isConnected) {
       fetch("/api/products")
         .then((res) => res.json())
@@ -115,6 +116,17 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
           setProducts(data);
         });
     }
+    const interval = setInterval(() => {
+    if (isConnected) {
+      fetch("/api/products")
+        .then((res) => res.json())
+        .then((data) => {
+          setProducts(data);
+        });
+    }
+    }, 60000);
+    return () => clearInterval(interval);
+
   }, [isConnected]);
 
   //set subTotal when cartItems changes

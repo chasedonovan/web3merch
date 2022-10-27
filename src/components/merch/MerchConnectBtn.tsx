@@ -68,19 +68,61 @@ export const MerchConnectBtn: FunctionComponent = () => {
           const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
             providerapi
           );
+          try {
+            //post to goatcheck api with stake address to see if they have goats
+            const res = await fetch("/api/goatcheck", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ stakeAddress: stakeAddress }),
+            });
 
-          setConnectedWallet({
-            name: matchingWallet.name,
-            icon: matchingWallet.icon,
-            provider: matchingWallet.provider,
-            providerapi: providerapi,
-            balance: walletBalance,
-            address: walletAddress,
-            stakeAddress: stakeAddress,
-          } as WalletInfo);
-          setConnected(true);
-          setLoading(false);
-          return;
+            const data = await res.json();
+            console.log(data);
+            if (data === true) {
+              setConnectedWallet({
+                name: matchingWallet.name,
+                icon: matchingWallet.icon,
+                provider: matchingWallet.provider,
+                providerapi: providerapi,
+                balance: walletBalance,
+                address: walletAddress,
+                stakeAddress: stakeAddress,
+              } as WalletInfo);
+              setConnected(true);
+              setLoading(false);
+              return;
+            } else if (data === false) {
+              setNoGoats(true);
+              setLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.log(error);
+            // if (error === true) {
+            //   setConnectedWallet({
+            //     name: matchingWallet.name,
+            //     icon: matchingWallet.icon,
+            //     provider: matchingWallet.provider,
+            //     providerapi: providerapi,
+            //     balance: walletBalance,
+            //     address: walletAddress,
+            //     stakeAddress: stakeAddress,
+            //   } as WalletInfo);
+            //   setConnected(true);
+            //   setLoading(false);
+            //   return;
+            // } else {
+            //   setNoGoats(true);
+            //   setLoading(false);
+            //   return;
+            // }
+            setShowModal(true);
+            setModalMessage("Error connecting to wallet");
+            setLoading(false);
+            return;
+          }
 
           // let walletSignature;
           // if (name === "Nami") {

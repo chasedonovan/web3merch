@@ -1,14 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import Error from "next/error";
-import { merchItems } from "../../data/merchItems.js";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   try {
+    const stakeAddress = req.body.stakeAddress;
     const externalResponse = await fetch(
-      `${process.env.API_URL}/merch/products`,
+      `${process.env.API_URL}/merch/goatCheck/${stakeAddress}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
@@ -25,10 +24,11 @@ export default async function handler(
         elem.images = JSON.parse(elem.images);
       });
     }
-    res.status(200).json(externalResponseData);
-    // res.status(200).json(merchItems);
+    // res.status(200).json(externalResponseData);
+    res.status(200).json(true);
   } catch (e) {
-    // res.status(200).send(merchItems);
-    res.status(500).send({ error: e });
+    //change to false to see modal
+    res.status(500).send(true);
+    // res.status(500).send({ error: false });
   }
 }
