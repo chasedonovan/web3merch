@@ -17,12 +17,14 @@ export default async function handler(
       }
     );
     let externalResponseData = await externalResponse.json();
+    console.log(externalResponseData);
     if (externalResponseData) {
+      //success
       if (externalResponseData.gate_access == true) res.status(200).json(true);
     }
     res.status(200).json(false);
   } catch (e) {
-    //change to false to see modal
+    console.log("TokenGate", e);
     res.status(500).send(false);
   }
 }

@@ -208,19 +208,12 @@ class CardanoWalletAPI {
   }
 
   async getRewardAddresses (walletProviderApi) {
-
     try {
       const cardano = await CardanoLoader.Cardano();
-      if(walletProviderApi.getRewardAddresses === "function"){
-        const raw = await walletProviderApi.getRewardAddresses();
-        const rawFirst = raw[0];
-        const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
-        return rewardAddressHex;
-      }
-      else if(walletProviderApi.getRewardAddress === "function"){
-        const raw = await walletProviderApi.getRewardAddress();
-        return raw.data;
-      }
+      const raw = await walletProviderApi.getRewardAddresses();
+      const rawFirst = raw[0];
+      const rewardAddressHex = cardano.Address.from_bytes(Buffer.from(rawFirst, "hex")).to_bech32()
+      return rewardAddressHex;
     } catch (err) {
       console.log(err)
     }

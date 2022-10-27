@@ -68,6 +68,7 @@ export const MerchConnectBtn: FunctionComponent = () => {
           const stakeAddress = await CardanoWalletAPI.getRewardAddresses(
             providerapi
           );
+          console.log(walletAddress, walletBalance, stakeAddress);
           try {
             //post to goatcheck api with stake address to see if they have goats
             const res = await fetch("/api/goatcheck", {
