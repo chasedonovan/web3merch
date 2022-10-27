@@ -81,7 +81,7 @@ export const MerchConnectBtn: FunctionComponent = () => {
 
             const data = await res.json();
             console.log(data);
-            if (data === true) {
+            if (data && data.allow_access === true) {
               setConnectedWallet({
                 name: matchingWallet.name,
                 icon: matchingWallet.icon,
