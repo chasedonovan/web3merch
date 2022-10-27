@@ -20,7 +20,9 @@ export default async function handler(
     console.log(externalResponseData);
     if (externalResponseData) {
       //success
-      if (externalResponseData.gate_access == true) res.status(200).json(true);
+      if (externalResponseData.gate_access == true) {
+        res.status(200).json(true);
+      }
     }
     res.status(200).json(false);
   } catch (e) {
