@@ -16,17 +16,23 @@ export default async function handler(
         method: "GET",
       }
     );
-    const externalResponseData = await externalResponse.json();
-    console.log(externalResponseData);
-    if (externalResponseData) {
-      //success
-      if (
-        externalResponseData.gate_access &&
-        externalResponseData.gate_access === true
-      ) {
-        return res.status(200).json({ allow_access: true });
+
+    console.log("TokenGate data", externalResponse);
+    try {
+      const externalResponseData = await externalResponse.json();
+      if (externalResponseData) {
+        //success
+        if (
+          externalResponseData.gate_access &&
+          externalResponseData.gate_access === true
+        ) {
+          return res.status(200).json({ allow_access: true });
+        }
       }
+    } catch (e) {
+      console.error("TokenGate response", e);
     }
+
     return res.status(200).json({ allow_access: false });
   } catch (e) {
     console.log("TokenGate", e);
