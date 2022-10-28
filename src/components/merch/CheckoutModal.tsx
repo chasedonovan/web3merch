@@ -92,6 +92,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     })
       .then((res) => res.json())
       .then((data) => {
+        if (data.status === "success") {
         setCart({
           ...cart,
           payToAddress: data.pay_to_address,
@@ -101,6 +102,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           totalPrice: data.total_price,
           cartUuid: data.uuid,
         });
+      } else {
+        console.log("error", data);
+      }
       });
   }, []);
 
@@ -359,21 +363,30 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             {...register("email")}
                           />
                         </div>
+                          
+                        {cart.subTotalPrice && cart.shippingPrice ? (
+                          <>
                         <div className="font-bold font-quicksand text-black mt-2">
-                          Sub total: {cart.subTotalPrice / 1000000} ADA
+                          Sub total: {cart.subTotalPrice ? (cart.subTotalPrice / 1000000 + " ADA") : ("")} 
                         </div>
                         <div className="font-quicksand text-black">
-                          +Shipping: {cart.shippingPrice / 1000000} ADA
+                          +Shipping: {cart.shippingPrice ? (cart.shippingPrice / 1000000 + " ADA") : (""
+                          )} 
                         </div>
+                        </>
+                        ) : (
+                          ""
+                        )}
                         <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                           <button
                             type="button"
-                            className=" mt-3 inline-flex min-w-max justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm "
+                            className="self-center mt-3 flex flex-col max-h-[42px] min-w-max justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm "
                             onClick={() => setShowModal(false)}
                             ref={cancelButtonRef}
                           >
                             Go Back
                           </button>
+                          {cart.subTotalPrice && cart.shippingPrice ? (
                           <button
                             disabled={
                               errors.address ||
@@ -386,10 +399,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 : false
                             }
                             type="submit"
-                            className=" mt-3 inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
+                            className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                           >
-                            PAY {cart.totalPrice / 1000000} ADA
-                          </button>
+                            {!cart.totalPrice ? (<img src='/loadingblack.gif' className="relative -top-5 h-[64px] "/> ) : (`PAY ${cart.totalPrice / 1000000} ADA`)}
+                          </button>) : (
+                            <img src={'/cardanocoin.gif'} alt="loading" className="w-16 h-16 mx-auto my-4" />
+                          )
+                          }
                         </div>
                       </form>
                     </div>
