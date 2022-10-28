@@ -36,6 +36,7 @@ type CheckoutForm = {
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const { products, cart, setCart, orderAddress, setAddress } =
     useMerchContext();
+  const [errMsg, setErrMsg] = useState("");
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -107,6 +108,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             cartUuid: data.uuid,
           });
         } else {
+          setErrMsg(data.detail);
           console.log("error", data);
         }
       });
@@ -272,7 +274,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className=" min-h-min relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border- max-w-screen">
+              <Dialog.Panel className={`${errMsg && 'bg-red-100 border border-red-400'} min-h-min relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border  max-w-screen`}>
                 <div className="sm:flex items-center justify-center">
                   <div className="mt-3 text-center">
                     <Dialog.Title
@@ -283,6 +285,12 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                     </Dialog.Title>
                     <div className="mt-2 px-6">
                       <form onSubmit={handleSubmit(onSubmit)}>
+                      {errMsg ? (
+                        <div className=" text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                          <span className="block sm:inline">{errMsg}</span>
+                        </div>
+                      ) : (
+                      <>
                         <div className="flex flex-col sm:flex-row my-2 justify-between mb-0 gap-2 w-full ">
                           <TextField
                             color="secondary"
@@ -393,6 +401,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             {...register("phone")}
                           />
                         </div>
+                        </>
+                        )}
 
                         {cart.subTotalPrice && cart.shippingPrice ? (
                           <>
@@ -449,7 +459,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <img
                               src={"/cardanocoin.gif"}
                               alt="loading"
-                              className="w-16 h-16 mx-auto my-4"
+                              className={`w-16 h-16 mx-auto my-4 ${errMsg && "hidden"}`}
                             />
                           )}
                         </div>
