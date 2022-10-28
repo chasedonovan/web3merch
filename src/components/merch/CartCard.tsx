@@ -112,7 +112,7 @@ const CartCard = (props: Props) => {
         <div className="flex flex-col items-center min-w-max">
           <img
             src={product?.image}
-            alt="item"
+            alt=""
             className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'opacity-50'} w-16 h-16 md:h-24 md:w-24 object-cover rounded-sm`}
           />
         </div>

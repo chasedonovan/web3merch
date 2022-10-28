@@ -160,13 +160,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
               item.quantity * item.price
             }`;
           });
-
           emailjs
             .send(
-              `service_ra0p0dz`,
-              `template_5j3q9s6`,
+              `${process.env.EMAIL_KEY}`,
+              `${process.env.EMAIL_TEMPLATE}`,
               {
-                // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
                 to_email: orderAddress.email,
                 to_name: orderAddress.firstName + " " + orderAddress.lastName,
                 address: orderAddress.streetAddress,
@@ -177,9 +175,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                 shipping: `${cart.shippingPrice / 1000000}`,
                 total: `${cart.totalPrice / 1000000}`,
                 date_time: new Date().toLocaleString(),
-                // }, `${process.env.EMAIL_PUBLIC_KEY}`)
               },
-              `nHKdN2eeVxPRtvKoF`
+              `${process.env.EMAIL_PUBLIC_KEY}`
             )
             .then(
               (result) => {
@@ -274,7 +271,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className={`${errMsg && 'bg-red-100 border border-red-400'} min-h-min relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border  max-w-screen`}>
+              <Dialog.Panel
+                className={`${
+                  errMsg && "bg-red-100 border border-red-400"
+                } min-h-min relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border  max-w-screen`}
+              >
                 <div className="sm:flex items-center justify-center">
                   <div className="mt-3 text-center">
                     <Dialog.Title
@@ -285,123 +286,127 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                     </Dialog.Title>
                     <div className="mt-2 px-6">
                       <form onSubmit={handleSubmit(onSubmit)}>
-                      {errMsg ? (
-                        <div className=" text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                          <span className="block sm:inline">{errMsg}</span>
-                        </div>
-                      ) : (
-                      <>
-                        <div className="flex flex-col sm:flex-row my-2 justify-between mb-0 gap-2 w-full ">
-                          <TextField
-                            color="secondary"
-                            error={errors.firstName ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.firstName
-                                ? errors.firstName.message
-                                : "First Name"
-                            }
-                            variant="outlined"
-                            className="stroke-2 stroke-red-500 sm:w-1/2 "
-                            {...register("firstName")}
-                          />
-                          <TextField
-                            color="secondary"
-                            error={errors.lastName ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.lastName
-                                ? errors.lastName.message
-                                : "Last Name"
-                            }
-                            variant="outlined"
-                            className="border border-white sm:w-1/2"
-                            {...register("lastName")}
-                          />
-                        </div>
-                        <div className="flex flex-row my-2 justify-around mb-0 gap-4 w-full">
-                          <TextField
-                            color="secondary"
-                            error={errors.address ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.address
-                                ? errors.address.message
-                                : "Address"
-                            }
-                            variant="outlined"
-                            className="border border-white w-full"
-                            {...register("address")}
-                          />
-                        </div>
-                        <div className="flex flex-col sm:flex-row my-2 justify-between w-full mb-0 gap-2  ">
-                        <div className="flex gap-2">
-                          <TextField
-                            color="secondary"
-                            error={errors.postalCode ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.postalCode
-                                ? errors.postalCode.message
-                                : "Postal Code"
-                            }
-                            variant="outlined"
-                            className="border border-white"
-                            {...register("postalCode")}
-                          />
-                          <TextField
-                            color="secondary"
-                            error={errors.state ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.state
-                                ? errors.state.message
-                                : "State"
-                            }
-                            variant="outlined"
-                            className="border border-white"
-                            {...register("state")}
-                          />                          </div>
+                        {errMsg ? (
+                          <div
+                            className=" text-red-700 px-4 py-3 rounded relative mb-4"
+                            role="alert"
+                          >
+                            <span className="block sm:inline">{errMsg}</span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex flex-col sm:flex-row my-2 justify-between mb-0 gap-2 w-full ">
+                              <TextField
+                                color="secondary"
+                                error={errors.firstName ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.firstName
+                                    ? errors.firstName.message
+                                    : "First Name"
+                                }
+                                variant="outlined"
+                                className="stroke-2 stroke-red-500 sm:w-1/2 "
+                                {...register("firstName")}
+                              />
+                              <TextField
+                                color="secondary"
+                                error={errors.lastName ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.lastName
+                                    ? errors.lastName.message
+                                    : "Last Name"
+                                }
+                                variant="outlined"
+                                className="border border-white sm:w-1/2"
+                                {...register("lastName")}
+                              />
+                            </div>
+                            <div className="flex flex-row my-2 justify-around mb-0 gap-4 w-full">
+                              <TextField
+                                color="secondary"
+                                error={errors.address ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.address
+                                    ? errors.address.message
+                                    : "Address"
+                                }
+                                variant="outlined"
+                                className="border border-white w-full"
+                                {...register("address")}
+                              />
+                            </div>
+                            <div className="flex flex-col sm:flex-row my-2 justify-between w-full mb-0 gap-2  ">
+                              <div className="flex gap-2">
+                                <TextField
+                                  color="secondary"
+                                  error={errors.postalCode ? true : false}
+                                  id="outlined-basic"
+                                  label={
+                                    errors.postalCode
+                                      ? errors.postalCode.message
+                                      : "Postal Code"
+                                  }
+                                  variant="outlined"
+                                  className="border border-white"
+                                  {...register("postalCode")}
+                                />
+                                <TextField
+                                  color="secondary"
+                                  error={errors.state ? true : false}
+                                  id="outlined-basic"
+                                  label={
+                                    errors.state
+                                      ? errors.state.message
+                                      : "State"
+                                  }
+                                  variant="outlined"
+                                  className="border border-white"
+                                  {...register("state")}
+                                />{" "}
+                              </div>
 
-                          <TextField
-                            color="secondary"
-                            error={errors.country ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.country
-                                ? errors.country.message
-                                : "Country"
-                            }
-                            variant="outlined"
-                            className="border border-white"
-                            {...register("country")}
-                          />
-                        </div>
-                        <div className="flex flex-col sm:flex-row my-2 justify-around mb-0 gap-2 sm:gap-4 w-full ">
-                          <TextField
-                            color="secondary"
-                            error={errors.email ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.email ? errors.email.message : "Email"
-                            }
-                            variant="outlined"
-                            className="border border-white sm:w-1/2"
-                            {...register("email")}
-                          />
-                          <TextField
-                            color="secondary"
-                            error={errors.phone ? true : false}
-                            id="outlined-basic"
-                            label={
-                              errors.phone ? errors.phone.message : "Phone"
-                            }
-                            variant="outlined"
-                            className="border border-white sm:w-1/2"
-                            {...register("phone")}
-                          />
-                        </div>
-                        </>
+                              <TextField
+                                color="secondary"
+                                error={errors.country ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.country
+                                    ? errors.country.message
+                                    : "Country"
+                                }
+                                variant="outlined"
+                                className="border border-white"
+                                {...register("country")}
+                              />
+                            </div>
+                            <div className="flex flex-col sm:flex-row my-2 justify-around mb-0 gap-2 sm:gap-4 w-full ">
+                              <TextField
+                                color="secondary"
+                                error={errors.email ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.email ? errors.email.message : "Email"
+                                }
+                                variant="outlined"
+                                className="border border-white sm:w-1/2"
+                                {...register("email")}
+                              />
+                              <TextField
+                                color="secondary"
+                                error={errors.phone ? true : false}
+                                id="outlined-basic"
+                                label={
+                                  errors.phone ? errors.phone.message : "Phone"
+                                }
+                                variant="outlined"
+                                className="border border-white sm:w-1/2"
+                                {...register("phone")}
+                              />
+                            </div>
+                          </>
                         )}
 
                         {cart.subTotalPrice && cart.shippingPrice ? (
@@ -459,7 +464,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <img
                               src={"/cardanocoin.gif"}
                               alt="loading"
-                              className={`w-16 h-16 mx-auto my-4 ${errMsg && "hidden"}`}
+                              className={`w-16 h-16 mx-auto my-4 ${
+                                errMsg && "hidden"
+                              }`}
                             />
                           )}
                         </div>
