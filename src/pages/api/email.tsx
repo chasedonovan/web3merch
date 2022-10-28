@@ -6,7 +6,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  // NOTE: Uncomment the below lines to make the code work
 
   try {
 
@@ -53,38 +52,3 @@ export default async function handler(
   console.log("email sent", req.body);
   return res.status(200).json({ error: "" });
 }
-
-
-// const itemList = cart.cartItems.map((item) => {
-//   const product = products.find((product) => product.name === item.name);
-//   return `<br/> <img style="height:100px; width:100px;" src='https://merch.uniscroll.io${product?.image}'  alt='${item.name}' width="56" height="56" /> <br/> ${item.name} - ${item.quantity} x $${item.price} = ${item.quantity * item.price} <br/>`
-// });
-
-// emailjs
-// .send(
-//   `service_ra0p0dz`,
-//   `template_5j3q9s6`,
-//   {
-//     // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
-//       to_email: orderAddress.email,
-//       to_name: orderAddress.firstName + " " + orderAddress.lastName,
-//       address: orderAddress.streetAddress,
-//       postal: orderAddress.postalCode,
-//       country: orderAddress.country,
-//       items: `<div>${itemList}</div>`,
-//       subtotal: `${cart.subTotalPrice / 1000000}`,
-//       shipping: `${cart.shippingPrice / 1000000}`,
-//       total: `${cart.totalPrice / 1000000}`,
-//       date_time: new Date().toLocaleString(),
-//     // }, `${process.env.EMAIL_PUBLIC_KEY}`)
-//   },
-//   `nHKdN2eeVxPRtvKoF`
-// )
-// .then(
-//   (result) => {
-//     console.log(result.text);
-//   },
-//   (error) => {
-//     console.log(error.text);
-//   }
-// );

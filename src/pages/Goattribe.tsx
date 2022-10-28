@@ -114,7 +114,7 @@ const GoatTribe = (props: Props) => {
                   </div>
                   <div className="flex flex-col w-full overflow-scroll scrollbar-hide">
                     {cart.cartItems.map((item, i) => (
-                        <CartCard key={i} item={item} />
+                        <CartCard key={item.variant_id} item={item} />
                       ))}
                   </div>
                 </div>
