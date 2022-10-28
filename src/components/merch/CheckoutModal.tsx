@@ -32,7 +32,8 @@ type CheckoutForm = {
 };
 
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
-  const { cart, setCart, orderAddress, setAddress } = useMerchContext();
+  const { products, cart, setCart, orderAddress, setAddress } =
+    useMerchContext();
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -137,24 +138,35 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           });
           setLoading(false);
 
+          const itemList = cart.cartItems.map((item) => {
+            const product = products.find(
+              (product) => product.name === item.name
+            );
+            return `<br/> <br/> <img style="height:100px; width:100px;" src='https://merch.uniscroll.io${
+              product?.image
+            }'  alt='${item.name}' width="98" height="98"/> <br/> ${
+              item.name
+            } - ${item.quantity} x $${item.price} = ${
+              item.quantity * item.price
+            }`;
+          });
+
           emailjs
             .send(
               `service_ra0p0dz`,
               `template_5j3q9s6`,
               {
                 // emailjs.send( `${process.env.EMAIL_KEY}`, `${process.env.EMAIL_TEMPLATE}`, {
-                to_name: orderAddress.firstName + " " + orderAddress.lastName,
                 to_email: orderAddress.email,
-                from_name: "GoatTribe x Uniscroll",
+                to_name: orderAddress.firstName + " " + orderAddress.lastName,
                 address: orderAddress.streetAddress,
                 postal: orderAddress.postalCode,
                 country: orderAddress.country,
-                // items: items,
+                items: `<div>${itemList}</div>`,
                 subtotal: `${cart.subTotalPrice / 1000000}`,
                 shipping: `${cart.shippingPrice / 1000000}`,
                 total: `${cart.totalPrice / 1000000}`,
                 date_time: new Date().toLocaleString(),
-                reply_to: orderAddress.email,
                 // }, `${process.env.EMAIL_PUBLIC_KEY}`)
               },
               `nHKdN2eeVxPRtvKoF`

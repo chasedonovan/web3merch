@@ -64,6 +64,11 @@ const GoatTribe = (props: Props) => {
         setShowCart={setShowCart}
         cartCount={cartCount}
       />
+      {isConnected && products.length === 0 && (
+        <div className="min-w-[48px] flex flex-col justify-center h-full mx-2 self-center">
+          <img className=" self-center" src="./loading.svg" />
+        </div>
+      )}
       {products.length > 0 && isConnected && (
         <GlobalContextProvider>
           <div className="flex-1 text-white w-full h-full overflow-scroll scrollbar-hide">
@@ -108,8 +113,7 @@ const GoatTribe = (props: Props) => {
                     </div>
                   </div>
                   <div className="flex flex-col w-full overflow-scroll scrollbar-hide">
-                    {cart.cartItems.length !== 0 &&
-                      cart.cartItems.map((item, i) => (
+                    {cart.cartItems.map((item, i) => (
                         <CartCard key={i} item={item} />
                       ))}
                   </div>
