@@ -81,23 +81,25 @@ export const MerchConnectBtn: FunctionComponent = () => {
 
             const data = await res.json();
             console.log(data);
-            if (data && data.allow_access === true) {
-              setConnectedWallet({
-                name: matchingWallet.name,
-                icon: matchingWallet.icon,
-                provider: matchingWallet.provider,
-                providerapi: providerapi,
-                balance: walletBalance,
-                address: walletAddress,
-                stakeAddress: stakeAddress,
-              } as WalletInfo);
-              setConnected(true);
-              setLoading(false);
-              return;
-            } else if (data === false) {
-              setNoGoats(true);
-              setLoading(false);
-              return;
+            if (data) {
+              if (data.allow_access === true) {
+                setConnectedWallet({
+                  name: matchingWallet.name,
+                  icon: matchingWallet.icon,
+                  provider: matchingWallet.provider,
+                  providerapi: providerapi,
+                  balance: walletBalance,
+                  address: walletAddress,
+                  stakeAddress: stakeAddress,
+                } as WalletInfo);
+                setConnected(true);
+                setLoading(false);
+                return;
+              } else if (data.allow_access === false) {
+                setNoGoats(true);
+                setLoading(false);
+                return;
+              }
             }
           } catch (error) {
             console.log(error);
