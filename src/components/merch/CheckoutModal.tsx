@@ -29,6 +29,8 @@ type CheckoutForm = {
   postalCode: string;
   country: string;
   email: string;
+  state: string;
+  phone: string;
 };
 
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
@@ -42,6 +44,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     postalCode: Yup.string().required("postal code is required"),
     country: Yup.string().required("country is required"),
     email: Yup.string().required("email is required"),
+    phone: Yup.string(),
+    state: Yup.string(),
   });
   const { protocolParameters } = useGlobalContext();
 
@@ -93,18 +97,18 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
-        setCart({
-          ...cart,
-          payToAddress: data.pay_to_address,
-          transactionId: data.transaction_id,
-          subTotalPrice: data.subtotal_price,
-          shippingPrice: data.shipping_price,
-          totalPrice: data.total_price,
-          cartUuid: data.uuid,
-        });
-      } else {
-        console.log("error", data);
-      }
+          setCart({
+            ...cart,
+            payToAddress: data.pay_to_address,
+            transactionId: data.transaction_id,
+            subTotalPrice: data.subtotal_price,
+            shippingPrice: data.shipping_price,
+            totalPrice: data.total_price,
+            cartUuid: data.uuid,
+          });
+        } else {
+          console.log("error", data);
+        }
       });
   }, []);
 
@@ -211,8 +215,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       postalCode: data.postalCode,
       country: data.country,
       email: data.email,
-      phone: "", //TODO (not required)
-      state: "", //TODO (not required)
+      phone: data.phone,
+      state: data.state,
     });
 
     await fetch("/api/cart/address", {
@@ -229,8 +233,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           street_address: data.address,
           postal_code: data.postalCode,
           country: data.country,
-          state: "",
-          phone: "",
+          state: data.state,
+          phone: data.phone,
           email: data.email,
         },
       }),
@@ -273,7 +277,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                   <div className="mt-3 text-center">
                     <Dialog.Title
                       as="h3"
-                      className="text-xl font-bold font-quicksand  leading-6 text-black w-full mb-8 text-center "
+                      className="text-xl font-bold font-quicksand  leading-6 text-black w-full mb-8 text-center"
                     >
                       Delivery and Contact Details
                     </Dialog.Title>
@@ -290,7 +294,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 : "First Name"
                             }
                             variant="outlined"
-                            className="stroke-2 stroke-red-500 "
+                            className="stroke-2 stroke-red-500 sm:w-1/2 "
                             {...register("firstName")}
                           />
                           <TextField
@@ -303,7 +307,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 : "Last Name"
                             }
                             variant="outlined"
-                            className="border border-white"
+                            className="border border-white sm:w-1/2"
                             {...register("lastName")}
                           />
                         </div>
@@ -323,6 +327,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           />
                         </div>
                         <div className="flex flex-col sm:flex-row my-2 justify-between w-full mb-0 gap-2  ">
+                        <div className="flex gap-2">
                           <TextField
                             color="secondary"
                             error={errors.postalCode ? true : false}
@@ -338,6 +343,20 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           />
                           <TextField
                             color="secondary"
+                            error={errors.state ? true : false}
+                            id="outlined-basic"
+                            label={
+                              errors.state
+                                ? errors.state.message
+                                : "State"
+                            }
+                            variant="outlined"
+                            className="border border-white"
+                            {...register("state")}
+                          />                          </div>
+
+                          <TextField
+                            color="secondary"
                             error={errors.country ? true : false}
                             id="outlined-basic"
                             label={
@@ -350,7 +369,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             {...register("country")}
                           />
                         </div>
-                        <div className="flex flex-row my-2 justify-around mb-0 gap-4 w-full ">
+                        <div className="flex flex-col sm:flex-row my-2 justify-around mb-0 gap-2 sm:gap-4 w-full ">
                           <TextField
                             color="secondary"
                             error={errors.email ? true : false}
@@ -359,21 +378,37 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               errors.email ? errors.email.message : "Email"
                             }
                             variant="outlined"
-                            className="border border-white w-full"
+                            className="border border-white sm:w-1/2"
                             {...register("email")}
                           />
+                          <TextField
+                            color="secondary"
+                            error={errors.phone ? true : false}
+                            id="outlined-basic"
+                            label={
+                              errors.phone ? errors.phone.message : "Phone"
+                            }
+                            variant="outlined"
+                            className="border border-white sm:w-1/2"
+                            {...register("phone")}
+                          />
                         </div>
-                          
+
                         {cart.subTotalPrice && cart.shippingPrice ? (
                           <>
-                        <div className="font-bold font-quicksand text-black mt-2">
-                          Sub total: {cart.subTotalPrice ? (cart.subTotalPrice / 1000000 + " ADA") : ("")} 
-                        </div>
-                        <div className="font-quicksand text-black">
-                          +Shipping: {cart.shippingPrice ? (cart.shippingPrice / 1000000 + " ADA") : (""
-                          )} 
-                        </div>
-                        </>
+                            <div className="font-bold font-quicksand text-black mt-2">
+                              Sub total:{" "}
+                              {cart.subTotalPrice
+                                ? cart.subTotalPrice / 1000000 + " ADA"
+                                : ""}
+                            </div>
+                            <div className="font-quicksand text-black">
+                              +Shipping:{" "}
+                              {cart.shippingPrice
+                                ? cart.shippingPrice / 1000000 + " ADA"
+                                : ""}
+                            </div>
+                          </>
                         ) : (
                           ""
                         )}
@@ -387,25 +422,36 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             Go Back
                           </button>
                           {cart.subTotalPrice && cart.shippingPrice ? (
-                          <button
-                            disabled={
-                              errors.address ||
-                              errors.country ||
-                              errors.email ||
-                              errors.firstName ||
-                              errors.lastName ||
-                              errors.postalCode
-                                ? true
-                                : false
-                            }
-                            type="submit"
-                            className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
-                          >
-                            {!cart.totalPrice ? (<img src='/loadingblack.gif' className="relative -top-5 h-[64px] "/> ) : (`PAY ${cart.totalPrice / 1000000} ADA`)}
-                          </button>) : (
-                            <img src={'/cardanocoin.gif'} alt="loading" className="w-16 h-16 mx-auto my-4" />
-                          )
-                          }
+                            <button
+                              disabled={
+                                errors.address ||
+                                errors.country ||
+                                errors.email ||
+                                errors.firstName ||
+                                errors.lastName ||
+                                errors.postalCode
+                                  ? true
+                                  : false
+                              }
+                              type="submit"
+                              className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
+                            >
+                              {!cart.totalPrice ? (
+                                <img
+                                  src="/loadingblack.gif"
+                                  className="relative -top-5 h-[64px] "
+                                />
+                              ) : (
+                                `PAY ${cart.totalPrice / 1000000} ADA`
+                              )}
+                            </button>
+                          ) : (
+                            <img
+                              src={"/cardanocoin.gif"}
+                              alt="loading"
+                              className="w-16 h-16 mx-auto my-4"
+                            />
+                          )}
                         </div>
                       </form>
                     </div>
