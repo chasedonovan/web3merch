@@ -10,6 +10,7 @@ import { useWalletContext } from "hooks/useWalletContext";
 import { useMerchContext } from "hooks/useMerchContext";
 import { useGlobalContext } from "hooks/useGlobalContext";
 import CardanoWalletAPI from "client/CardanoWalletAPI";
+import AlertModal from "./../AlertModal";
 
 type Variant = {
   variant_id: string;
@@ -36,7 +37,10 @@ type CheckoutForm = {
 export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const { products, cart, setCart, orderAddress, setAddress } =
     useMerchContext();
+  const [loadingTx, setLoadingTx] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const [showErr2, setShowErr2] = useState(false);
+  const [errMessage2, setErrMessage2] = useState("");
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -97,10 +101,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
-        //if success
+        // console.log("data", data);
         if (data) {
-        setCart({
+          setCart({
             ...cart,
             payToAddress: data.pay_to_address,
             transactionId: data.transaction_id,
@@ -118,10 +121,12 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
 
   const handlePayment = async () => {
     if (isConnected) {
+      console.log(cart.totalPrice);
       await CardanoWalletAPI.pay(
         connectedWallet.providerapi,
         protocolParameters,
-        cart.payToAddress,
+        // cart.payToAddress,
+        "addr1qyx9c02jad982uvhm9lzm4s82fvmayp3pmw7z2q4dqgqne7q3kk6dx5tnj68lcf0q6npxfyrywdv8fa4g8mhvxaxkflsfkq2dn",
         cart.totalPrice
       )
         .then((res) => {
@@ -149,6 +154,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             }
           });
           setLoading(false);
+          setLoadingTx(false);
 
           const itemList = cart.cartItems.map((item) => {
             const product = products.find(
@@ -194,11 +200,12 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         .catch((err) => {
           console.log(err);
           setLoading(false);
-          // setShowErr2(true);
-          // setErrMessage2(err?.message);
+          setShowErr2(true);
+          setErrMessage2(err?.message);
+          setLoadingTx(false);
         });
     } else {
-      setLoading(false);
+      setLoadingTx(false);
       // props.setErrMessage("Please connect your wallet");
       // props.setShowErr(true);
       // props.setShowModal(false);
@@ -219,7 +226,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       phone: data.phone,
       state: data.state,
     });
-
+    setLoadingTx(true);
     await fetch("/api/cart/address", {
       method: "POST",
       headers: {
@@ -453,7 +460,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               type="submit"
                               className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
                             >
-                              {!cart.totalPrice ? (
+                              {!cart.totalPrice || loadingTx ? (
                                 <img
                                   src="/loadingblack.gif"
                                   className="relative -top-5 h-[64px] "
@@ -476,6 +483,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                     </div>
                   </div>
                 </div>
+                {showErr2 && (
+                <AlertModal
+                  showModal={showErr2}
+                  setShowModal={setShowErr2}
+                  message={errMessage2}
+                />
+              )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
