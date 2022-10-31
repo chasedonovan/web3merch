@@ -80,6 +80,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   });
 
   useEffect(() => {
+    setLoadingTx(true);
     fetch("/api/cart/update", {
       method: "POST",
       headers: {
@@ -116,6 +117,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             totalPrice: data.total_price,
             cartUuid: data.uuid,
           });
+          setLoadingTx(false);
         } else {
           setErrMsg(data.detail);
           console.log("error", data);
