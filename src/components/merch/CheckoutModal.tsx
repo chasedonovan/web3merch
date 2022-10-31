@@ -97,8 +97,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") {
-          setCart({
+        console.log("data", data);
+        //if success
+        if (data) {
+        setCart({
             ...cart,
             payToAddress: data.pay_to_address,
             transactionId: data.transaction_id,
