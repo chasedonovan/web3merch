@@ -11,6 +11,8 @@ import { useMerchContext } from "hooks/useMerchContext";
 import { useGlobalContext } from "hooks/useGlobalContext";
 import CardanoWalletAPI from "client/CardanoWalletAPI";
 import AlertModal from "./../AlertModal";
+import SuccessModal from "./../SuccessModal";
+
 
 type Variant = {
   variant_id: string;
@@ -41,6 +43,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const [errMsg, setErrMsg] = useState("");
   const [showErr2, setShowErr2] = useState(false);
   const [errMessage2, setErrMessage2] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const cancelButtonRef = useRef(null);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -125,8 +129,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       await CardanoWalletAPI.pay(
         connectedWallet.providerapi,
         protocolParameters,
-        // cart.payToAddress,
-        "addr1qyx9c02jad982uvhm9lzm4s82fvmayp3pmw7z2q4dqgqne7q3kk6dx5tnj68lcf0q6npxfyrywdv8fa4g8mhvxaxkflsfkq2dn",
+        cart.payToAddress,
         cart.totalPrice
       )
         .then((res) => {
@@ -194,8 +197,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                 console.log(error.text);
               }
             );
-          // setShowSuccess(true);
-          // setSuccessMessage("" + res.message + " " + res.transactionId);
+          setShowSuccess(true);
+          setSuccessMessage("" + res.message + " " + res.transactionId);
         })
         .catch((err) => {
           console.log(err);
@@ -484,12 +487,19 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                   </div>
                 </div>
                 {showErr2 && (
-                <AlertModal
-                  showModal={showErr2}
-                  setShowModal={setShowErr2}
-                  message={errMessage2}
-                />
-              )}
+                  <AlertModal
+                    showModal={showErr2}
+                    setShowModal={setShowErr2}
+                    message={errMessage2}
+                  />
+                )}
+                {showSuccess && (
+                  <SuccessModal
+                    showModal={showSuccess}
+                    setShowModal={setShowSuccess}
+                    message={successMessage}
+                  />
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
