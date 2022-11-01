@@ -33,7 +33,7 @@ type Props = {
 };
 
 const ItemCard = (props: Props) => {
-  const { cart, setCart } = useMerchContext();
+  const { cart, setCart, setAddedModal } = useMerchContext();
   const [showDetails, setShowDetails] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const validationSchema = Yup.object().shape({
@@ -126,9 +126,10 @@ const ItemCard = (props: Props) => {
         cartItems: [...cart.cartItems, newCartItem],
       });
     }
-    if (cart.cartItems.length === 0) {
-      props.setShowCart(true);
-    }
+    setAddedModal(true);
+    // if (cart.cartItems.length === 0) {
+    //   props.setShowCart(true);
+    // }
     setQuantity(1);
   };
 

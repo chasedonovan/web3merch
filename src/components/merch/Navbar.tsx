@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MerchConnectBtn } from "../merch/MerchConnectBtn";
 import { useWalletContext } from "../../hooks/useWalletContext";
+import { useMerchContext } from "../../hooks/useMerchContext";
 
 type Props = {
   setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,6 +12,15 @@ type Props = {
 
 export default function Navbar(props: Props) {
   const { isConnected } = useWalletContext();
+  const { addedModal, setAddedModal } = useMerchContext();
+
+  useEffect(() => {
+    if (addedModal) {
+      setTimeout(() => {
+        setAddedModal(false);
+      }, 3000);
+    }
+  }, [addedModal]);
 
   return (
     <div
@@ -29,14 +39,14 @@ export default function Navbar(props: Props) {
         /> */}
       </div>
       {isConnected && (
-        <div className="relative flex flex-row self-center">
+        <div className="relative flex flex-row-reverse self-center">
           {props.cartCount > 0 && (
             <div
               onClick={() => {
                 props.setCartOpen(true);
                 props.setShowCart(!props.showCart);
               }}
-              className="hover:cursor-pointer absolute bg-white border border-gray-500 shadow-md shadow-gray-400 left-[28px] w-5 h-5 rounded-full text-black text-sm"
+              className="hover:cursor-pointer absolute bg-white border border-gray-500 shadow-md shadow-gray-400 right-[2px] w-5 h-5 rounded-full text-black text-sm"
             >
               {props.cartCount}
             </div>
@@ -46,7 +56,7 @@ export default function Navbar(props: Props) {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            className="w-9 h-9 self-center mr-4 hover:cursor-pointer shadow-white"
+            className="w-9 h-9 self-center mx-4 hover:cursor-pointer shadow-white"
             onClick={() => {
               props.setCartOpen(true);
               props.setShowCart(!props.showCart);
@@ -59,6 +69,26 @@ export default function Navbar(props: Props) {
             />
           </svg>
           <MerchConnectBtn />
+          {addedModal && (
+            <div className="absolute top-28 right-0 w-full h-full bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
+              <div className="bg-white rounded-lg p-4">
+                <div className="flex flex-col justify-center items-center">
+                  <div className="text-2xl text-gray-800 font-bold">Added to Cart!</div>
+                  <div className="text-sm text-gray-500">
+                    Check out your cart to complete your purchase.
+                  </div>
+                  <button
+                    className="bg-black text-white rounded-lg px-4 py-2 mt-4"
+                    onClick={() => {
+                      setAddedModal(false);
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

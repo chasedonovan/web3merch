@@ -61,6 +61,8 @@ type MerchContextProps = {
   setCart: (cart: Cart) => void;
   orderAddress: Address;
   setAddress: (address: Address) => void;
+  addedModal: boolean;
+  setAddedModal: (addedModal: boolean) => void;
 };
 
 const MerchContext = createContext<MerchContextProps>({
@@ -69,6 +71,8 @@ const MerchContext = createContext<MerchContextProps>({
   setCart: () => {},
   orderAddress: {} as Address,
   setAddress: () => {},
+  addedModal: false,
+  setAddedModal: () => {},
 });
 
 type ProviderProps = {} & PropsWithChildren;
@@ -107,6 +111,8 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
     setTheAddress(address);
   };
 
+  const [addedModal, setAddedModal] = useState(false);
+
   useEffect(() => {
     //get products from backend every 2 minutes
     if (isConnected) {
@@ -143,7 +149,7 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
 
   return (
     <MerchContext.Provider
-      value={{ products, cart, setCart, orderAddress, setAddress }}
+      value={{ products, cart, setCart, orderAddress, setAddress, addedModal, setAddedModal }}
     >
       {children}
     </MerchContext.Provider>

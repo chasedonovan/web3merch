@@ -18,7 +18,7 @@ export default function ItemDetailsModal({
   item,
   setShowCart,
 }: Props) {
-  const { cart, setCart } = useMerchContext();
+  const { cart, setCart, setAddedModal } = useMerchContext();
   const cancelButtonRef = useRef(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
@@ -95,6 +95,7 @@ export default function ItemDetailsModal({
       setQuantity(1);
       setTimeout(() => {
         setShowModal(false);
+        setAddedModal(true);
       }, 100);
     }
   };
