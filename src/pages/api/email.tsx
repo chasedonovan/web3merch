@@ -28,9 +28,9 @@ export default async function handler(
           postal: req.body.postalCode,
           country: req.body.country,
           items: items,
-          subtotal: `${req.body.cart.subTotalPrice / 1000000}`,
-          shipping: `${req.body.cart.shippingPrice / 1000000}`,
-          total: `${req.body.cart.totalPrice / 1000000}`,
+          subtotal: `${req.body.cart.subTotalPrice}`,
+          shipping: `${req.body.cart.shippingPrice}`,
+          total: `${req.body.cart.totalPrice}`,
           date_time: new Date().toLocaleString(),
           reply_to: req.body.orderAddress.email,
           // }, `${process.env.EMAIL_PUBLIC_KEY}`)

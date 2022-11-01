@@ -184,9 +184,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                 postal: orderAddress.postalCode,
                 country: orderAddress.country,
                 items: `<div>${itemList}</div>`,
-                subtotal: `${cart.subTotalPrice / 1000000}`,
-                shipping: `${cart.shippingPrice / 1000000}`,
-                total: `${cart.totalPrice / 1000000}`,
+                subtotal: `${cart.subTotalPrice}`,
+                shipping: `${cart.shippingPrice}`,
+                total: `${cart.totalPrice}`,
                 date_time: new Date().toLocaleString(),
               },
               `${process.env.EMAIL_PUBLIC_KEY}`
@@ -428,13 +428,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <div className="font-bold font-quicksand text-black mt-2">
                               Sub total:{" "}
                               {cart.subTotalPrice
-                                ? cart.subTotalPrice / 1000000 + " ADA"
+                                ? " $" + cart.subTotalPrice
                                 : ""}
                             </div>
                             <div className="font-quicksand text-black">
                               +Shipping:{" "}
                               {cart.shippingPrice
-                                ? cart.shippingPrice / 1000000 + " ADA"
+                                ? " $" + cart.shippingPrice 
                                 : ""}
                             </div>
                           </>
@@ -471,7 +471,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   className="relative -top-5 h-[64px] "
                                 />
                               ) : (
-                                `PAY ${cart.totalPrice / 1000000} ADA`
+                                `PAY $${cart.totalPrice}`
                               )}
                             </button>
                           ) : (

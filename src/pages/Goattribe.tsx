@@ -93,7 +93,7 @@ const GoatTribe = (props: Props) => {
                     <div className="flex flex-col px-4 py-4 min-w-max">
                       <p className="text-xl font-saira">Subtotal:</p>
                       <p className="text-xl">
-                        {cart.subTotalPrice / 1000000} ADA
+                        ${cart.subTotalPrice}
                       </p>
                       <p className="text-gray-300 text-sm">+shipping</p>
                     </div>

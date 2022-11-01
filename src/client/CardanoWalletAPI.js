@@ -360,8 +360,8 @@ class CardanoWalletAPI {
     txBuilder.add_output(cardano.TransactionOutput.new(
       outputAddress,
       cardano.Value.new(cardano.BigNum.from_str(
-        //paymentAmountLovelace.toString()
-        '1131000'
+        paymentAmountLovelace.toString()
+        // '1131000'
         ))    
       ));
 

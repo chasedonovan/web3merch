@@ -184,13 +184,13 @@ const CartCard = (props: Props) => {
         <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
           {product.original_price !== product.price ? (
             <p className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'text-gray-500'} self-end text-right text-gray-200 line-through opacity-75`}>
-              {product.original_price / 1000000} ₳
+              ${product.original_price}
             </p>
           ) : (
             ""
           )}
           <p className={`${product?.name === props.item.name &&product?.variants.find((variant: any) => variant.size === size).stock === 0 && 'text-gray-500'} self-end text-right text-gray-200 `}>
-            {product.price / 1000000} ₳
+            ${product.price}
           </p>
         </div>
         <svg
