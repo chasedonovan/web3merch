@@ -103,6 +103,7 @@ export default function ItemDetailsModal({
     setSize(e.target.value);
     setErr(false);
   };
+
   return (
     <Transition.Root show={showModal} as={Fragment}>
       <Dialog
@@ -224,7 +225,7 @@ export default function ItemDetailsModal({
                     <p className="max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400">
                       {item.description}
                     </p>
-                    {item.additional_info && (
+                    {item.additional_info && item.additional_info.length > 6 && (
                       <div className="mt-2">
                         Additional Info{" "}
                         {showAdditionalInfo ? (
@@ -575,7 +576,7 @@ export default function ItemDetailsModal({
                         <p className="mt-1 whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400">
                           {item.description}
                         </p>
-                        {item.additional_info && (
+                        {item.additional_info && item.additional_info.length > 6 && (
                           <div className="mt-4">
                             Additional Info{" "}
                             <div
