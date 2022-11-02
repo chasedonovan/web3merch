@@ -128,36 +128,46 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const handlePayment = async () => {
     if (isConnected) {
       console.log(cart.totalPrice);
-      await CardanoWalletAPI.pay(
-        connectedWallet.providerapi,
-        protocolParameters,
-        cart.payToAddress,
-        cart.totalPrice
-      )
+      
+      // await CardanoWalletAPI.pay(
+      //   connectedWallet.providerapi,
+      //   protocolParameters,
+      //   cart.payToAddress,
+      //   cart.totalPrice
+      // )
+      await fetch ("/api/cart/pay", {
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart: cart
+        }),
+      })
         .then((res) => {
           console.log("Handle payment", res);
-          if (!res.success) throw res;
+          // if (!res.success) throw res;
 
-          fetch("/api/cart/checkout", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              cart_uuid: cart.cartUuid,
-              transaction_id: res.transactionId,
-            }),
-          }).then((res2) => {
-            if (res2.status !== 200) {
-              console.log(res2);
-              throw {
-                success: false,
-                message:
-                  "Failed to update your order, save the transaction id and contact Uniscroll.",
-                transactionId: "",
-              };
-            }
-          });
+          // fetch("/api/cart/checkout", {
+          //   method: "POST",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({
+          //     cart_uuid: cart.cartUuid,
+          //     transaction_id: res.transactionId,
+          //   }),
+          // }).then((res2) => {
+          //   if (res2.status !== 200) {
+          //     console.log(res2);
+          //     throw {
+          //       success: false,
+          //       message:
+          //         "Failed to update your order, save the transaction id and contact Uniscroll.",
+          //       transactionId: "",
+          //     };
+          //   }
+          // });
           setLoading(false);
           setLoadingTx(false);
 
@@ -200,7 +210,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
               }
             );
           setShowSuccess(true);
-          setSuccessMessage("" + res.message + " " + res.transactionId);
+          // setSuccessMessage("" + res.message + " " + res.transactionId);
+          setSuccessMessage("");
         })
         .catch((err) => {
           console.log(err);
@@ -216,6 +227,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       // props.setShowModal(false);
     }
   };
+
 
   const onSubmit = async (data: CheckoutForm) => {
     console.log("submit address", data);
