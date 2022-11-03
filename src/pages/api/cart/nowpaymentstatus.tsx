@@ -5,7 +5,10 @@ export default async function handler(
   res: NextApiResponse<unknown>
 ) {
   try {
-    const cart = req.body.cart_uuid;
+    const cart_uuid = req.body.cart_uuid;
+
+    const cart = await getCart(cart_uuid);
+
     const resp = await fetch(
       `${process.env.NOWPAYMENT_API_URL}/v1/payment/${cart.payment_id}`,
       {
@@ -21,6 +24,26 @@ export default async function handler(
     res.status(200).json(respData);
   } catch (e) {
     res.status(500).json(e);
+  }
+}
+
+async function getCart(cart_uuid: string) {
+  try {
+    const cartResp = await fetch(
+      `${process.env.API_URL}/merch/cart/${cart_uuid}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      }
+    );
+    const cartData = await cartResp.json();
+    console.log("Get cart", cartData);
+    return cartData;
+  } catch (e) {
+    throw e;
   }
 }
 
