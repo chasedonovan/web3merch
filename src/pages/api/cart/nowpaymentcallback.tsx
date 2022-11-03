@@ -58,6 +58,8 @@ async function check_ipn_request_is_valid(
   );
   const signature = hmac.digest("hex");
 
+  //TODO: remove log
+  console.log("check_ipn_request_is_valid", nowpaymentsSig, signature);
   if (nowpaymentsSig == signature) return true;
 
   return false;
