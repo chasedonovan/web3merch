@@ -13,7 +13,6 @@ import CardanoWalletAPI from "client/CardanoWalletAPI";
 import AlertModal from "./../AlertModal";
 import SuccessModal from "./../SuccessModal";
 
-
 type Variant = {
   variant_id: string;
   size: string;
@@ -107,7 +106,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       .then((res) => res.json())
       .then((data) => {
         // console.log("data", data);
-        if (data) {
+        if (data && data.success != "false") {
           setCart({
             ...cart,
             payToAddress: data.pay_to_address,
@@ -116,6 +115,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             shippingPrice: data.shipping_price,
             totalPrice: data.total_price,
             cartUuid: data.uuid,
+            estimatedTotal: data.estimated_total,
           });
           setLoadingTx(false);
         } else {
@@ -128,20 +128,20 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const handlePayment = async () => {
     if (isConnected) {
       console.log(cart.totalPrice);
-      
+
       // await CardanoWalletAPI.pay(
       //   connectedWallet.providerapi,
       //   protocolParameters,
       //   cart.payToAddress,
       //   cart.totalPrice
       // )
-      await fetch ("/api/cart/pay", {
-        method:"POST",
+      await fetch("/api/cart/pay", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cart: cart
+          cart: cart,
         }),
       })
         .then((res) => {
@@ -227,7 +227,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       // props.setShowModal(false);
     }
   };
-
 
   const onSubmit = async (data: CheckoutForm) => {
     console.log("submit address", data);
@@ -446,7 +445,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <div className="font-quicksand text-black">
                               +Shipping:{" "}
                               {cart.shippingPrice
-                                ? " $" + cart.shippingPrice 
+                                ? " $" + cart.shippingPrice
                                 : ""}
                             </div>
                           </>
@@ -483,12 +482,16 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   className="relative -top-5 h-[64px] "
                                 />
                               ) : (
-                                `PAY $${cart.totalPrice}`
+                                `PAY $${cart.totalPrice} ${
+                                  cart.estimatedTotal > 0
+                                    ? `(~${cart.estimatedTotal} ADA)`
+                                    : ""
+                                }`
                               )}
                             </button>
                           ) : (
                             <img
-                              src={"/cardanocoin.gif"}
+                              src={"/loading.svg"}
                               alt="loading"
                               className={`w-16 h-16 mx-auto my-4 ${
                                 errMsg && "hidden"

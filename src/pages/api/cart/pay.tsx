@@ -37,7 +37,7 @@ export default async function handler(
     console.log("Pay", externalResponseData);
     res.status(200).json(externalResponseData);
   } catch (e) {
-    res.status(500).send({ error: e });
+    res.status(500).json({ error: e });
   }
 }
 

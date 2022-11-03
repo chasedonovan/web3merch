@@ -24,17 +24,23 @@ export default async function handler(
 
     if (minPayment.min_amount <= externalResponseData.total_price) {
       const estPayment = await estimatedPayment(externalResponseData);
-      externalResponseData.estimatedTotal = estPayment.estimated_amount;
+      externalResponseData.estimated_total = Number(
+        estPayment.estimated_amount
+      ).toFixed(2);
     } else {
-      res.status(200).json({
+      console.log(
+        `The total order value is less than than the minumim amount (${minPayment.min_amount})`
+      );
+      return res.status(200).json({
         success: "false",
         detail: `The total order value is less than than the minumim amount (${minPayment.min_amount})`,
       });
     }
 
+    console.log("Update cart", externalResponseData);
     res.status(200).json(externalResponseData);
   } catch (e) {
-    res.status(500).send({ error: e });
+    res.status(500).json({ error: e });
   }
 }
 

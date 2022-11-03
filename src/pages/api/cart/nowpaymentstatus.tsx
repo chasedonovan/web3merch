@@ -18,9 +18,9 @@ export default async function handler(
     );
     const respData = await resp.json();
     console.log("Payment status", respData);
-    return respData;
+    res.status(200).json(respData);
   } catch (e) {
-    throw e;
+    res.status(500).json(e);
   }
 }
 

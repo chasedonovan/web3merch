@@ -42,6 +42,7 @@ type Cart = {
   subTotalPrice: number;
   shippingPrice: number;
   totalPrice: number;
+  estimatedTotal: number;
 };
 
 type Address = {
@@ -86,6 +87,7 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
     subTotalPrice: 0,
     shippingPrice: 0,
     totalPrice: 0,
+    estimatedTotal: 0,
   });
   const [orderAddress, setTheAddress] = useState<Address>({
     firstName: "",
@@ -123,16 +125,15 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
         });
     }
     const interval = setInterval(() => {
-    if (isConnected) {
-      fetch("/api/products")
-        .then((res) => res.json())
-        .then((data) => {
-          setProducts(data);
-        });
-    }
+      if (isConnected) {
+        fetch("/api/products")
+          .then((res) => res.json())
+          .then((data) => {
+            setProducts(data);
+          });
+      }
     }, 60000);
     return () => clearInterval(interval);
-
   }, [isConnected]);
 
   //set subTotal when cartItems changes
@@ -149,7 +150,15 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
 
   return (
     <MerchContext.Provider
-      value={{ products, cart, setCart, orderAddress, setAddress, addedModal, setAddedModal }}
+      value={{
+        products,
+        cart,
+        setCart,
+        orderAddress,
+        setAddress,
+        addedModal,
+        setAddedModal,
+      }}
     >
       {children}
     </MerchContext.Provider>
