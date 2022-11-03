@@ -43,7 +43,7 @@ export default async function handler(
 async function minimumPayment() {
   try {
     const minimumPaymentResponse = await fetch(
-      `${process.env.NOWPAYMENT_API_URL}/v1/min-amount?currency_from=usd&currency_to=ada`,
+      `${process.env.NOWPAYMENT_API_URL}/v1/min-amount?currency_from=usd&currency_to=ada&fiat_equivalent=usd`,
       {
         headers: {
           "x-api-key": `${process.env.NOWPAYMENT_API_KEY}`,
@@ -63,7 +63,7 @@ async function minimumPayment() {
 async function estimatedPayment(externalResponseData: any) {
   try {
     const estPaymentResponse = await fetch(
-      `${process.env.NOWPAYMENT_API_URL}/v1/min-amount?estimate?amount=${externalResponseData.totalPrice}&currency_from=usd&currency_to=ada`,
+      `${process.env.NOWPAYMENT_API_URL}/v1/estimate?amount=${externalResponseData.totalPrice}&currency_from=usd&currency_to=ada`,
       {
         headers: {
           "x-api-key": `${process.env.NOWPAYMENT_API_KEY}`,

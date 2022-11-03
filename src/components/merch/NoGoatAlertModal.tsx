@@ -86,7 +86,7 @@ export default function NoGoatsAlertModal({
                       className=" w-full sm:w-auto inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#FFDB24] text-base font-medium text-black hover:bg-[#c1a621] sm:ml-3 sm:text-sm"
                       onClick={() => setNoGoats(false)}
                     >
-                      Take me to JPEG.store to buy a Goat
+                      Take me to buy a Goat
                     </button>
                   </a>
                   <button
