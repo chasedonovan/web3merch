@@ -107,7 +107,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       .then((res) => res.json())
       .then((data) => {
         // console.log("data", data);
-        if (data) {
+        if (data && data.success != "false") {
           setCart({
             ...cart,
             payToAddress: data.pay_to_address,
@@ -116,6 +116,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             shippingPrice: data.shipping_price,
             totalPrice: data.total_price,
             cartUuid: data.uuid,
+            estimatedTotal: data.estimated_total,
           });
           setLoadingTx(false);
         } else {
@@ -496,12 +497,16 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   className="relative -top-5 h-[64px] "
                                 />
                               ) : (
-                                `PAY $${cart.totalPrice}`
+                                `PAY $${cart.totalPrice} ${
+                                  cart.estimatedTotal > 0
+                                    ? `(~${cart.estimatedTotal} ADA)`
+                                    : ""
+                                }`
                               )}
                             </button>
                           ) : (
                             <img
-                              src={"/cardanocoin.gif"}
+                              src={"/loading.svg"}
                               alt="loading"
                               className={`w-16 h-16 mx-auto my-4 ${
                                 errMsg && "hidden"

@@ -16,8 +16,6 @@ export default async function handler(
         method: "GET",
       }
     );
-
-    console.log("TokenGate data", externalResponse);
     try {
       const externalResponseData = await externalResponse.json();
       if (externalResponseData) {
