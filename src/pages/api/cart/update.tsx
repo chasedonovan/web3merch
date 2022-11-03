@@ -1,11 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import Error from "next/error";
-
-// type Data = {
-//   name: string;
-//   success: boolean;
-// };
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,14 +17,19 @@ export default async function handler(
         body: JSON.stringify(cart),
       }
     );
-    const externalResponseData = await externalResponse.json();
+    let externalResponseData = await externalResponse.json();
     console.log("update cart", externalResponseData);
 
     const minPayment = await minimumPayment();
 
-    if (minPayment.min_amount > cart.subTotalPrice) {
+    if (minPayment.min_amount <= externalResponseData.total_price) {
       const estPayment = await estimatedPayment(cart);
       externalResponseData.estimatedTotal = estPayment.estimated_amount;
+    } else {
+      res.status(200).json({
+        success: "false",
+        detail: `The total order value is less than than the minumim amount (${minPayment.min_amount})`,
+      });
     }
 
     res.status(200).json(externalResponseData);
