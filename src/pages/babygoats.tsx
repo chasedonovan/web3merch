@@ -9,10 +9,13 @@ const Babygoats = (props: Props) => {
   const [checkLoading, setCheckLoading] = React.useState<boolean>(false);
   const [whitelisted, setWhitelisted] = React.useState<boolean>(false);
   const [whitelistedAmount, setWhitelistedAmount] = React.useState<number>(0);
+  const [msg, setMsg] = React.useState<string>("");
   const [badMsg, setBadMsg] = React.useState<string>("");
 
   const copy = async () => {
-    await navigator.clipboard.writeText('addr1v9q54r6t0xdeftuyysjq88hmf8esqsqmrahu5gdtm8634zcr79uh3');
+    await navigator.clipboard.writeText(
+      "addr1v9q54r6t0xdeftuyysjq88hmf8esqsqmrahu5gdtm8634zcr79uh3"
+    );
     alert("Address copied. Send 2 ADA to this address to claim a Baby Goat!");
   };
 
@@ -21,7 +24,8 @@ const Babygoats = (props: Props) => {
     if (stakeAddy.length > 1) {
       setErr(false);
       setCheckLoading(true);
-
+      setBadMsg("");
+      setMsg("");
       try {
         const res = await fetch("/api/babygoat", {
           body: JSON.stringify({
@@ -37,17 +41,25 @@ const Babygoats = (props: Props) => {
           setCheckLoading(false);
           setWhitelisted(true);
           setWhitelistedAmount(result.whitelisted_amount);
+        } else if (result.whitelisted === false) {
+          setCheckLoading(false);
+          setWhitelisted(false);
+          setMsg(
+            "You have not been whitelisted for this drop. Please check back later."
+          );
         } else if (result.invalid) {
           setCheckLoading(false);
           setBadMsg(result.invalid);
           setCheckLoading(false);
         } else {
           setCheckLoading(false);
+          setBadMsg("Something went wrong. Please try again.");
           console.log(result);
         }
       } catch (e) {
         console.log(e);
         setCheckLoading(false);
+        setBadMsg("Something went wrong. Please try again.");
       }
     } else {
       setErr(true);
@@ -73,9 +85,10 @@ const Babygoats = (props: Props) => {
             Goat Tribe - Baby Goats
           </div>
           {!whitelisted && (
-          <p className="text-gray-600 text-center">
-            Enter stake address to check eligibility for claiming a babygoat.
-          </p>)}
+            <p className="text-gray-600 text-center">
+              Enter stake address to check eligibility for claiming a babygoat.
+            </p>
+          )}
 
           {!whitelisted && (
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-4">
@@ -93,9 +106,16 @@ const Babygoats = (props: Props) => {
                 }}
               />
 
-                {badMsg && (
-                  <p className="text-red-500 text-center">{badMsg} <br/></p>
-                )}
+              {badMsg && (
+                <p className="text-red-500 text-center">
+                  {badMsg} <br />
+                </p>
+              )}
+              {msg && (
+                <p className="text-purple-600 text-center">
+                  {msg} <br /> 
+                </p>
+              )}
 
               <button
                 type="submit"
@@ -108,39 +128,46 @@ const Babygoats = (props: Props) => {
               </button>
             </form>
           )}
-{whitelisted && (
+          {whitelisted && (
             <div className="flex flex-col gap-6 mt-12 text-center">
               <p className="text-xl text-gray-800 font-bold">
                 You are whitelisted for {whitelistedAmount} babygoat!
               </p>
               <p className="text-xl text-gray-800 ">
-              Send 2 ADA to: <br/> <span className="font-bold break-words">addr1v9q54r6t0xdeftuyysjq88hmf8esqsqmrahu5gdtm8634zcr79uh3 </span> 
-              <svg
-                onClick={copy}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-purple-800" 
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
-                />
-              </svg>
+                Send 2 ADA to: <br />{" "}
+                <span className="font-bold break-words">
+                  addr1v9q54r6t0xdeftuyysjq88hmf8esqsqmrahu5gdtm8634zcr79uh3{" "}
+                </span>
+                <svg
+                  onClick={copy}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-purple-800"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                  />
+                </svg>
               </p>
               <p className="text-xl text-gray-800 ">
-              You will get 1.7 ADA back and the baby goat NFT
+                You will get 1.7 ADA back and the baby goat NFT
               </p>
 
-              <p className=" mt-12 text-gray-800  cursor-pointer hover:text-purple-800" onClick={()=>{setWhitelisted(false)}}>
+              <p
+                className=" mt-12 text-gray-800  cursor-pointer hover:text-purple-800"
+                onClick={() => {
+                  setWhitelisted(false);
+                }}
+              >
                 click to check another wallet
               </p>
-</div>)
-}
-
+            </div>
+          )}
         </div>
       </div>
     </>
