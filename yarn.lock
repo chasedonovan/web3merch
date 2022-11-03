@@ -1846,6 +1846,11 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+libphonenumber-js@^1.10.13:
+  version "1.10.14"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.14.tgz#e29da7f539751f724ac54017a098e3c7ca23de94"
+  integrity sha512-McGS7GV/WjJ2KjfOGhJU1oJn29RYeo7Q+RpANRbUNMQ9gj5XArpbjurSuyYPTejFwbaUojstQ4XyWCrAzGOUXw==
+
 lilconfig@^2.0.5, lilconfig@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.6.tgz#32a384558bd58af3d4c6e077dd1ad1d397bc69d4"
@@ -1931,6 +1936,13 @@ ms@^2.1.1:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
+
+mui-tel-input@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/mui-tel-input/-/mui-tel-input-2.0.4.tgz#b6b90cb66e37fc23362dc2b20d5c89d00072b016"
+  integrity sha512-0/njwfJb6vikjTQFxiCTsOudroctwjMXTmUpEASt/QeNL/iOu71jTzFYrDaPH95ewU+6MOhXm1/47peHO5dkcQ==
+  dependencies:
+    libphonenumber-js "^1.10.13"
 
 nanoclone@^0.2.1:
   version "0.2.1"

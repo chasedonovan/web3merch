@@ -12,6 +12,8 @@ import { useGlobalContext } from "hooks/useGlobalContext";
 import AlertModal from "./../AlertModal";
 import SuccessModal from "./../SuccessModal";
 import { countries } from "../../data/countries.js";
+import { MuiTelInput } from 'mui-tel-input'
+
 
 type Variant = {
   variant_id: string;
@@ -45,17 +47,19 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const cancelButtonRef = useRef(null);
+  const [phone, setPhone] = useState("");
+  const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
     firstName: Yup.string().required("first name is required"),
     address: Yup.string().required("address is required"),
     postalCode: Yup.string().required("postal code is required"),
     country: Yup.string().required("country is required"),
-    email: Yup.string().required("email is required"),
-    phone: Yup.string(),
+    email: Yup.string().email().required("email is required"),
+    // phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required(),  
     state: Yup.string(),
   });
-  const { protocolParameters } = useGlobalContext();
+
 
   const {
     isConnected,
@@ -91,61 +95,55 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     setValue("phone", orderAddress.phone);
 
     // setLoadingTx(false);
-    fetch("/api/cart/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cart: {
-          uuid: cart.cartUuid,
-          stake_key: connectedWallet.stakeAddress,
-          cartItems: cart.cartItems,
-          address: {
-            first_name: orderAddress.firstName,
-            last_name: orderAddress.lastName,
-            street_address: orderAddress.streetAddress,
-            postal_code: orderAddress.postalCode,
-            country: orderAddress.country,
-            state: orderAddress.state,
-            phone: orderAddress.phone,
-            email: orderAddress.email,
-          },
-        },
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log("data", data);
-        if (data && data.success != "false") {
-          setCart({
-            ...cart,
-            // payToAddress: data.pay_to_address,
-            // transactionId: data.transaction_id,
-            // subTotalPrice: data.subtotal_price,
-            // shippingPrice: data.shipping_price,
-            // totalPrice: data.total_price,
-            cartUuid: data.uuid,
-            // estimatedTotal: data.estimated_total,
-          });
-          setLoadingTx(false);
-        } else {
-          setErrMsg(data.detail);
-          console.log("error", data);
-        }
-      });
+  //   fetch("/api/cart/update", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       cart: {
+  //         uuid: cart.cartUuid,
+  //         stake_key: connectedWallet.stakeAddress,
+  //         cartItems: cart.cartItems,
+  //         address: {
+  //           first_name: orderAddress.firstName,
+  //           last_name: orderAddress.lastName,
+  //           street_address: orderAddress.streetAddress,
+  //           postal_code: orderAddress.postalCode,
+  //           country: orderAddress.country,
+  //           state: orderAddress.state,
+  //           phone: orderAddress.phone,
+  //           email: orderAddress.email,
+  //         },
+  //       },
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       // console.log("data", data);
+  //       if (data && data.success != "false") {
+  //         setCart({
+  //           ...cart,
+  //           // payToAddress: data.pay_to_address,
+  //           // transactionId: data.transaction_id,
+  //           // subTotalPrice: data.subtotal_price,
+  //           // shippingPrice: data.shipping_price,
+  //           // totalPrice: data.total_price,
+  //           cartUuid: data.uuid,
+  //           // estimatedTotal: data.estimated_total,
+  //         });
+  //         setLoadingTx(false);
+  //       } else {
+  //         setErrMsg(data.detail);
+  //         console.log("error", data);
+  //       }
+  //     });
   }, []);
 
   const handlePayment = async () => {
     if (isConnected) {
       console.log(cart.totalPrice);
 
-      // await CardanoWalletAPI.pay(
-      //   connectedWallet.providerapi,
-      //   protocolParameters,
-      //   cart.payToAddress,
-      //   cart.totalPrice
-      // )
       await fetch("/api/cart/pay", {
         method: "POST",
         headers: {
@@ -249,7 +247,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       postalCode: data.postalCode,
       country: data.country,
       email: data.email,
-      phone: data.phone,
+      phone: phone,
       state: data.state,
     });
     // setLoadingTx(true);
@@ -268,7 +266,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           postal_code: data.postalCode,
           country: data.country,
           state: data.state,
-          phone: data.phone,
+          phone: phone,
           email: data.email,
         },
       }),
@@ -295,6 +293,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         }
       });
   };
+  const handleChange = (e:any) => {
+    setPhone(e)
+    console.log(phone)
+  }
   console.log(cart);
   return (
     <Transition.Root show={showModal} as={Fragment}>
@@ -473,7 +475,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 className="border border-white sm:w-1/2"
                                 {...register("email")}
                               />
-                              <TextField
+                              <MuiTelInput value={phone} onChange={handleChange} />
+                              {/* <TextField
                                 color="secondary"
                                 error={errors.phone ? true : false}
                                 id="outlined-basic"
@@ -483,7 +486,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 variant="outlined"
                                 className="border border-white sm:w-1/2"
                                 {...register("phone")}
-                              />
+                              /> */}
                             </div>
                           </>
                         )}
