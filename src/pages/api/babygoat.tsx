@@ -7,12 +7,11 @@ export default async function handler(
 ) {
   try {
     const externalResponse = await fetch(
-      `${process.env.API_URL}/check_whitelist/baby_goats/${req.body.stakeAddy}`,
+      `${process.env.BABY_CHECK_URL}/check_whitelist/baby_goats/${req.body.stakeAddy}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
           "Content-Type": "application/json",
-
         },
         method: "GET",
       }
