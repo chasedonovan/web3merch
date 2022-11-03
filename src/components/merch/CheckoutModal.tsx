@@ -9,7 +9,6 @@ import emailjs from "emailjs-com";
 import { useWalletContext } from "hooks/useWalletContext";
 import { useMerchContext } from "hooks/useMerchContext";
 import { useGlobalContext } from "hooks/useGlobalContext";
-import CardanoWalletAPI from "client/CardanoWalletAPI";
 import AlertModal from "./../AlertModal";
 import SuccessModal from "./../SuccessModal";
 import { countries } from "../../data/countries.js";
@@ -73,14 +72,25 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
     formState: { errors },
   } = useForm<CheckoutForm>({
     resolver: yupResolver(validationSchema),
   });
+  const watchCountry = watch("country");
 
   useEffect(() => {
-    setLoadingTx(true);
+    setValue("firstName", orderAddress.firstName);
+    setValue("lastName", orderAddress.lastName);
+    setValue("address", orderAddress.streetAddress);
+    setValue("postalCode", orderAddress.postalCode);
+    setValue("country", orderAddress.country);
+    setValue("email", orderAddress.email);
+    setValue("state", orderAddress.state);
+    setValue("phone", orderAddress.phone);
+
+    // setLoadingTx(false);
     fetch("/api/cart/update", {
       method: "POST",
       headers: {
@@ -110,13 +120,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         if (data && data.success != "false") {
           setCart({
             ...cart,
-            payToAddress: data.pay_to_address,
-            transactionId: data.transaction_id,
-            subTotalPrice: data.subtotal_price,
-            shippingPrice: data.shipping_price,
-            totalPrice: data.total_price,
+            // payToAddress: data.pay_to_address,
+            // transactionId: data.transaction_id,
+            // subTotalPrice: data.subtotal_price,
+            // shippingPrice: data.shipping_price,
+            // totalPrice: data.total_price,
             cartUuid: data.uuid,
-            estimatedTotal: data.estimated_total,
+            // estimatedTotal: data.estimated_total,
           });
           setLoadingTx(false);
         } else {
@@ -148,7 +158,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         .then((res) => {
           console.log("Handle payment", res);
           // if (!res.success) throw res;
-
           // fetch("/api/cart/checkout", {
           //   method: "POST",
           //   headers: {
@@ -243,7 +252,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       phone: data.phone,
       state: data.state,
     });
-    setLoadingTx(true);
+    // setLoadingTx(true);
     await fetch("/api/cart/address", {
       method: "POST",
       headers: {
@@ -263,9 +272,30 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           email: data.email,
         },
       }),
-    }).then(async () => await handlePayment());
+      // }).then(async () => await handlePayment());
+    })
+      .then(async (res) => res.json())
+      .then((data) => {
+        console.log("data", data);
+        if (data && data.success != "false") {
+          setCart({
+            ...cart,
+            payToAddress: data.pay_to_address,
+            transactionId: data.transaction_id,
+            subTotalPrice: data.subtotal_price,
+            shippingPrice: data.shipping_price,
+            totalPrice: data.total_price,
+            cartUuid: data.uuid,
+            estimatedTotal: data.estimated_total,
+          });
+          setLoadingTx(false);
+        } else {
+          setErrMsg(data.detail);
+          console.log("error", data);
+        }
+      });
   };
-
+  console.log(cart);
   return (
     <Transition.Root show={showModal} as={Fragment}>
       <Dialog
@@ -392,6 +422,30 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   className="border border-white"
                                   {...register("state")}
                                 />{" "}
+                                <select
+                                  defaultValue=""
+                                  className={`border w-1/3 rounded-md text-gray-800 font-light cursor-pointer ${
+                                    watchCountry === "" && "text-gray-400"
+                                  } ${
+                                    errors.country
+                                      ? " border-red-500 text-red-500"
+                                      : " border-gray-400"
+                                  }`}
+                                  {...register("country")}
+                                >
+                                  <option
+                                    disabled
+                                    value=""
+                                    className="text-gray-500"
+                                  >
+                                    Country
+                                  </option>
+                                  {countries.map((country, index) => (
+                                    <option key={index} value={country.code}>
+                                      {country.name}
+                                    </option>
+                                  ))}
+                                </select>{" "}
                               </div>
                               {/* <TextField
                                 color="secondary"
@@ -406,21 +460,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 className="border border-white"
                                 {...register("country")}
                               /> */}
-                              <select className={`border w-1/3 rounded-md text-gray-800 ${errors.country ? " border-red-500 text-red-500" : " border-gray-400"}`} {...register("country")}>
-                                <option
-                                  selected
-                                  disabled
-                                  value=""
-                                  className="text-gray-500"
-                                >
-                                  Country
-                                </option>
-                                {countries.map((country, index) => (
-                                  <option key={index} value={country.code}>
-                                    {country.name}
-                                  </option>
-                                ))}
-                              </select>{" "}
                             </div>
                             <div className="flex flex-col sm:flex-row my-2 justify-around mb-0 gap-2 sm:gap-4 w-full ">
                               <TextField
@@ -476,34 +515,35 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           >
                             Go Back
                           </button>
-                          {cart.subTotalPrice && cart.shippingPrice ? (
-                            <button
-                              disabled={
-                                errors.address ||
-                                errors.country ||
-                                errors.email ||
-                                errors.firstName ||
-                                errors.lastName ||
-                                errors.postalCode
-                                  ? true
-                                  : false
-                              }
-                              type="submit"
-                              className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
-                            >
-                              {!cart.totalPrice || loadingTx ? (
-                                <img
-                                  src="/loadingblack.gif"
-                                  className="relative -top-5 h-[64px] "
-                                />
-                              ) : (
-                                `PAY $${cart.totalPrice} ${
-                                  cart.estimatedTotal > 0
-                                    ? `(~${cart.estimatedTotal} ADA)`
-                                    : ""
-                                }`
-                              )}
-                            </button>
+                          {!cart.totalPrice ? (
+                            <div className="flex  w-full justify-around">
+                              <button
+                                disabled={
+                                  errors.address ||
+                                  errors.country ||
+                                  errors.email ||
+                                  errors.firstName ||
+                                  errors.lastName ||
+                                  errors.postalCode
+                                    ? true
+                                    : false
+                                }
+                                type="submit"
+                                className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-1/3 justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
+                              >
+                                {!cart.subTotalPrice ? (
+                                  <img
+                                    src="/loadingblack.gif"
+                                    className="relative -top-5 h-[64px] "
+                                  />
+                                ) : (
+                                  "Next"
+                                )}
+                              </button>
+                              <p className="text-black self-center text-sm mx-2 text-left w-max">
+                                Subtotal: ${cart.subTotalPrice}{" "}
+                              </p>
+                            </div>
                           ) : (
                             <img
                               src={"/loading.svg"}
@@ -512,6 +552,33 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 errMsg && "hidden"
                               }`}
                             />
+                             // <button
+                            //   disabled={
+                            //     errors.address ||
+                            //     errors.country ||
+                            //     errors.email ||
+                            //     errors.firstName ||
+                            //     errors.lastName ||
+                            //     errors.postalCode
+                            //       ? true
+                            //       : false
+                            //   }
+                            //   type="submit"
+                            //   className="relative overflow-hidden mt-3 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
+                            // >
+                            //   {!cart.totalPrice || loadingTx ? (
+                            //     <img
+                            //       src="/loadingblack.gif"
+                            //       className="relative -top-5 h-[64px] "
+                            //     />
+                            //   ) : (
+                            //     `PAY $${cart.totalPrice} ${
+                            //       cart.estimatedTotal > 0
+                            //         ? `(~${cart.estimatedTotal} ADA)`
+                            //         : ""
+                            //     }`
+                            //   )}
+                            // </button>
                           )}
                         </div>
                       </form>
