@@ -12,7 +12,7 @@ import { useGlobalContext } from "hooks/useGlobalContext";
 import CardanoWalletAPI from "client/CardanoWalletAPI";
 import AlertModal from "./../AlertModal";
 import SuccessModal from "./../SuccessModal";
-
+import { countries } from "../../data/countries.js";
 
 type Variant = {
   variant_id: string;
@@ -128,20 +128,20 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const handlePayment = async () => {
     if (isConnected) {
       console.log(cart.totalPrice);
-      
+
       // await CardanoWalletAPI.pay(
       //   connectedWallet.providerapi,
       //   protocolParameters,
       //   cart.payToAddress,
       //   cart.totalPrice
       // )
-      await fetch ("/api/cart/pay", {
-        method:"POST",
+      await fetch("/api/cart/pay", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cart: cart
+          cart: cart,
         }),
       })
         .then((res) => {
@@ -227,7 +227,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       // props.setShowModal(false);
     }
   };
-
 
   const onSubmit = async (data: CheckoutForm) => {
     console.log("submit address", data);
@@ -393,8 +392,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   {...register("state")}
                                 />{" "}
                               </div>
-
-                              <TextField
+                              {/* <TextField
                                 color="secondary"
                                 error={errors.country ? true : false}
                                 id="outlined-basic"
@@ -406,7 +404,22 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 variant="outlined"
                                 className="border border-white"
                                 {...register("country")}
-                              />
+                              /> */}
+                              <select className={`border w-1/3 rounded-md text-gray-800 ${errors.country ? " border-red-500 text-red-500" : " border-gray-400"}`} {...register("country")}>
+                                <option
+                                  selected
+                                  disabled
+                                  value=""
+                                  className="text-gray-500"
+                                >
+                                  Country
+                                </option>
+                                {countries.map((country, index) => (
+                                  <option key={index} value={country.code}>
+                                    {country.name}
+                                  </option>
+                                ))}
+                              </select>{" "}
                             </div>
                             <div className="flex flex-col sm:flex-row my-2 justify-around mb-0 gap-2 sm:gap-4 w-full ">
                               <TextField
@@ -446,7 +459,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <div className="font-quicksand text-black">
                               +Shipping:{" "}
                               {cart.shippingPrice
-                                ? " $" + cart.shippingPrice 
+                                ? " $" + cart.shippingPrice
                                 : ""}
                             </div>
                           </>
