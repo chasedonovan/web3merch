@@ -14,8 +14,6 @@ export default async function handler(
     }
     const paymentInfoJson = req.body.json();
 
-    const cartResp = await getCart(paymentInfoJson.order_id);
-
     const nowpaymentsSig = String(req.headers["x-nowpayments-sig"] ?? "");
     console.log("x-nowpayments-sig", nowpaymentsSig);
 
@@ -32,11 +30,19 @@ export default async function handler(
       res.status(500).send(false);
     }
 
-    //save
-    await savePayment(paymentInfoJson);
+    const currentCart = await getCartPaymentStatus(paymentInfoJson.order_id);
 
-    if (paymentInfoJson.payment_status == "finished") {
-      //send order confirmation email
+    if (currentCart && currentCart.cart_uuid) {
+      //save
+      const updatedCart = await savePayment(paymentInfoJson);
+
+      //check if the status changed to "finished"
+      if (
+        currentCart.payment_status != "finished" &&
+        updatedCart.payment_status == "finished"
+      ) {
+        //TODO: send order confirmation email
+      }
     }
 
     res.status(200).send(true);
@@ -67,28 +73,44 @@ async function check_ipn_request_is_valid(
 
 async function savePayment(paymentInfo: any) {
   try {
-    const savePayment = await fetch(
-      `${process.env.API_URL}/merch/cart/payment`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(paymentInfo),
-      }
-    );
-    console.log("Save payment", savePayment);
-    return true;
+    const cartResp = await fetch(`${process.env.API_URL}/merch/cart/payment`, {
+      headers: {
+        Authorization: `Bearer ${process.env.API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(paymentInfo),
+    });
+    const cartData = await cartResp.json();
+    console.log("Save cart payment", cartData);
+    return cartData;
   } catch (e) {
     throw e;
   }
 }
 
-async function getCart(cart_uuid: string) {
+// {
+//   "payment_id": 5524759814,
+//   "payment_status": "finished",
+//   "pay_address": "TNDFkiSmBQorNFacb3735q8MnT29sn8BLn",
+//   "price_amount": 5,
+//   "price_currency": "usd",
+//   "pay_amount": 165.652609,
+//   "actually_paid": 180,
+//   "pay_currency": "trx",
+//   "order_id": "RGDBP-21314",
+//   "order_description": "Apple Macbook Pro 2019 x 1",
+//   "purchase_id": "4944856743",
+//   "created_at": "2020-12-16T14:30:43.306Z",
+//   "updated_at": "2020-12-16T14:40:46.523Z",
+//   "outcome_amount": 178.9005,
+//   "outcome_currency": "trx"
+// }
+
+async function getCartPaymentStatus(cart_uuid: string) {
   try {
     const cartResp = await fetch(
-      `${process.env.API_URL}/merch/cart/${cart_uuid}`,
+      `${process.env.API_URL}/merch/cart/payment/${cart_uuid}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,

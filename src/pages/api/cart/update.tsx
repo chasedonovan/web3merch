@@ -23,7 +23,7 @@ export default async function handler(
     const minPayment = await minimumPayment();
 
     if (minPayment.min_amount <= externalResponseData.total_price) {
-      const estPayment = await estimatedPayment(cart);
+      const estPayment = await estimatedPayment(externalResponseData);
       externalResponseData.estimatedTotal = estPayment.estimated_amount;
     } else {
       res.status(200).json({
@@ -60,8 +60,9 @@ async function minimumPayment() {
 
 async function estimatedPayment(externalResponseData: any) {
   try {
+    console.log(externalResponseData);
     const estPaymentResponse = await fetch(
-      `${process.env.NOWPAYMENT_API_URL}/v1/estimate?amount=${externalResponseData.totalPrice}&currency_from=usd&currency_to=ada`,
+      `${process.env.NOWPAYMENT_API_URL}/v1/estimate?amount=${externalResponseData.total_price}&currency_from=usd&currency_to=ada`,
       {
         headers: {
           "x-api-key": `${process.env.NOWPAYMENT_API_KEY}`,
