@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import emailjs from "emailjs-com";
-import { XMLHttpRequest } from "xmlhttprequest";
 
 export default async function handler(
   req: NextApiRequest,

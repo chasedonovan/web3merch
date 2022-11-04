@@ -13,7 +13,7 @@ import AlertModal from "./../AlertModal";
 import SuccessModal from "./../SuccessModal";
 import { countries } from "../../data/countries.js";
 import { MuiTelInput } from "mui-tel-input";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
 type Variant = {
   variant_id: string;
@@ -107,7 +107,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cart: cart,
+          cart_uuid: cart.cartUuid,
         }),
       })
         .then((res) => {
@@ -118,9 +118,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           }
         })
         .then((data) => {
-          console.log('d',data);
+          console.log("d", data);
           setLoadingTx(false);
-          router.push(`/checkout/${cart.cartUuid}`);          
+          router.push(`/checkout/${cart.cartUuid}`);
         })
         .catch((err) => {
           console.log(err);
@@ -133,7 +133,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       setLoadingTx(false);
     }
   };
-
 
   const onSubmit = async (data: CheckoutForm) => {
     setLoadingN(true);
@@ -198,7 +197,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     setPhone(e);
     console.log(phone);
   };
-
 
   return (
     <Transition.Root show={showModal} as={Fragment}>
@@ -386,7 +384,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             </>
                           )}
 
-                          {cart.subTotalPrice && cart.shippingPrice && approved ? (
+                          {cart.subTotalPrice &&
+                          cart.shippingPrice &&
+                          approved ? (
                             <>
                               <div className="font-bold font-quicksand text-black mt-2">
                                 Sub total:{" "}
@@ -454,7 +454,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           </div>
                         </form>
                       ) : (
-                        <form onSubmit={handleSubmit(onSubmit)} className='h-full'>
+                        <form
+                          onSubmit={handleSubmit(onSubmit)}
+                          className="h-full"
+                        >
                           {errMsg ? (
                             <div
                               className=" text-red-700 px-4 py-3 rounded relative mb-4"
@@ -480,9 +483,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           </div>
                           <div className="font-quicksand text-black">
                             Total:{" "}
-                            {cart.totalPrice
-                              ? " $" + cart.totalPrice 
-                              : ""}
+                            {cart.totalPrice ? " $" + cart.totalPrice : ""}
                           </div>
                           <div className="font-quicksand text-black mb-6">
                             Estimated Total in ADA:{" "}
@@ -490,7 +491,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ? cart.estimatedTotal + " ₳"
                               : ""}
                           </div>
-                          
+
                           <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                             <button
                               type="button"

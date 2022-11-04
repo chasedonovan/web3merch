@@ -7,9 +7,24 @@ export default async function handler(
   res: NextApiResponse<unknown>
 ) {
   try {
-    const cart = req.body.cart;
+    console.log("Payment init");
+    const cart_uuid = req.body.cart_uuid;
 
-    const cartResponse = await getCart(cart.cartUuid);
+    const cartResponse = await getCart(cart_uuid);
+    console.log("Payment, fetch cart", cartResponse);
+
+    const paymentData = {
+      price_amount: cartResponse.total_price,
+      price_currency: "usd",
+      pay_currency: "ada",
+      ipn_callback_url: "https://merch.uniscoll.io/nowpaymentcallback",
+      order_id: cartResponse.uuid,
+      order_description: "GoatTribe merch",
+    };
+
+    const paymentDataJson = JSON.stringify(paymentData);
+
+    console.log("Payment data", paymentData, paymentDataJson);
 
     const externalResponse = await fetch(
       `${process.env.NOWPAYMENT_API_URL}/v1/payment?currency_from=USD&currency_to=ADA`,
@@ -19,24 +34,25 @@ export default async function handler(
           "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify(`
-          "price_amount": ${cartResponse.total_price},
-          "price_currency": "usd",
-          "pay_currency": "ada",
-          "ipn_callback_url": "https://merch.uniscoll.io/nowpaymentcallback",
-          "order_id": ${cartResponse.uuid},
-          "order_description": "GoatTribe merch"`),
+        body: paymentDataJson,
       }
     );
 
     const externalResponseData = await externalResponse.json();
 
-    //TODO: save the payment info
-    await savePayment(externalResponseData);
+    const paymentSaved = await savePayment(externalResponseData);
+
+    if (!paymentSaved) {
+      console.error("Payment could not be saved", externalResponseData);
+      return res
+        .status(500)
+        .json({ status: "false", detail: "Payment could not be saved" });
+    }
 
     console.log("Pay", externalResponseData);
     res.status(200).json(externalResponseData);
   } catch (e) {
+    console.log("Pay error", e);
     res.status(500).json({ error: e });
   }
 }
