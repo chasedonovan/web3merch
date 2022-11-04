@@ -75,7 +75,7 @@ const Checkout = (props: Props) => {
   return (
     <div className="w-full h-screen flex justify-center items-center p-2">
       {details ? (
-        <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col justify-center items-center border rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
+        <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col items-center border min-h-[75%] rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
           <div className="w-max flex justify-center items-center my-2">
             <img src="/goat-logo.png" className="h-18" />{" "}
             <p className="text-xl font-quicksand mx-6 hidden sm:block">X</p>{" "}
@@ -98,7 +98,7 @@ const Checkout = (props: Props) => {
             </div>
           )}
           {details.payment_status === "waiting" && (
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col justify-around my-auto h-[75%] w-full">
               <div className="flex flex-col justify-center items-center mt-4 break-words">
                 <h2 className="text-xl font-bold ">Payment Address:</h2>
                 <p className="text-center break-all">
@@ -141,7 +141,7 @@ const Checkout = (props: Props) => {
                   </svg>
                 </p>
               </div>
-              <div className="flex gap-2 justify-center mt-2 items-center">
+              <div className="flex gap-2 flex-col justify-center mt-2 items-center">
                 <h2 className="text-xl font-bold">Payment Status:</h2>
                 <p className="text-lg">{details.payment_status}</p>
               </div>
@@ -210,11 +210,11 @@ const Checkout = (props: Props) => {
             </p>
           )}
           {details.payment_status === "waiting" && (
-            <p className="sm:text-lg text-gray-200 text-center mt-8">
+            <p className="sm:text-lg sm:font-bold text-gray-200 text-center my-auto">
               {" "}
               Please send {details.pay_amount} {details.pay_currency} to the
               address above. <br />{" "}
-              <span className="text-sm mt-2 text-gray-300">
+              <span className="text-sm mt-4 text-gray-300">
                 No need to reload the page after payment, the status will
                 automatically refresh.
               </span>
