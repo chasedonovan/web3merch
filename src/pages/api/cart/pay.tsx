@@ -9,7 +9,7 @@ export default async function handler(
   try {
     const cart = req.body.cart;
 
-    const cartResponse = await getCart(cart.uuid);
+    const cartResponse = await getCart(cart.cartUuid);
 
     const externalResponse = await fetch(
       `${process.env.NOWPAYMENT_API_URL}/v1/payment?currency_from=USD&currency_to=ADA`,
