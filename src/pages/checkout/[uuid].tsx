@@ -25,15 +25,29 @@ const checkout = (props: Props) => {
   const [details, setDetails] = React.useState<Details | null>(null);
   const router = useRouter();
 
-  const copy = async () => {
+  const copyLink = async () => {
     await navigator.clipboard.writeText(
       `https://merch.uniscroll.io/checkout/${router.query.uuid}`
     );
     alert("Link copied. Save this to keep track of your order.");
   };
+  const copyAddress = async () => {
+    await navigator.clipboard.writeText(
+      `${details?.pay_address}`
+    );
+    alert(`Address copied. Send this address ${details?.pay_amount} ${details?.pay_currency} to complete your order.`);
+  };
+  const copyAmount = async () => {
+    await navigator.clipboard.writeText(
+      `${details?.pay_address}`
+    );
+    alert(`Amount copied. Send to ${details?.pay_address} to complete your order.`);
+  };
 
   useEffect(() => {
     //fetch payment status
+    console.log(router.query.uuid, 'uuid');
+    const uuid = router.query.uuid;
     const fetchPaymentStatus = async () => {
       fetch("/api/cart/nowpaymentstatus", {
         method: "POST",
@@ -41,7 +55,7 @@ const checkout = (props: Props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cart_uuid: router.query.uuid,
+          cart_uuid: uuid,
         }),
       })
         .then((res) => res.json())
@@ -50,7 +64,7 @@ const checkout = (props: Props) => {
           setDetails(data);
           // setDetails({
           //   payment_id: 5524759814,
-          //   payment_status: "finshed",
+          //   payment_status: "none",
           //   pay_address: "TNDFkiSmBQorNFacb3735q8MnT29sn8BLn",
           //   price_amount: 5,
           //   price_currency: "usd",
@@ -83,14 +97,15 @@ const checkout = (props: Props) => {
             <p className="text-xl font-quicksand mx-6 hidden sm:block">X</p>{" "}
             <img src="/uniscroll-full.webp" className="pr-4 sm:block hidden" />
           </div>
-          {details.payment_status === "finished" ? (
+          {details.payment_status === "finished" && (
             <div className="flex gap-2 flex-col justify-center items-center text-center my-2">
               <p className="text-3xl">
                 {" "}
                 Congratulations, your transaction has been completed!{" "}
               </p>
             </div>
-          ) : (
+          )}
+          {details.payment_status === "pending" && (
             <div className="flex gap-2 flex-col justify-center items-center text-center my-6 mb-4">
               <p className="text-3xl">
                 {" "}
@@ -98,7 +113,55 @@ const checkout = (props: Props) => {
               </p>
             </div>
           )}
-          <h1 className="text-2xl font-bold mt-2">Order Details</h1>
+          {details.payment_status === "none" && (
+            <>
+              <div className="flex flex-col justify-center items-center mt-4">
+                <h2 className="text-xl font-bold">Payment Address:</h2>
+                <p className="text-lg">{details.pay_address}
+                <svg
+                onClick={copyAddress}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-gray-400"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                />
+              </svg></p>
+              </div>
+              <div className="flex flex-col justify-center items-center mt-2">
+                <h2 className="text-xl font-bold">Amount:</h2>
+                <p className="text-lg ml-2">{details.pay_amount} {details.pay_currency}
+                <svg
+                onClick={copyAmount}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-gray-400"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                />
+              </svg>
+                </p>
+              </div>
+              <div className="flex gap-2 justify-center mt-2 items-center">
+                <h2 className="text-xl font-bold">Payment Status:</h2>
+                <p className="text-lg">{details.payment_status}</p>
+              </div>
+            </>
+          )}
+          {details.payment_status === "finished" || details.payment_status === "pending" && (
+          <>
           <div className="flex gap-2 justify-center items-center">
             <h2 className="text-xl font-bold">Payment Status:</h2>
             <p className="text-lg">{details.payment_status}</p>
@@ -138,21 +201,21 @@ const checkout = (props: Props) => {
           <div className="flex gap-2 justify-center items-center">
             <h2 className="text-xl font-bold">Pay Currency:</h2>
             <p className="text-lg">{details.pay_currency}</p>
-          </div>
-          {details.payment_status === "finished" ? (
+          </div></>)}
+          {details.payment_status === "finished" && (
             <p className="text-lg text-gray-200 text-center mt-8">
               {" "}
               For your records save or take a screenshot of this page. You can
               also save this link: <br /> https://merch.uniscroll.io/checkout/
               {router.query.uuid}
               <svg
-                onClick={copy}
+                onClick={copyLink}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-purple-800"
+                className="w-6 h-6 inline cursor-pointer translate-x-2 hover:stroke-gray-400"
               >
                 <path
                   strokeLinecap="round"
@@ -161,11 +224,20 @@ const checkout = (props: Props) => {
                 />
               </svg>
             </p>
-          ) : (
-            <p className="sm:text-lg text-gray-200 text-center mt-8 mb-2">
+          )}
+          {details.payment_status === "pending" && (
+            <p className="sm:text-lg text-gray-200 text-center mt-8">
               {" "}
               Please be patient, as this may take some time. <br /> No need to
               reload the page, the status will automatically refresh.
+            </p>
+          )}
+          {details.payment_status === "none" && (
+            <p className="sm:text-lg text-gray-200 text-center mt-8">
+              {" "}
+              Please send {details.pay_amount} {details.pay_currency} to the
+              address above. <br /> <span className="text-sm mt-2 text-gray-300">No need to reload the page after payment,
+              the status will automatically refresh.</span> 
             </p>
           )}
         </div>
