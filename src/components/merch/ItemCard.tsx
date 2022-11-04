@@ -139,7 +139,6 @@ const ItemCard = (props: Props) => {
     // }
     setQuantity(1);
   };
-
   return (
     <div className="w-max h-max flex flex-col hover:scale-105 ease-in duration-300 mb-2 max-w-64 sm:min-w-[386px] ">
       <img

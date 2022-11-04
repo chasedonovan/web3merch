@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 type Props = {};
@@ -21,8 +21,8 @@ type Details = {
   outcome_currency: string;
 };
 
-const checkout = (props: Props) => {
-  const [details, setDetails] = React.useState<Details | null>(null);
+const Checkout = (props: Props) => {
+  const [details, setDetails] = useState<Details | null>(null);
   const router = useRouter();
   const uuid = router.query.uuid ?? "";
 
@@ -75,7 +75,7 @@ const checkout = (props: Props) => {
   return (
     <div className="w-full h-screen flex justify-center items-center p-2">
       {details ? (
-        <div className=" overflow-scroll scrollbar-hide min-w-min h-max flex flex-col justify-center items-center border rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
+        <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col justify-center items-center border rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
           <div className="w-max flex justify-center items-center my-2">
             <img src="/goat-logo.png" className="h-18" />{" "}
             <p className="text-xl font-quicksand mx-6 hidden sm:block">X</p>{" "}
@@ -98,10 +98,10 @@ const checkout = (props: Props) => {
             </div>
           )}
           {details.payment_status === "waiting" && (
-            <>
-              <div className="flex flex-col justify-center items-center mt-4">
-                <h2 className="text-xl font-bold">Payment Address:</h2>
-                <p className="text-lg">
+            <div className="flex flex-col w-full">
+              <div className="flex flex-col justify-center items-center mt-4 break-words">
+                <h2 className="text-xl font-bold ">Payment Address:</h2>
+                <p className="text-center break-all">
                   {details.pay_address}
                   <svg
                     onClick={copyAddress}
@@ -145,7 +145,7 @@ const checkout = (props: Props) => {
                 <h2 className="text-xl font-bold">Payment Status:</h2>
                 <p className="text-lg">{details.payment_status}</p>
               </div>
-            </>
+            </div>
           )}
           {details.payment_status != "waiting" && (
             <>
@@ -230,4 +230,4 @@ const checkout = (props: Props) => {
   );
 };
 
-export default checkout;
+export default Checkout;
