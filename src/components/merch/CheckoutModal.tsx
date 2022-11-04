@@ -112,6 +112,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       })
         .then((res) => {
           if (res.status === 200) {
+            router.push(`/checkout/${cart.cartUuid}`);
             return res.json();
           } else {
             throw new Error("Something went wrong");
@@ -119,8 +120,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         })
         .then((data) => {
           console.log("d", data);
-          setLoadingTx(false);
-          router.push(`/checkout/${cart.cartUuid}`);
         })
         .catch((err) => {
           console.log(err);
@@ -183,7 +182,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             cartUuid: data.uuid,
             estimatedTotal: data.estimated_total,
           });
-          setLoadingTx(false);
           setApproved(true);
         } else {
           setErrMsg(data.detail);
@@ -516,7 +514,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   : false
                               }
                               onClick={handlePayment}
-                              className="relative overflow-hidden mt-6 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500"
+                              className={`relative overflow-hidden mt-6 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500 ${loadingTx ? 'border-none' : 'border'}`}
                             >
                               {!cart.totalPrice || loadingTx ? (
                                 <img
