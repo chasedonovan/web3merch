@@ -366,6 +366,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   {...register("email")}
                                 />
                                 <MuiTelInput
+                                defaultCountry="US"
                                   value={phone}
                                   onChange={handleChange}
                                 />
@@ -417,6 +418,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               <div className="flex  w-full justify-around">
                                 <button
                                   disabled={
+                                    // phone.length < 7 ||
                                     errors.address ||
                                     errors.country ||
                                     errors.email ||
