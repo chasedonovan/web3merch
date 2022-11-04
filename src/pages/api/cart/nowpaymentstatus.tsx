@@ -9,6 +9,11 @@ export default async function handler(
 
     const cart = await getCart(cart_uuid);
 
+    if (!cart.payment_id) {
+      console.error(cart);
+      return res.status(500).json(cart);
+    }
+
     const resp = await fetch(
       `${process.env.NOWPAYMENT_API_URL}/v1/payment/${cart.payment_id}`,
       {
