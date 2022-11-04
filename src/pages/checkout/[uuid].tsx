@@ -75,7 +75,7 @@ const Checkout = (props: Props) => {
   return (
     <div className="w-full h-screen flex justify-center items-center p-2">
       {details ? (
-        <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col items-center border min-h-[75%] rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
+        <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col items-center border min-h-[66%] rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
           <div className="w-max flex justify-center items-center my-2">
             <img src="/goat-logo.png" className="h-18" />{" "}
             <p className="text-xl font-quicksand mx-6 hidden sm:block">X</p>{" "}
