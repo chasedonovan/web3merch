@@ -64,6 +64,8 @@ type MerchContextProps = {
   setAddress: (address: Address) => void;
   addedModal: boolean;
   setAddedModal: (addedModal: boolean) => void;
+  maxModal: boolean;
+  setMaxModal: (maxModal: boolean) => void;
 };
 
 const MerchContext = createContext<MerchContextProps>({
@@ -74,6 +76,8 @@ const MerchContext = createContext<MerchContextProps>({
   setAddress: () => {},
   addedModal: false,
   setAddedModal: () => {},
+  maxModal: false,
+  setMaxModal: () => {},
 });
 
 type ProviderProps = {} & PropsWithChildren;
@@ -114,6 +118,8 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
   };
 
   const [addedModal, setAddedModal] = useState(false);
+  const [maxModal, setMaxModal] = useState(false);
+
 
   useEffect(() => {
     //get products from backend every 2 minutes
@@ -158,6 +164,8 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
         setAddress,
         addedModal,
         setAddedModal,
+        maxModal,
+        setMaxModal,
       }}
     >
       {children}

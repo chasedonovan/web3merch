@@ -33,7 +33,7 @@ type Props = {
 };
 
 const ItemCard = (props: Props) => {
-  const { cart, setCart, setAddedModal } = useMerchContext();
+  const { cart, setCart, setAddedModal, setMaxModal } = useMerchContext();
   const [showDetails, setShowDetails] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const validationSchema = Yup.object().shape({
@@ -63,52 +63,59 @@ const ItemCard = (props: Props) => {
   const onSubmit = (data: IFormInput) => {
     // console.log(data);
 
+    // const itemInCart = cart.cartItems.find(
+    //   (item) => item.variant.size === data.size && item.name === props.item.name
+    // );
+
+    //limit quantity to 1 per product
     const itemInCart = cart.cartItems.find(
-      (item) => item.variant.size === data.size && item.name === props.item.name
+      (item) => item.name === props.item.name
     );
 
     if (itemInCart) {
-      if (itemInCart.quantity < itemInCart.variant.stock - quantity) {
-        const newCartItems = cart.cartItems.map((item) => {
-          if (
-            item.variant.size === data.size &&
-            item.name === props.item.name
-          ) {
-            return {
-              ...item,
-              quantity: item.quantity + quantity,
-            };
-          }
-          return item;
-        });
-        setCart({
-          ...cart,
-          cartItems: newCartItems,
-        });
-      } else {
-        const variant = props.item.variants.find(
-          (variant) => variant.size === data.size
-        );
-        if (variant) {
-          const newCartItems = cart.cartItems.map((item) => {
-            if (
-              item.variant.size === data.size &&
-              item.name === props.item.name
-            ) {
-              return {
-                ...item,
-                quantity: variant.stock,
-              };
-            }
-            return item;
-          });
+      setMaxModal(true);
+      // setAddedModal(true);
+      // if (itemInCart.quantity < itemInCart.variant.stock - quantity) {
+      //   const newCartItems = cart.cartItems.map((item) => {
+      //     if (
+      //       item.variant.size === data.size &&
+      //       item.name === props.item.name
+      //     ) {
+      //       return {
+      //         ...item,
+      //         quantity: item.quantity + quantity,
+      //       };
+      //     }
+      //     return item;
+      //   });
+      //   setCart({
+      //     ...cart,
+      //     cartItems: newCartItems,
+      //   });
+      // } else {
+      //   const variant = props.item.variants.find(
+      //     (variant) => variant.size === data.size
+      //   );
+      //   if (variant) {
+      //     const newCartItems = cart.cartItems.map((item) => {
+      //       if (
+      //         item.variant.size === data.size &&
+      //         item.name === props.item.name
+      //       ) {
+      //         return {
+      //           ...item,
+      //           quantity: variant.stock,
+      //         };
+      //       }
+      //       return item;
+      //     });
 
-          setCart({
-            ...cart,
-            cartItems: newCartItems,
-          });
-        }
-      }
+      //     setCart({
+      //       ...cart,
+      //       cartItems: newCartItems,
+      //     });
+      //   }
+      // }
     } else {
       // Add item to cart
       const variant = props.item.variants.find(
@@ -125,14 +132,13 @@ const ItemCard = (props: Props) => {
         ...cart,
         cartItems: [...cart.cartItems, newCartItem],
       });
+      setAddedModal(true);
     }
-    setAddedModal(true);
     // if (cart.cartItems.length === 0) {
     //   props.setShowCart(true);
     // }
     setQuantity(1);
   };
-
 
   return (
     <div className="w-max h-max flex flex-col hover:scale-105 ease-in duration-300 mb-2 max-w-64 sm:min-w-[386px] ">
@@ -170,7 +176,13 @@ const ItemCard = (props: Props) => {
           props.item.variants &&
           props.item.variants[0].size === "OneSize" && (
             <div className="flex flex-row">
-              <div className={`pr-2 font-quicksand ${props.item.variants[0].stock === 0 && 'hidden'}`}>Quantity</div>
+              <div
+                className={`pr-2 font-quicksand ${
+                  props.item.variants[0].stock === 0 && "hidden"
+                }`}
+              >
+                Quantity
+              </div>
               <select
                 disabled={props.item.variants[0].stock === 0}
                 autoFocus
@@ -180,7 +192,12 @@ const ItemCard = (props: Props) => {
               >
                 {props.item.variants[0].stock > 0 ? (
                   <>
-                  {Array.from(
+                    <option key={1} value={1}>
+                      {1 === props.item.variants[0].stock
+                        ? 1 + " left"
+                        : `${1}`}
+                    </option>
+                    {/* {Array.from(
                     { length: Math.min(props.item.variants[0].stock, 100) },
                     (_, i) => i + 1
                   ).map((num) => (
@@ -189,7 +206,7 @@ const ItemCard = (props: Props) => {
                         ? num + " left"
                         : `${num}`}
                     </option>
-                  ))}
+                  ))} */}
                   </>
                 ) : (
                   <option value={0}>Out of stock</option>
@@ -213,7 +230,6 @@ const ItemCard = (props: Props) => {
             errors.size && "border rounded-lg border-red-600"
           }`}
           {...register("size")}
-
           defaultValue=""
         >
           {props.item &&
@@ -239,9 +255,17 @@ const ItemCard = (props: Props) => {
             </>
           )}
         </select>
-       {/* If the item is out of stock at selected size, disable the button */}
+        {/* If the item is out of stock at selected size, disable the button */}
         <button
-          disabled={errors.size ? true : false || (props.item.variants[0].stock === 0 && props.item.variants[0].size === "OneSize") || props.item.variants.find((variant) => variant.size === size)?.stock === 0}
+          disabled={
+            errors.size
+              ? true
+              : false ||
+                (props.item.variants[0].stock === 0 &&
+                  props.item.variants[0].size === "OneSize") ||
+                props.item.variants.find((variant) => variant.size === size)
+                  ?.stock === 0
+          }
           type="submit"
           className="border border-white mb-2 rounded-md self-center w-1/3 text-white py-2 px-1 min-w-max disabled:opacity-50 font-quicksand"
         >

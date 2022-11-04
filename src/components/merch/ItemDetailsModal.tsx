@@ -18,7 +18,7 @@ export default function ItemDetailsModal({
   item,
   setShowCart,
 }: Props) {
-  const { cart, setCart, setAddedModal } = useMerchContext();
+  const { cart, setCart, setAddedModal, setMaxModal } = useMerchContext();
   const cancelButtonRef = useRef(null);
   const [imgIndex, setImgIndex] = useState(0);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
@@ -50,27 +50,30 @@ export default function ItemDetailsModal({
     if (size === "" && item.variants[0].size !== "OneSize") {
       setErr(true);
     } else {
-      const itemInCart = cart.cartItems.find(
-        (cartItem) =>
-          cartItem.variant.size === size && cartItem.name === item.name
-      );
+      // const itemInCart = cart.cartItems.find(
+      //   (cartItem) =>
+      //     cartItem.variant.size === size && cartItem.name === item.name
+      // );
 
+      //limit quantity to 1 per product
+      const itemInCart = cart.cartItems.find((p) => p.name === item.name);
       if (itemInCart) {
-        if (itemInCart.quantity < itemInCart.variant.stock) {
-          const newCartItems = cart.cartItems.map((item) => {
-            if (item.variant.size === size && item.name === item.name) {
-              return {
-                ...item,
-                quantity: item.quantity + quantity,
-              };
-            }
-            return item;
-          });
-          setCart({
-            ...cart,
-            cartItems: newCartItems,
-          });
-        }
+        setMaxModal(true);
+        //   if (itemInCart.quantity < itemInCart.variant.stock) {
+        //     const newCartItems = cart.cartItems.map((item) => {
+        //       if (item.variant.size === size && item.name === item.name) {
+        //         return {
+        //           ...item,
+        //           quantity: item.quantity + quantity,
+        //         };
+        //       }
+        //       return item;
+        //     });
+        //     setCart({
+        //       ...cart,
+        //       cartItems: newCartItems,
+        //     });
+        //   }
       } else {
         // Add item to cart
         const variant = item.variants.find(
@@ -264,7 +267,7 @@ export default function ItemDetailsModal({
                     </p>
                     {item.original_price !== item.price ? (
                       <p className="self-end text-right text-gray-200 line-through opacity-75">
-                      ${item.original_price}
+                        ${item.original_price}
                       </p>
                     ) : (
                       ""
@@ -307,7 +310,12 @@ export default function ItemDetailsModal({
                               </> */}
                               {item.variants[0].stock > 0 ? (
                                 <>
-                                  {Array.from(
+                                  <option key={1} value={1}>
+                                    {1 === item.variants[0].stock
+                                      ? 1 + " left"
+                                      : `${1}`}
+                                  </option>
+                                  {/* {Array.from(
                                     {
                                       length: Math.min(
                                         item.variants[0].stock,
@@ -321,7 +329,7 @@ export default function ItemDetailsModal({
                                         ? num + " left"
                                         : `${num}`}
                                     </option>
-                                  ))}
+                                  ))} */}
                                 </>
                               ) : (
                                 <option value={0}>Out of stock</option>
@@ -496,7 +504,12 @@ export default function ItemDetailsModal({
                                 >
                                   {item.variants[0].stock > 0 ? (
                                     <>
-                                      {Array.from(
+                                      <option key={1} value={1}>
+                                        {1 === item.variants[0].stock
+                                          ? 1 + " left"
+                                          : `${1}`}
+                                      </option>
+                                      {/* {Array.from(
                                         {
                                           length: Math.min(
                                             item.variants[0].stock,
@@ -510,7 +523,7 @@ export default function ItemDetailsModal({
                                             ? num + " left"
                                             : `${num}`}
                                         </option>
-                                      ))}
+                                      ))} */}
                                     </>
                                   ) : (
                                     <option value={0}>Out of stock</option>
@@ -577,17 +590,18 @@ export default function ItemDetailsModal({
                         <p className="mt-1 whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400">
                           {item.description}
                         </p>
-                        {item.additional_info && item.additional_info.length > 6 && (
-                          <div className="mt-4">
-                            Additional Info{" "}
-                            <div
-                              className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2"
-                              dangerouslySetInnerHTML={{
-                                __html: item.additional_info,
-                              }}
-                            />
-                          </div>
-                        )}
+                        {item.additional_info &&
+                          item.additional_info.length > 6 && (
+                            <div className="mt-4">
+                              Additional Info{" "}
+                              <div
+                                className="mt-1 max-w-screen whitespace-normal overflow-scroll scrollbar-hide text-sm text-gray-400 ease-in duration-500 flex flex-col gap-2"
+                                dangerouslySetInnerHTML={{
+                                  __html: item.additional_info,
+                                }}
+                              />
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>

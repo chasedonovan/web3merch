@@ -12,15 +12,20 @@ type Props = {
 
 export default function Navbar(props: Props) {
   const { isConnected } = useWalletContext();
-  const { addedModal, setAddedModal } = useMerchContext();
+  const { addedModal, setAddedModal, maxModal, setMaxModal } = useMerchContext();
 
   useEffect(() => {
     if (addedModal) {
       setTimeout(() => {
         setAddedModal(false);
-      }, 3000);
+      }, 2500);
     }
-  }, [addedModal]);
+      else if (maxModal) {
+        setTimeout(() => {
+          setMaxModal(false);
+        }, 2500);
+    }
+  }, [addedModal, maxModal]);
 
   return (
     <div
@@ -81,6 +86,26 @@ export default function Navbar(props: Props) {
                     className="bg-black text-white rounded-lg px-4 py-2 mt-4"
                     onClick={() => {
                       setAddedModal(false);
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {maxModal && (
+            <div className="absolute top-28 right-0 w-full h-full bg-black bg-opacity-50 z-50 flex flex-col justify-center items-center">
+              <div className="bg-white rounded-lg p-4">
+                <div className="flex flex-col justify-center items-center">
+                  <div className=" text-gray-800 font-bold">Sorry, only one is allowed.</div>
+                  <div className="text-sm text-gray-600">
+                    Keep up in our Discord or Twitter if you don't want to miss the restocking.
+                  </div>
+                  <button
+                    className="bg-black text-white rounded-lg px-4 py-2 mt-4"
+                    onClick={() => {
+                      setMaxModal(false);
                     }}
                   >
                     Close
