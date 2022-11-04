@@ -30,7 +30,7 @@ export default async function handler(
       res.status(500).send(false);
     }
 
-    const currentCart = await getCartPaymentStatus(paymentInfoJson.order_id);
+    const currentCart = await getCart(paymentInfoJson.order_id);
 
     if (currentCart && currentCart.cart_uuid) {
       //save
@@ -41,13 +41,58 @@ export default async function handler(
         currentCart.payment_status != "finished" &&
         updatedCart.payment_status == "finished"
       ) {
-        //TODO: send order confirmation email
+        await sendOrderConfirmationEmail(currentCart);
       }
     }
 
     res.status(200).json(true);
   } catch (e) {
     res.status(500).json({ error: e });
+  }
+}
+
+async function sendOrderConfirmationEmail(cart: any) {
+  try {
+    const items = cart.cartItems.map((item: any) => {
+      return `
+          <img src="https://merch.uniscroll.io/${item.image}" alt="${
+        item.name
+      }" />
+          <p>${item.name} ${item.variant.size} ${item.price} ${item.quantity} ${
+        item.price * item.quantity
+      }</p>
+          `;
+    });
+
+    emailjs
+      .send(
+        `${process.env.EMAIL_KEY}`,
+        `${process.env.EMAIL_TEMPLATE}`,
+        {
+          to_name: cart.address.first_name + " " + cart.address.last_name,
+          to_email: cart.address.email,
+          address: cart.address.street_address,
+          postal: cart.address.postal_code,
+          country: cart.address.country,
+          items: items,
+          subtotal: `${cart.subtotal_price}`,
+          shipping: `${cart.shipping_price}`,
+          total: `${cart.total_price}`,
+          date_time: new Date().toLocaleString(),
+        },
+        `${process.env.EMAIL_PUBLIC_KEY}`
+      )
+      .then(
+        (result: any) => {
+          console.log(result.text);
+        },
+        (error: any) => {
+          console.log(error.text);
+        }
+      );
+  } catch (error: any) {
+    console.log(error);
+    throw error;
   }
 }
 
@@ -107,10 +152,10 @@ async function savePayment(paymentInfo: any) {
 //   "outcome_currency": "trx"
 // }
 
-async function getCartPaymentStatus(cart_uuid: string) {
+async function getCart(cart_uuid: string) {
   try {
     const cartResp = await fetch(
-      `${process.env.API_URL}/merch/cart/payment/${cart_uuid}`,
+      `${process.env.API_URL}/merch/cart/${cart_uuid}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.API_KEY}`,
