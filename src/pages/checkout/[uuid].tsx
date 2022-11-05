@@ -73,7 +73,7 @@ const Checkout = (props: Props) => {
   }, [router.isReady]);
 
   return (
-    <div className="w-full h-screen flex justify-center items-center p-2">
+    <div className="w-full h-screen  flex justify-center items-center p-2">
       {details ? (
         <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col items-center border min-h-[66%] rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
           <div className="w-max flex justify-center items-center my-2">
@@ -148,7 +148,7 @@ const Checkout = (props: Props) => {
             </div>
           )}
           {details.payment_status != "waiting" && (
-            <>
+            <div className="flex flex-col my-auto">
               <div className="flex gap-2 justify-center items-center">
                 <h2 className="text-xl font-bold">Payment Status:</h2>
                 <p className="text-lg">{details.payment_status}</p>
@@ -177,7 +177,7 @@ const Checkout = (props: Props) => {
                 <h2 className="text-xl font-bold">Pay Currency:</h2>
                 <p className="text-lg">{details.pay_currency}</p>
               </div>
-            </>
+            </div>
           )}
           {details.payment_status === "finished" && (
             <p className="text-lg text-gray-200 text-center mt-8">
