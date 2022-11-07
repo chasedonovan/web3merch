@@ -280,7 +280,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                       as="h3"
                       className="text-xl font-bold font-quicksand  leading-6 text-black w-full mb-8 text-center"
                     >
-                      Delivery and Contact Details
+                      {currencySelect || approved ? "Checkout" : "Delivery and Contact Details"}
                     </Dialog.Title>
                     <div className="mt-2 px-6 h-full">
                       {currencySelect && (
@@ -320,7 +320,17 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 </span>
                               </div>
                             )} 
-                          <button
+                            <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
+                            <button
+                              type="button"
+                              className="self-center mt-3 flex flex-col max-h-[42px] min-w-max justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm "
+                              onClick={() => setShowModal(false)}
+                              ref={cancelButtonRef}
+                            >
+                              Go Back
+                            </button>
+
+                            <button
                             disabled={!paymentMethod}
                             onClick={handleCheckout}
                             className={`w-full relative overflow-hidden h-[42px] sm:h-[38px] inline-flex justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500`}
@@ -334,6 +344,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               "Next"
                             )}
                           </button>
+                          </div>
+
                         </div>
                       )}
                       {!currencySelect && (
