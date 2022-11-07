@@ -43,6 +43,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     useMerchContext();
   const [loadingTx, setLoadingTx] = useState(false);
   const [loadingN, setLoadingN] = useState(false);
+  const [loadingP, setLoadingP] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [showErr2, setShowErr2] = useState(false);
   const [errMessage2, setErrMessage2] = useState("");
@@ -51,8 +52,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const cancelButtonRef = useRef(null);
   const [phone, setPhone] = useState("");
   const [approved, setApproved] = useState(false);
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+  const [paymentMethod, setPaymentMethod] = useState("ADA");
+  const [currencySelect, setCurrencySelect] = useState(false);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
     firstName: Yup.string().required("first name is required"),
@@ -133,19 +134,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     }
   };
 
-  const onSubmit = async (data: CheckoutForm) => {
-    setLoadingN(true);
-    setAddress({
-      ...orderAddress,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      streetAddress: data.address,
-      postalCode: data.postalCode,
-      country: data.country,
-      email: data.email,
-      phone: phone,
-      state: data.state,
-    });
+  const handleCheckout = async () => {
+    setLoadingP(true);
     await fetch("/api/cart/update", {
       method: "POST",
       headers: {
@@ -156,16 +146,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           uuid: cart.cartUuid,
           stake_key: connectedWallet.stakeAddress,
           cartItems: cart.cartItems,
-          address: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            street_address: data.address,
-            postal_code: data.postalCode,
-            country: data.country,
-            state: data.state,
-            phone: phone,
-            email: data.email,
-          },
+          paymentMethod,
+          address: orderAddress,
         },
       }),
     })
@@ -183,12 +165,72 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             estimatedTotal: data.estimated_total,
           });
           setApproved(true);
+          setCurrencySelect(false);
         } else {
           setErrMsg(data.detail);
           console.log("error", data);
         }
       });
+    setLoadingP(false);
+  };
+
+  const onSubmit = async (data: CheckoutForm) => {
+    setLoadingN(true);
+    setAddress({
+      ...orderAddress,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      streetAddress: data.address,
+      postalCode: data.postalCode,
+      country: data.country,
+      email: data.email,
+      phone: phone,
+      state: data.state,
+    });
+    // await fetch("/api/cart/update", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     cart: {
+    //       uuid: cart.cartUuid,
+    //       stake_key: connectedWallet.stakeAddress,
+    //       cartItems: cart.cartItems,
+    //       address: {
+    //         first_name: data.firstName,
+    //         last_name: data.lastName,
+    //         street_address: data.address,
+    //         postal_code: data.postalCode,
+    //         country: data.country,
+    //         state: data.state,
+    //         phone: phone,
+    //         email: data.email,
+    //       },
+    //     },
+    //   }),
+    // })
+    //   .then(async (res) => res.json())
+    //   .then((data) => {
+    //     if (data && data.success != "false") {
+    //       setCart({
+    //         ...cart,
+    //         payToAddress: data.pay_to_address,
+    //         transactionId: data.transaction_id,
+    //         subTotalPrice: data.subtotal_price,
+    //         shippingPrice: data.shipping_price,
+    //         totalPrice: data.total_price,
+    //         cartUuid: data.uuid,
+    //         estimatedTotal: data.estimated_total,
+    //       });
+    //       setApproved(true);
+    //     } else {
+    //       setErrMsg(data.detail);
+    //       console.log("error", data);
+    //     }
+    //   });
     setLoadingN(false);
+    setCurrencySelect(true);
   };
 
   const handleChange = (e: any) => {
@@ -241,7 +283,60 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                       Delivery and Contact Details
                     </Dialog.Title>
                     <div className="mt-2 px-6 h-full">
-                      {!approved ? (
+                      {currencySelect && (
+                        <div className="flex flex-col justify-between h-full">
+                          <div className="font-bold font-quicksand text-black mt-2">
+                            Sub total:{" "}
+                            {cart.subTotalPrice
+                              ? " $" + cart.subTotalPrice
+                              : ""}
+                          </div>
+                          <div className={`py-3 flex gap-2 w-full mt-2 ${!errMsg && 'mb-12'}  h-max justify-center`}>
+                            <p className="text-black font-bold font-quicksand self-center">
+                              Payment Method
+                            </p>
+                            <p className="self-center text-black mr-2">:</p>
+                            <select
+                              className="border my-auto border-black text-black rounded-md w-max p-2 justify-self-end font-bold font-quicksand"
+                              value={paymentMethod}
+                              onChange={(e) => setPaymentMethod(e.target.value)}
+                            >
+                              {/* ADA, BTC, ETH, SOL, USDT, USDC */}
+                              <option value="ADA">ADA</option>
+                              <option value="BTC">BTC</option>
+                              <option value="ETH">ETH</option>
+                              <option value="SOL">SOL</option>
+                              <option value="USDT">USDT</option>
+                              <option value="USDC">USDC</option>
+                            </select>
+                          </div>
+                          {errMsg && (
+                              <div
+                                className=" text-red-700 px-4 rounded relative mb-4"
+                                role="alert"
+                              >
+                                <span className="block sm:inline">
+                                  {errMsg}
+                                </span>
+                              </div>
+                            )} 
+                          <button
+                            disabled={!paymentMethod}
+                            onClick={handleCheckout}
+                            className={`w-full relative overflow-hidden h-[42px] sm:h-[38px] inline-flex justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500`}
+                          >
+                            {!cart.subTotalPrice || loadingP ? (
+                              <img
+                                src="/loadingblack.gif"
+                                className="relative -top-5 h-[64px] "
+                              />
+                            ) : (
+                              "Next"
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      {!currencySelect && (
                         <form onSubmit={handleSubmit(onSubmit)}>
                           {errMsg ? (
                             <div
@@ -364,7 +459,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   {...register("email")}
                                 />
                                 <MuiTelInput
-                                defaultCountry="US"
+                                  defaultCountry="US"
                                   value={phone}
                                   onChange={handleChange}
                                 />
@@ -453,7 +548,8 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             )}
                           </div>
                         </form>
-                      ) : (
+                      )}
+                      {approved && (
                         <form
                           onSubmit={handleSubmit(onSubmit)}
                           className="h-full"
@@ -491,7 +587,26 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ? cart.estimatedTotal + " ₳"
                               : ""}
                           </div>
-
+                          <div className="py-3 flex  gap-2 w-full mt-2 h-max justify-center">
+                            <p className="text-black font-bold font-quicksand self-center">
+                              Payment Method
+                            </p>
+                            <p className="self-center text-black mr-2">:</p>
+                            <select
+                              className="border my-auto border-black text-black rounded-md w-max p-2 justify-self-end font-bold font-quicksand"
+                              value={paymentMethod}
+                              onChange={(e) => setPaymentMethod(e.target.value)}
+                            >
+                              {/* ADA, BTC, ETH, SOL, USDT, USDC */}
+                              <option value="">select</option>
+                              <option value="ADA">ADA</option>
+                              <option value="BTC">BTC</option>
+                              <option value="ETH">ETH</option>
+                              <option value="SOL">SOL</option>
+                              <option value="USDT">USDT</option>
+                              <option value="USDC">USDC</option>
+                            </select>
+                          </div>
                           <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                             <button
                               type="button"
@@ -514,7 +629,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   : false
                               }
                               onClick={handlePayment}
-                              className={`relative overflow-hidden mt-6 h-[42px] sm:h-[38px] inline-flex w-full justify-center rounded-md  bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500 ${loadingTx ? 'border-none' : 'border-black border'}`}
+                              className={`relative overflow-hidden mt-3 h-[42px] min-h-min sm:h-[38px] inline-flex w-full justify-center rounded-md  bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500 ${
+                                loadingTx
+                                  ? "border-none"
+                                  : "border-black border"
+                              }`}
                             >
                               {!cart.totalPrice || loadingTx ? (
                                 <img
