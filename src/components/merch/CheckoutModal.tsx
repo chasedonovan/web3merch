@@ -188,48 +188,38 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
       phone: phone,
       state: data.state,
     });
-    // await fetch("/api/cart/update", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     cart: {
-    //       uuid: cart.cartUuid,
-    //       stake_key: connectedWallet.stakeAddress,
-    //       cartItems: cart.cartItems,
-    //       address: {
-    //         first_name: data.firstName,
-    //         last_name: data.lastName,
-    //         street_address: data.address,
-    //         postal_code: data.postalCode,
-    //         country: data.country,
-    //         state: data.state,
-    //         phone: phone,
-    //         email: data.email,
-    //       },
-    //     },
-    //   }),
-    // })
-    //   .then(async (res) => res.json())
-    //   .then((data) => {
-    //     if (data && data.success != "false") {
-    //       setCart({
-    //         ...cart,
-    //         payToAddress: data.pay_to_address,
-    //         transactionId: data.transaction_id,
-    //         subTotalPrice: data.subtotal_price,
-    //         shippingPrice: data.shipping_price,
-    //         totalPrice: data.total_price,
-    //         cartUuid: data.uuid,
-    //         estimatedTotal: data.estimated_total,
-    //       });
-    //       setApproved(true);
-    //     } else {
-    //       setErrMsg(data.detail);
-    //       console.log("error", data);
-    //     }
-    //   });
+    //post cart to shipping endpoint to get shipping price
+    await fetch("/api/cart/shipping", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cart: {
+          uuid: cart.cartUuid,
+          stake_key: connectedWallet.stakeAddress,
+          cartItems: cart.cartItems,
+          paymentMethod: cart.paymentMethod,
+          address: orderAddress,
+        },
+      }),
+    })
+      .then(async (res) => res.json())
+      .then((data) => {
+        console.log(orderAddress)
+        if (data && data.success != "false") {
+          setCart({
+            ...cart,
+            shippingPrice: data.shipping_price,
+            totalPrice: data.shipping_price + cart.subTotalPrice,
+          });
+          setLoadingN(false);
+          setCurrencySelect(true);
+        } else {
+          setErrMsg(data.detail);
+          console.log("error", data);
+        }
+      });
     setLoadingN(false);
     setCurrencySelect(true);
   };
@@ -294,9 +284,19 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ? " $" + cart.subTotalPrice
                               : ""}
                           </div>
+                          <div className="font-quicksand text-black">
+                            +Shipping:{" "}
+                            {cart.shippingPrice
+                              ? " $" + cart.shippingPrice
+                              : ""}
+                          </div>
+                          <div className="font-quicksand text-black">
+                            Total:{" "}
+                            {cart.totalPrice ? " $" + cart.totalPrice : ""}
+                          </div>
                           <div
                             className={`py-3 flex gap-2 w-full mt-2 ${
-                              !errMsg && "mb-12"
+                              !errMsg && "mb-4"
                             }  h-max justify-center`}
                           >
                             <p className="text-black font-bold font-quicksand self-center">
