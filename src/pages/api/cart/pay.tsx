@@ -17,7 +17,7 @@ export default async function handler(
       price_amount: cartResponse.total_price,
       price_currency: "usd",
       pay_currency: "ada",
-      ipn_callback_url: "https://merch.uniscoll.io/nowpaymentcallback",
+      ipn_callback_url: "https://merch.uniscoll.io/api/cart/nowpaymentcallback",
       order_id: cartResponse.uuid,
       order_description: "GoatTribe merch",
     };

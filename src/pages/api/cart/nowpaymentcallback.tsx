@@ -9,6 +9,7 @@ export default async function handler(
 ) {
   try {
     const paymentInfo = req.body;
+    console.log("api/nowpaymentcallback", paymentInfo);
 
     if (paymentInfo == undefined) {
       res.status(500).send(false);
