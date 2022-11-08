@@ -39,7 +39,7 @@ const Checkout = (props: Props) => {
     );
   };
   const copyAmount = async () => {
-    await navigator.clipboard.writeText(`${details?.pay_address}`);
+    await navigator.clipboard.writeText(`${details?.pay_amount}`);
     alert(
       `Amount copied. Send to ${details?.pay_address} to complete your order.`
     );
@@ -98,7 +98,7 @@ const Checkout = (props: Props) => {
             </div>
           )}
           {details.payment_status === "waiting" && (
-            <div className="flex flex-col justify-around my-auto h-[75%] w-full">
+            <div className="flex flex-col justify-around my- h-[75%] w-full">
               <div className="flex flex-col justify-center items-center mt-4 break-words">
                 <h2 className="text-xl font-bold ">Payment Address:</h2>
                 <p className="text-center break-all">
@@ -145,6 +145,11 @@ const Checkout = (props: Props) => {
                 <h2 className="text-xl font-bold">Payment Status:</h2>
                 <p className="text-lg">{details.payment_status}</p>
               </div>
+            </div>
+          )}
+          {details.payment_status === "waiting" && (
+            <div className="min-w-[48px] flex-col my-auto self-center">
+              <img className="h-7 w-64 self-center" src="/loading.svg" />
             </div>
           )}
           {details.payment_status != "waiting" && (
@@ -210,7 +215,7 @@ const Checkout = (props: Props) => {
             </p>
           )}
           {details.payment_status === "waiting" && (
-            <p className="sm:text-lg sm:font-bold text-gray-200 text-center my-auto">
+            <p className="sm:text-lg sm:font-bold text-gray-200 text-center mb-auto">
               {" "}
               Please send {details.pay_amount} {details.pay_currency} to the
               address above. <br />{" "}

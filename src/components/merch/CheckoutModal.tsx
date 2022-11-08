@@ -357,7 +357,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           </div>
                         </div>
                       )}
-                      {!currencySelect && (
+                      {!currencySelect && !approved && (
                         <form onSubmit={handleSubmit(onSubmit)}>
                           {errMsg ? (
                             <div
@@ -609,30 +609,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 " " +
                                 cart.estimatedCurrency
                               : ""}
-                          </div>
-                          <div className="py-3 flex  gap-2 w-full mt-2 h-max justify-center">
-                            <p className="text-black font-bold font-quicksand self-center">
-                              Payment Method
-                            </p>
-                            <p className="self-center text-black mr-2">:</p>
-                            <select
-                              className="border my-auto border-black text-black rounded-md w-max p-2 justify-self-end font-bold font-quicksand"
-                              value={cart.paymentMethod}
-                              onChange={(e) =>
-                                setCart({
-                                  ...cart,
-                                  paymentMethod: e.target.value,
-                                })
-                              }
-                            >
-                              {/* ADA, BTC, ETH, SOL, USDC */}
-                              <option value="">select</option>
-                              <option value="ADA">ADA</option>
-                              <option value="BTC">BTC</option>
-                              <option value="ETH">ETH</option>
-                              <option value="SOL">SOL</option>
-                              <option value="USDC">USDC</option>
-                            </select>
                           </div>
                           <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                             <button
