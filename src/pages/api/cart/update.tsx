@@ -8,7 +8,7 @@ export default async function handler(
     let cart = req.body.cart;
 
     //check that the payment currency is okay
-    const validPaymentMethods = ["ADA", "ETH", "BTC", "SOL", "USDC", "USDT"];
+    const validPaymentMethods = ["ADA", "ETH", "BTC", "SOL", "USDC"];
 
     let paymentCurrencyValid = false;
     validPaymentMethods.forEach((p) => {
