@@ -219,6 +219,9 @@ const Checkout = (props: Props) => {
               {" "}
               Please send {details.pay_amount} {details.pay_currency} to the
               address above. <br />{" "}
+              <span className="text-base">
+              Be patient. The payment process can take up to 10 minutes.
+              </span> <br/>
               <span className="text-sm mt-4 text-gray-300">
                 No need to reload the page after payment, the status will
                 automatically refresh.
