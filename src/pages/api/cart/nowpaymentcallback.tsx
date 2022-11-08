@@ -12,31 +12,36 @@ export default async function handler(
     console.log("api/nowpaymentcallback", paymentInfo);
 
     if (paymentInfo == undefined) {
-      res.status(500).send(false);
+      console.log("api/nowpaymentcallback", "No paymentInfo");
+      return res.status(500).send(false);
     }
-    const paymentInfoJson = req.body.json();
 
     const nowpaymentsSig = String(req.headers["x-nowpayments-sig"] ?? "");
     console.log("x-nowpayments-sig", nowpaymentsSig);
 
     if (nowpaymentsSig == undefined) {
-      res.status(500).send(false);
+      console.log("api/nowpaymentcallback", "No x-nowpayments-sig header");
+      return res.status(500).send(false);
     }
 
     //verify
-    const valid = await check_ipn_request_is_valid(
-      nowpaymentsSig,
-      paymentInfoJson
-    );
+    const valid = await check_ipn_request_is_valid(nowpaymentsSig, paymentInfo);
     if (!valid) {
-      res.status(500).send(false);
+      console.log(
+        "api/nowpaymentcallback",
+        "Invalid IPN request",
+        nowpaymentsSig,
+        paymentInfo
+      );
+      return res.status(500).send(false);
     }
 
-    const currentCart = await getCart(paymentInfoJson.order_id);
+    console.log("Request is valid.. now get cart", paymentInfo);
+    const currentCart = await getCart(paymentInfo.order_id);
 
-    if (currentCart && currentCart.cart_uuid) {
+    if (currentCart && currentCart.uuid) {
       //save
-      const updatedCart = await savePayment(paymentInfoJson);
+      const updatedCart = await savePayment(paymentInfo);
 
       //check if the status changed to "finished"
       if (
@@ -49,6 +54,7 @@ export default async function handler(
 
     res.status(200).json(true);
   } catch (e) {
+    console.error("api/nowpaymentcallback", "ERROR", e);
     res.status(500).json({ error: e });
   }
 }
@@ -105,9 +111,14 @@ async function check_ipn_request_is_valid(
     "sha512",
     String(process.env.NOWPAYMENT_IPN_KEY)
   );
-  hmac.update(
-    JSON.stringify(paymentInfoJson, Object.keys(paymentInfoJson).sort())
+
+  const sortedJsonStr = JSON.stringify(
+    paymentInfoJson,
+    Object.keys(paymentInfoJson).sort()
   );
+  console.log("check_ipn_request_is_valid sortedJsonArray", sortedJsonStr);
+
+  hmac.update(sortedJsonStr);
   const signature = hmac.digest("hex");
 
   //TODO: remove log
