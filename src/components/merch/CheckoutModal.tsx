@@ -206,7 +206,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     })
       .then(async (res) => res.json())
       .then((data) => {
-        console.log(orderAddress)
+        console.log(orderAddress);
         if (data && data.success != "false") {
           setCart({
             ...cart,
@@ -228,6 +228,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     setPhone(e);
     console.log(phone);
   };
+
+  function money_round(num: number) {
+    return Math.ceil(num * 100) / 100;
+  }
 
   return (
     <Transition.Root show={showModal} as={Fragment}>
@@ -269,7 +273,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                   <div className="mt-3 text-center h-full flex flex-col justify-between">
                     <Dialog.Title
                       as="h3"
-                      className="text-xl font-bold font-quicksand  leading-6 text-black w-full mb-8 text-center"
+                      className="text-xl font-bold font-quicksand  leading-6 text-black w-full text-center"
                     >
                       {currencySelect || approved
                         ? "Checkout"
@@ -292,7 +296,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           </div>
                           <div className="font-quicksand text-black">
                             Total:{" "}
-                            {cart.totalPrice ? " $" + cart.totalPrice : ""}
+                            {cart.totalPrice
+                              ? " $" + money_round(cart.totalPrice)
+                              : ""}
                           </div>
                           <div
                             className={`py-3 flex gap-2 w-full mt-2 ${
@@ -343,16 +349,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <button
                               disabled={!cart.paymentMethod}
                               onClick={handleCheckout}
-                              className={`w-full relative overflow-hidden h-[42px] sm:h-[38px] inline-flex justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500`}
+                              className={`self-center min-w-[124px] relative w-full mt-3 flex flex-col max-h-[42px] items-center px-12 justify-center rounded-md border border-black bg-white py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:text-sm `}
                             >
-                              {!cart.subTotalPrice || loadingP ? (
-                                <img
-                                  src="/loadingblack.gif"
-                                  className="relative -top-5 h-[64px] "
-                                />
-                              ) : (
-                                "Next"
-                              )}
+                              {!cart.subTotalPrice || loadingP
+                                ? "loading..."
+                                : "Next"}
                             </button>
                           </div>
                         </div>
@@ -585,24 +586,55 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           ) : (
                             <></>
                           )}
-
-                          <div className="font-bold font-quicksand text-black mt-2">
+                          <div className="flex flex-col gap- ">
+                            {/* details summary with address info */}
+                            {/* <h4 className=" text-black">Details Summary:</h4> */}
+                            <p className="text-gray-800 font-quicksand">
+                              Name: {orderAddress.first_name}{" "}
+                              {orderAddress.last_name}
+                            </p>
+                            <p className="text-gray-800 font-quicksand">
+                              Address: {orderAddress.street_address},{" "}
+                              {orderAddress.postal_code},{" "}
+                              {orderAddress.state && orderAddress.state},{" "}
+                              {orderAddress.country}
+                            </p>
+                            <p className="text-gray-800 font-quicksand ">
+                              Email: {orderAddress.email}
+                            </p>
+                            {orderAddress.phone && (
+                              <p>Phone: {orderAddress.phone}</p>
+                            )}
+                            <p className="text-gray-800 font-quicksand mb-2">
+                              Payment Method: {cart.estimatedCurrency}
+                            </p>
+                            <button
+                              type="button"
+                              className="mb-4 w-full border rounded-2xl hover:border-orange-300"
+                              onClick={() => setApproved(false)}
+                            >
+                              <p className="text-gray-800 font-quicksand ">
+                                Edit
+                              </p>
+                            </button>
+                          </div>
+                          <div className="font-bold font-quicksand text-black">
                             Sub total:{" "}
                             {cart.subTotalPrice
                               ? " $" + cart.subTotalPrice
                               : ""}
                           </div>
-                          <div className="font-quicksand text-black">
+                          <div className="font-quicksand font-bold text-black">
                             +Shipping:{" "}
                             {cart.shippingPrice
                               ? " $" + cart.shippingPrice
                               : ""}
                           </div>
-                          <div className="font-quicksand text-black">
+                          <div className="font-quicksand font-bold text-black">
                             Total:{" "}
                             {cart.totalPrice ? " $" + cart.totalPrice : ""}
                           </div>
-                          <div className="font-quicksand text-black mb-6">
+                          <div className="font-quicksand font-bold text-black mb-6">
                             Estimated Total:{" "}
                             {cart.estimatedTotal
                               ? cart.estimatedTotal +
@@ -638,17 +670,19 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   : "border-black border"
                               }`}
                             >
-                              {!cart.totalPrice || loadingTx ? (
+                              {!cart.estimatedTotal || loadingTx ? (
                                 <img
                                   src="/loadingblack.gif"
                                   className="relative -top-5 h-[64px] "
                                 />
                               ) : (
-                                `PAY $${cart.totalPrice} ${
-                                  cart.estimatedTotal > 0
+                                <p className="flex ">
+                                  {" "}
+                                  PAY
+                                  <span className="hidden sm:block">{cart.estimatedTotal > 0
                                     ? `(~${cart.estimatedTotal} ${cart.estimatedCurrency})`
-                                    : ""
-                                }`
+                                    : ""}</span>
+                                </p>
                               )}
                             </button>
                           </div>
