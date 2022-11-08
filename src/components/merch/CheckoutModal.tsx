@@ -286,7 +286,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                         : "Delivery and Contact Details"}
                     </Dialog.Title>
                     <div className="mt-2 px-6 h-full">
-                      {currencySelect && (
+                      {currencySelect && !approved && (
                         <div className="flex flex-col justify-between h-full">
                           <div className="font-bold font-quicksand text-black mt-2">
                             Sub total:{" "}
