@@ -313,12 +313,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 })
                               }
                             >
-                              {/* ADA, BTC, ETH, SOL, USDT, USDC */}
+                              {/* ADA, BTC, ETH, SOL, USDC */}
                               <option value="ADA">ADA</option>
                               <option value="BTC">BTC</option>
                               <option value="ETH">ETH</option>
                               <option value="SOL">SOL</option>
-                              <option value="USDT">USDT</option>
                               <option value="USDC">USDC</option>
                             </select>
                           </div>
@@ -625,13 +624,12 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                 })
                               }
                             >
-                              {/* ADA, BTC, ETH, SOL, USDT, USDC */}
+                              {/* ADA, BTC, ETH, SOL, USDC */}
                               <option value="">select</option>
                               <option value="ADA">ADA</option>
                               <option value="BTC">BTC</option>
                               <option value="ETH">ETH</option>
                               <option value="SOL">SOL</option>
-                              <option value="USDT">USDT</option>
                               <option value="USDC">USDC</option>
                             </select>
                           </div>
