@@ -145,6 +145,10 @@ const ItemCard = (props: Props) => {
                         ? 1 + " left"
                         : `${1}`}
                     </option>
+                    <option disabled key={2} value="">
+                      {"("}
+                      {props.item.variants[0].stock} {"left)"}
+                    </option>
                     {/* {Array.from(
                     { length: Math.min(props.item.variants[0].stock, 100) },
                     (_, i) => i + 1
@@ -200,6 +204,10 @@ const ItemCard = (props: Props) => {
                     {variant.size} {variant.stock === 0 && "(sold out)"}
                   </option>
                 ))}
+              <option disabled key={2} value="stock">
+                {"("}
+                {props.item.variants[0].stock} {"left)"}
+              </option>
             </>
           )}
         </select>

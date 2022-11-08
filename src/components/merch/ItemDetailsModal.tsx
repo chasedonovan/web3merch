@@ -315,6 +315,9 @@ export default function ItemDetailsModal({
                                       ? 1 + " left"
                                       : `${1}`}
                                   </option>
+                                  <option disabled key={2} value=''>
+                                    {'('}{item.variants[0].stock} {'left)'}
+                                  </option>
                                   {/* {Array.from(
                                     {
                                       length: Math.min(
@@ -508,6 +511,9 @@ export default function ItemDetailsModal({
                                         {1 === item.variants[0].stock
                                           ? 1 + " left"
                                           : `${1}`}
+                                      </option>
+                                      <option disabled key={2} value=''>
+                                        {'('}{item.variants[0].stock} {'left)'}
                                       </option>
                                       {/* {Array.from(
                                         {

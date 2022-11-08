@@ -199,6 +199,10 @@ const CartCard = (props: Props) => {
                       <option key={1} value={1}>
                         {1 === product.variants[0].stock ? 1 + " left" : `${1}`}
                       </option>
+                      <option disabled key={2} value="">
+                        {"("}
+                        {product.variants[0].stock} {"left)"}
+                      </option>
                       {/* {Array.from(
                       { length: Math.min(product.variant.stock, 100) },
                       (_, i) => i + 1
@@ -218,7 +222,7 @@ const CartCard = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-between text-right ml-4 2xl:ml-12 font-quicksand pt-3 min-w-max">
+        <div className="flex flex-col justify-between text-right ml-[2px] 2xl:ml-12 font-quicksand pt-3 min-w-max">
           <div className="flex flex-col-reverse 2xl:flex-row gap-2 items-center">
             {product.original_price !== product.price ? (
               <p
