@@ -108,6 +108,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
         },
         body: JSON.stringify({
           cart_uuid: cart.cartUuid,
+          paymentMethod: cart.paymentMethod,
         }),
       })
         .then((res) => {

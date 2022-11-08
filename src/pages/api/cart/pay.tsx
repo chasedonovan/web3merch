@@ -7,8 +7,27 @@ export default async function handler(
   res: NextApiResponse<unknown>
 ) {
   try {
-    console.log("Payment init");
     const cart_uuid = req.body.cart_uuid;
+    const paymentMethod = req.body.paymentMethod;
+
+    console.log("Payment init", cart_uuid, paymentMethod);
+
+    //check that the payment currency is okay
+    const validPaymentMethods = ["ADA", "ETH", "BTC", "SOL", "USDC"];
+
+    let paymentCurrencyValid = false;
+    validPaymentMethods.forEach((p) => {
+      if (p == paymentMethod) {
+        paymentCurrencyValid = true;
+      }
+    });
+
+    if (!paymentCurrencyValid) {
+      console.info("Invalid paymentMethod: ", paymentMethod);
+      return "Invalid payment method selected. Please try again.";
+    } else {
+      console.info("Valid paymentMethod: ", paymentMethod);
+    }
 
     const cartResponse = await getCart(cart_uuid);
     console.log("Payment, fetch cart", cartResponse);
@@ -16,8 +35,9 @@ export default async function handler(
     const paymentData = {
       price_amount: cartResponse.total_price,
       price_currency: "usd",
-      pay_currency: "ada",
-      ipn_callback_url: "https://merch.uniscoll.io/api/cart/nowpaymentcallback",
+      pay_currency: paymentMethod,
+      ipn_callback_url:
+        "https://merch.unisrcoll.io/api/cart/nowpaymentcallback",
       order_id: cartResponse.uuid,
       order_description: "GoatTribe merch",
     };
@@ -27,7 +47,7 @@ export default async function handler(
     console.log("Payment data", paymentData, paymentDataJson);
 
     const externalResponse = await fetch(
-      `${process.env.NOWPAYMENT_API_URL}/v1/payment?currency_from=USD&currency_to=ADA`,
+      `${process.env.NOWPAYMENT_API_URL}/v1/payment?currency_from=USD&currency_to=${paymentMethod}`,
       {
         headers: {
           "x-api-key": `${process.env.NOWPAYMENT_API_KEY}`,
