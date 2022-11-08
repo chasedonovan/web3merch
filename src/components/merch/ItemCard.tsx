@@ -61,12 +61,6 @@ const ItemCard = (props: Props) => {
   }, [props.item.variants, setValue]);
 
   const onSubmit = (data: IFormInput) => {
-    // console.log(data);
-
-    // const itemInCart = cart.cartItems.find(
-    //   (item) => item.variant.size === data.size && item.name === props.item.name
-    // );
-
     //limit quantity to 1 per product
     const itemInCart = cart.cartItems.find(
       (item) => item.name === props.item.name
@@ -74,48 +68,6 @@ const ItemCard = (props: Props) => {
 
     if (itemInCart) {
       setMaxModal(true);
-      // setAddedModal(true);
-      // if (itemInCart.quantity < itemInCart.variant.stock - quantity) {
-      //   const newCartItems = cart.cartItems.map((item) => {
-      //     if (
-      //       item.variant.size === data.size &&
-      //       item.name === props.item.name
-      //     ) {
-      //       return {
-      //         ...item,
-      //         quantity: item.quantity + quantity,
-      //       };
-      //     }
-      //     return item;
-      //   });
-      //   setCart({
-      //     ...cart,
-      //     cartItems: newCartItems,
-      //   });
-      // } else {
-      //   const variant = props.item.variants.find(
-      //     (variant) => variant.size === data.size
-      //   );
-      //   if (variant) {
-      //     const newCartItems = cart.cartItems.map((item) => {
-      //       if (
-      //         item.variant.size === data.size &&
-      //         item.name === props.item.name
-      //       ) {
-      //         return {
-      //           ...item,
-      //           quantity: variant.stock,
-      //         };
-      //       }
-      //       return item;
-      //     });
-
-      //     setCart({
-      //       ...cart,
-      //       cartItems: newCartItems,
-      //     });
-      //   }
-      // }
     } else {
       // Add item to cart
       const variant = props.item.variants.find(
@@ -134,9 +86,6 @@ const ItemCard = (props: Props) => {
       });
       setAddedModal(true);
     }
-    // if (cart.cartItems.length === 0) {
-    //   props.setShowCart(true);
-    // }
     setQuantity(1);
   };
   return (

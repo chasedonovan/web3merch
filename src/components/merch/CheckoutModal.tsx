@@ -52,7 +52,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const cancelButtonRef = useRef(null);
   const [phone, setPhone] = useState("");
   const [approved, setApproved] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("ADA");
   const [currencySelect, setCurrencySelect] = useState(false);
   const validationSchema = Yup.object().shape({
     lastName: Yup.string().required("lastname is required"),
@@ -89,10 +88,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
   const watchCountry = watch("country");
 
   useEffect(() => {
-    setValue("firstName", orderAddress.firstName);
-    setValue("lastName", orderAddress.lastName);
-    setValue("address", orderAddress.streetAddress);
-    setValue("postalCode", orderAddress.postalCode);
+    setValue("firstName", orderAddress.first_name);
+    setValue("lastName", orderAddress.last_name);
+    setValue("address", orderAddress.street_address);
+    setValue("postalCode", orderAddress.postal_code);
     setValue("country", orderAddress.country);
     setValue("email", orderAddress.email);
     setValue("state", orderAddress.state);
@@ -146,7 +145,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           uuid: cart.cartUuid,
           stake_key: connectedWallet.stakeAddress,
           cartItems: cart.cartItems,
-          paymentMethod,
+          paymentMethod: cart.paymentMethod,
           address: orderAddress,
         },
       }),
@@ -163,6 +162,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
             totalPrice: data.total_price,
             cartUuid: data.uuid,
             estimatedTotal: data.estimated_total,
+            estimatedCurrency: data.estimated_currency,
           });
           setApproved(true);
           setCurrencySelect(false);
@@ -178,10 +178,10 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
     setLoadingN(true);
     setAddress({
       ...orderAddress,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      streetAddress: data.address,
-      postalCode: data.postalCode,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      street_address: data.address,
+      postal_code: data.postalCode,
       country: data.country,
       email: data.email,
       phone: phone,
@@ -280,7 +280,9 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                       as="h3"
                       className="text-xl font-bold font-quicksand  leading-6 text-black w-full mb-8 text-center"
                     >
-                      {currencySelect || approved ? "Checkout" : "Delivery and Contact Details"}
+                      {currencySelect || approved
+                        ? "Checkout"
+                        : "Delivery and Contact Details"}
                     </Dialog.Title>
                     <div className="mt-2 px-6 h-full">
                       {currencySelect && (
@@ -291,15 +293,25 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ? " $" + cart.subTotalPrice
                               : ""}
                           </div>
-                          <div className={`py-3 flex gap-2 w-full mt-2 ${!errMsg && 'mb-12'}  h-max justify-center`}>
+                          <div
+                            className={`py-3 flex gap-2 w-full mt-2 ${
+                              !errMsg && "mb-12"
+                            }  h-max justify-center`}
+                          >
                             <p className="text-black font-bold font-quicksand self-center">
                               Payment Method
                             </p>
                             <p className="self-center text-black mr-2">:</p>
                             <select
                               className="border my-auto border-black text-black rounded-md w-max p-2 justify-self-end font-bold font-quicksand"
-                              value={paymentMethod}
-                              onChange={(e) => setPaymentMethod(e.target.value)}
+                              value={cart.paymentMethod}
+                              onChange={(e) =>
+                                console.log(cart.paymentMethod) == undefined &&
+                                setCart({
+                                  ...cart,
+                                  paymentMethod: e.target.value,
+                                })
+                              }
                             >
                               {/* ADA, BTC, ETH, SOL, USDT, USDC */}
                               <option value="ADA">ADA</option>
@@ -311,16 +323,14 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             </select>
                           </div>
                           {errMsg && (
-                              <div
-                                className=" text-red-700 px-4 rounded relative mb-4"
-                                role="alert"
-                              >
-                                <span className="block sm:inline">
-                                  {errMsg}
-                                </span>
-                              </div>
-                            )} 
-                            <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
+                            <div
+                              className=" text-red-700 px-4 rounded relative mb-4"
+                              role="alert"
+                            >
+                              <span className="block sm:inline">{errMsg}</span>
+                            </div>
+                          )}
+                          <div className="py-3 flex flex-row-reverse justify-between gap-2 w-full mt-2">
                             <button
                               type="button"
                               className="self-center mt-3 flex flex-col max-h-[42px] min-w-max justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm "
@@ -331,21 +341,20 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             </button>
 
                             <button
-                            disabled={!paymentMethod}
-                            onClick={handleCheckout}
-                            className={`w-full relative overflow-hidden h-[42px] sm:h-[38px] inline-flex justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500`}
-                          >
-                            {!cart.subTotalPrice || loadingP ? (
-                              <img
-                                src="/loadingblack.gif"
-                                className="relative -top-5 h-[64px] "
-                              />
-                            ) : (
-                              "Next"
-                            )}
-                          </button>
+                              disabled={!cart.paymentMethod}
+                              onClick={handleCheckout}
+                              className={`w-full relative overflow-hidden h-[42px] sm:h-[38px] inline-flex justify-center rounded-md border border-black bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0  sm:text-sm disabled:focus:ring-0 disabled:cursor-default disabled:opacity-50 disabled:border-gray-500`}
+                            >
+                              {!cart.subTotalPrice || loadingP ? (
+                                <img
+                                  src="/loadingblack.gif"
+                                  className="relative -top-5 h-[64px] "
+                                />
+                              ) : (
+                                "Next"
+                              )}
+                            </button>
                           </div>
-
                         </div>
                       )}
                       {!currencySelect && (
@@ -594,9 +603,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             {cart.totalPrice ? " $" + cart.totalPrice : ""}
                           </div>
                           <div className="font-quicksand text-black mb-6">
-                            Estimated Total in ADA:{" "}
+                            Estimated Total:{" "}
                             {cart.estimatedTotal
-                              ? cart.estimatedTotal + " ₳"
+                              ? cart.estimatedTotal +
+                                " " +
+                                cart.estimatedCurrency
                               : ""}
                           </div>
                           <div className="py-3 flex  gap-2 w-full mt-2 h-max justify-center">
@@ -606,8 +617,13 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                             <p className="self-center text-black mr-2">:</p>
                             <select
                               className="border my-auto border-black text-black rounded-md w-max p-2 justify-self-end font-bold font-quicksand"
-                              value={paymentMethod}
-                              onChange={(e) => setPaymentMethod(e.target.value)}
+                              value={cart.paymentMethod}
+                              onChange={(e) =>
+                                setCart({
+                                  ...cart,
+                                  paymentMethod: e.target.value,
+                                })
+                              }
                             >
                               {/* ADA, BTC, ETH, SOL, USDT, USDC */}
                               <option value="">select</option>
@@ -655,7 +671,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ) : (
                                 `PAY $${cart.totalPrice} ${
                                   cart.estimatedTotal > 0
-                                    ? `(~${cart.estimatedTotal} ₳)`
+                                    ? `(~${cart.estimatedTotal} ${cart.estimatedCurrency})`
                                     : ""
                                 }`
                               )}

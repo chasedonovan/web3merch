@@ -42,14 +42,16 @@ type Cart = {
   subTotalPrice: number;
   shippingPrice: number;
   totalPrice: number;
+  paymentMethod: string;
   estimatedTotal: number;
+  estimatedCurrency: string;
 };
 
 type Address = {
-  firstName: string;
-  lastName: string;
-  streetAddress: string;
-  postalCode: string;
+  first_name: string;
+  last_name: string;
+  street_address: string;
+  postal_code: string;
   country: string;
   state: string;
   email: string;
@@ -92,12 +94,14 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
     shippingPrice: 0,
     totalPrice: 0,
     estimatedTotal: 0,
+    estimatedCurrency: "",
+    paymentMethod: "ADA",
   });
   const [orderAddress, setTheAddress] = useState<Address>({
-    firstName: "",
-    lastName: "",
-    streetAddress: "",
-    postalCode: "",
+    first_name: "",
+    last_name: "",
+    street_address: "",
+    postal_code: "",
     country: "",
     state: "",
     email: "",
@@ -119,7 +123,6 @@ export const MerchContextProvider = ({ children }: ProviderProps) => {
 
   const [addedModal, setAddedModal] = useState(false);
   const [maxModal, setMaxModal] = useState(false);
-
 
   useEffect(() => {
     //get products from backend every 2 minutes
