@@ -588,7 +588,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           )}
                           <div className="flex flex-col gap- pb-1">
                             {cart.cartItems.map((item) => (
-                              <p className="text-gray-800 font-quicksand ">
+                              <p className="text-gray-800 font-quicksand " key={item.variant_id}>
                                 {item.quantity +
                                   "x " +
                                   item.name +
