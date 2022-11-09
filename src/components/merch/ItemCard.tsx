@@ -183,22 +183,25 @@ const ItemCard = (props: Props) => {
               <option value="" disabled>
                 Size
               </option>
+              {/* sort by variant id */}
               {props.item &&
                 props.item.variants &&
-                props.item.variants.map((variant) => (
-                  <option
-                    key={variant.size}
-                    value={variant.size}
-                    disabled={variant.stock === 0}
-                  >
-                    {variant.size}
-                    {variant.stock > 20 && " (20+ in stock)"}
-                    {variant.stock <= 20 &&
-                      variant.stock > 0 &&
-                      " (only " + variant.stock + " left)"}
-                    {variant.stock === 0 && " (sold out)"}
-                  </option>
-                ))}
+                props.item.variants.sort((a, b) => parseInt(a.variant_id) - parseInt(b.variant_id)).map((variant) => (
+                    <option
+                      key={variant.size}
+                      value={variant.size}
+                      disabled={variant.stock === 0}
+                    >
+                      {variant.size}
+                      {variant.stock > 20 && " (20+ in stock)"}
+                      {variant.stock <= 20 &&
+                        variant.stock > 0 &&
+                        " (only " + variant.stock + " left)"}
+                      {variant.stock === 0 && " (sold out)"}
+                    </option>
+                  ))                }
+                
+                
             </>
           )}
         </select>

@@ -54,17 +54,18 @@ const CartCard = ({ item }: Props) => {
   }, [item.quantity]);
 
   const removeItem = () => {
-    //remove only selected item from cart and avoid removing all items with same name
-    const newCart = cart.cartItems.filter(
-      (item) => item.variant.variant_id !== item.variant.variant_id
+    //remove item from cart by variant_id
+    const newCart = { ...cart };
+    newCart.cartItems = newCart.cartItems.filter(
+      (cartItem) => cartItem.variant_id !== item.variant_id
     );
-    setCart({ ...cart, cartItems: newCart });
+    setCart(newCart);
   };
 
   const handleSizeChange = (e: any) => {
     setSize(e.target.value);
     const newCart = cart.cartItems.map((p) => {
-      if (p.name === item.name) {
+      if (p.variant_id === item.variant_id) {
         return {
           ...p,
           variant: product.variants.find((v: any) => v.size === e.target.value),
@@ -156,10 +157,7 @@ const CartCard = ({ item }: Props) => {
               } mb-2 max-w-[164px] 2xl:max-w-[212px]`}
             >
               {
-                item.name + " " + item.variant.size
-                // +     " (id:" +
-                //                     item.variant_id +
-                //                     ")"
+                item.name
               }
             </p>
             <div className="flex flex-col">

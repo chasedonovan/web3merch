@@ -77,8 +77,8 @@ const GoatTribe = (props: Props) => {
                 <div className="" ref={productSection}>
                   <img
                     id="logo"
-                    src="/goat-logo.png"
-                    className=" sm:h-[98px] 2xl:h-[164px] my-6 sm:my-12 mx-auto"
+                    src="/goat-logo.webp"
+                    className="h-[98px] 2xl:h-[164px] my-6 sm:my-12 mx-auto"
                   />
                 </div>
                 <div className="flex flex-row flex-wrap gap-16 self-center mx-auto px-1 justify-center max-w-[1600px]">
@@ -138,7 +138,7 @@ const GoatTribe = (props: Props) => {
       {!isConnected && (
         <div className="min-h-[298px] flex-1 text-white w-full h-full flex flex-col items-center justify-center px-[5%] pb-[10%] ">
           <img
-            src="/goat-logo.png"
+            src="/goat-logo.webp"
             className=" h-16 md:h-[124px] mb-2 sm:mb-12 mx-auto sm:mt-24 self-center"
           />
           <MerchConnectBtn />

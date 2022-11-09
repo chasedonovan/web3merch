@@ -77,7 +77,7 @@ const Checkout = (props: Props) => {
       {details ? (
         <div className="w-max overflow-scroll scrollbar-hide  h-max flex flex-col items-center border min-h-[66%] rounded-lg px-2 sm:px-12 pb-8 pt-6 ">
           <div className="w-max flex justify-center items-center my-2">
-            <img src="/goat-logo.png" className="h-18" />{" "}
+            <img src="/goat-logo.webp" className="h-18" />{" "}
             <p className="text-xl font-quicksand mx-6 hidden sm:block">X</p>{" "}
             <img src="/uniscroll-full.webp" className="pr-4 sm:block hidden" />
           </div>
