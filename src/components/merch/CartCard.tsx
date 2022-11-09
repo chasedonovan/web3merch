@@ -141,7 +141,9 @@ const CartCard = (props: Props) => {
                 "text-gray-500"
               } mb-2 max-w-[164px] 2xl:max-w-[212px]`}
             >
-              {props.item.name}
+              {props.item.name + " " + props.item.variant.size          +           " (id:" +
+                                  item.variant_id +
+                                  ")" +}
             </p>
             <div className="flex flex-col">
               <div
@@ -171,6 +173,9 @@ const CartCard = (props: Props) => {
                           disabled={variant.stock === 0}
                         >
                           {variant.size}
+                          {variant.stock <= 10 &&
+                            variant.stock > 0 &&
+                            " (only " + variant.stock + " left)"}
                         </option>
                       ))}
                     </>
@@ -197,22 +202,12 @@ const CartCard = (props: Props) => {
                   {product?.variant.stock > 0 ? (
                     <>
                       <option key={1} value={1}>
-                        {1 === product.variants[0].stock ? 1 + " left" : `${1}`}
+                        {1 === product.variant.stock ? 1 + " left" : `${1}`}
                       </option>
                       <option disabled key={2} value="">
-                        {"("}
-                        {product.variants[0].stock} {"left)"}
+                        {product.variant.size + " ("}
+                        {product.variant.stock} {"left)"}
                       </option>
-                      {/* {Array.from(
-                      { length: Math.min(product.variant.stock, 100) },
-                      (_, i) => i + 1
-                    ).map((num) => (
-                      <option key={num} value={num}>
-                        {num === product.variant.stock
-                          ? num + " left"
-                          : `${num}`}
-                      </option>
-                    ))} */}
                     </>
                   ) : (
                     <option value={0}>Out of stock</option>

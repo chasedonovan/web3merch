@@ -4,15 +4,16 @@ import { Dialog, Transition } from "@headlessui/react";
 //
 
 type Props = {
-  message: any,
-  setShowModal: (showModal: boolean) => void,
-  showModal: boolean
-}
+  message: any;
+  setShowModal: (showModal: boolean) => void;
+  showModal: boolean;
+};
 
-export default function SuccessModal({ showModal, setShowModal, message }: Props) {
-
-  
-
+export default function SuccessModal({
+  showModal,
+  setShowModal,
+  message,
+}: Props) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -87,7 +88,7 @@ export default function SuccessModal({ showModal, setShowModal, message }: Props
                     onClick={() => setShowModal(false)}
                     ref={cancelButtonRef}
                   >
-                    Go Back
+                    Go back
                   </button>
                 </div>
               </Dialog.Panel>

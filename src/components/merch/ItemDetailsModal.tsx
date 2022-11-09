@@ -289,25 +289,6 @@ export default function ItemDetailsModal({
                                 setQuantity(parseInt(e.target.value))
                               }
                             >
-                              {/* <>
-                                {Array.from(
-                                  {
-                                    length: Math.min(
-                                      item.variants[0].stock,
-                                      100
-                                    ),
-                                  },
-                                  (_, i) => i + 1
-                                ).map((num) => (
-                                  <option key={num} value={num}>
-                                    {item &&
-                                    item.variants &&
-                                    num === item.variants[0].stock
-                                      ? num + " left"
-                                      : `${num}`}
-                                  </option>
-                                ))}
-                              </> */}
                               {item.variants[0].stock > 0 ? (
                                 <>
                                   <option key={1} value={1}>
@@ -315,24 +296,10 @@ export default function ItemDetailsModal({
                                       ? 1 + " left"
                                       : `${1}`}
                                   </option>
-                                  <option disabled key={2} value=''>
-                                    {'('}{item.variants[0].stock} {'left)'}
+                                  <option disabled key={2} value="">
+                                    {"("}
+                                    {item.variants[0].stock} {"left)"}
                                   </option>
-                                  {/* {Array.from(
-                                    {
-                                      length: Math.min(
-                                        item.variants[0].stock,
-                                        100
-                                      ),
-                                    },
-                                    (_, i) => i + 1
-                                  ).map((num) => (
-                                    <option key={num} value={num}>
-                                      {num === item.variants[0].stock
-                                        ? num + " left"
-                                        : `${num}`}
-                                    </option>
-                                  ))} */}
                                 </>
                               ) : (
                                 <option value={0}>Out of stock</option>
@@ -372,8 +339,12 @@ export default function ItemDetailsModal({
                                   value={variant.size}
                                   disabled={variant.stock === 0}
                                 >
-                                  {variant.size}{" "}
-                                  {variant.stock === 0 && "(sold out)"}
+                                  {variant.size}
+                                  {variant.stock > 20 && " (20+ in stock)"}
+                                  {variant.stock <= 20 &&
+                                    variant.stock > 0 &&
+                                    " (only " + variant.stock + " left)"}
+                                  {variant.stock === 0 && " (sold out)"}
                                 </option>
                               ))}
                           </>
@@ -512,24 +483,10 @@ export default function ItemDetailsModal({
                                           ? 1 + " left"
                                           : `${1}`}
                                       </option>
-                                      <option disabled key={2} value=''>
-                                        {'('}{item.variants[0].stock} {'left)'}
+                                      <option disabled key={2} value="">
+                                        {"("}
+                                        {item.variants[0].stock} {"left)"}
                                       </option>
-                                      {/* {Array.from(
-                                        {
-                                          length: Math.min(
-                                            item.variants[0].stock,
-                                            100
-                                          ),
-                                        },
-                                        (_, i) => i + 1
-                                      ).map((num) => (
-                                        <option key={num} value={num}>
-                                          {num === item.variants[0].stock
-                                            ? num + " left"
-                                            : `${num}`}
-                                        </option>
-                                      ))} */}
                                     </>
                                   ) : (
                                     <option value={0}>Out of stock</option>
@@ -573,6 +530,11 @@ export default function ItemDetailsModal({
                                       disabled={variant.stock === 0}
                                     >
                                       {variant.size}
+                                      {variant.stock > 20 && " (20+ in stock)"}
+                                      {variant.stock <= 20 &&
+                                        variant.stock > 0 &&
+                                        " (only " + variant.stock + " left)"}
+                                      {variant.stock === 0 && " (sold out)"}
                                     </option>
                                   ))}
                               </>

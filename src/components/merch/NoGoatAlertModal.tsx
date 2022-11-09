@@ -95,7 +95,7 @@ export default function NoGoatsAlertModal({
                     onClick={() => setNoGoats(false)}
                     ref={cancelButtonRef}
                   >
-                    Go Back
+                    Go back
                   </button>
                 </div>
               </Dialog.Panel>

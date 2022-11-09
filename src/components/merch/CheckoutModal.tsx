@@ -343,7 +343,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               onClick={() => setShowModal(false)}
                               ref={cancelButtonRef}
                             >
-                              Go Back
+                              Go back
                             </button>
 
                             <button
@@ -527,7 +527,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               onClick={() => setShowModal(false)}
                               ref={cancelButtonRef}
                             >
-                              Go Back
+                              Go back
                             </button>
                             {!approved ? (
                               <div className="flex  w-full justify-around">
@@ -586,6 +586,21 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                           ) : (
                             <></>
                           )}
+                          <div className="flex flex-col gap- pb-1">
+                            {cart.cartItems.map((item) => (
+                              <p className="text-gray-800 font-quicksand ">
+                                {item.quantity +
+                                  "x " +
+                                  item.name +
+                                  " (" +
+                                  item.variant.size +
+                                  " (id:" +
+                                  item.variant_id +
+                                  ")" +
+                                  ")"}
+                              </p>
+                            ))}
+                          </div>
                           <div className="flex flex-col gap- ">
                             {/* details summary with address info */}
                             {/* <h4 className=" text-black">Details Summary:</h4> */}
@@ -649,7 +664,7 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               onClick={() => setShowModal(false)}
                               ref={cancelButtonRef}
                             >
-                              Go Back
+                              Go back
                             </button>
 
                             <button
@@ -678,10 +693,11 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                               ) : (
                                 <p className="flex ">
                                   {" "}
-                                  PAY
-                                  <span className="hidden sm:block">{cart.estimatedTotal > 0
-                                    ? `(~${cart.estimatedTotal} ${cart.estimatedCurrency})`
-                                    : ""}</span>
+                                  <span className="hidden sm:block">
+                                    {cart.estimatedTotal > 0
+                                      ? `Pay (~${cart.estimatedTotal} ${cart.estimatedCurrency})`
+                                      : ""}
+                                  </span>
                                 </p>
                               )}
                             </button>

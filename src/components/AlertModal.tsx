@@ -89,7 +89,7 @@ export default function AlertModal({
                     onClick={() => setShowModal(false)}
                     ref={cancelButtonRef}
                   >
-                    Go Back
+                    Go back
                   </button>
                 </div>
               </Dialog.Panel>

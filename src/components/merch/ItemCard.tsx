@@ -149,16 +149,6 @@ const ItemCard = (props: Props) => {
                       {"("}
                       {props.item.variants[0].stock} {"left)"}
                     </option>
-                    {/* {Array.from(
-                    { length: Math.min(props.item.variants[0].stock, 100) },
-                    (_, i) => i + 1
-                  ).map((num) => (
-                    <option key={num} value={num}>
-                      {num === props.item.variants[0].stock
-                        ? num + " left"
-                        : `${num}`}
-                    </option>
-                  ))} */}
                   </>
                 ) : (
                   <option value={0}>Out of stock</option>
@@ -201,13 +191,14 @@ const ItemCard = (props: Props) => {
                     value={variant.size}
                     disabled={variant.stock === 0}
                   >
-                    {variant.size} {variant.stock === 0 && "(sold out)"}
+                    {variant.size}
+                    {variant.stock > 20 && " (20+ in stock)"}
+                    {variant.stock <= 20 &&
+                      variant.stock > 0 &&
+                      " (only " + variant.stock + " left)"}
+                    {variant.stock === 0 && " (sold out)"}
                   </option>
                 ))}
-              <option disabled key={2} value="stock">
-                {"("}
-                {props.item.variants[0].stock} {"left)"}
-              </option>
             </>
           )}
         </select>
