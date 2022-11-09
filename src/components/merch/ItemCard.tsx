@@ -129,7 +129,13 @@ const ItemCard = (props: Props) => {
                   props.item.variants[0].stock === 0 && "hidden"
                 }`}
               >
-                Quantity
+                Quantity 
+                {props.item.variants[0].stock <= 20 && (
+              <p className="block text-sm md:hidden font-quicksand text-gray-300 self-center">
+                      {"(only "}
+                      {props.item.variants[0].stock} {"left)"}
+              </p>
+            )}
               </div>
               <select
                 disabled={props.item.variants[0].stock === 0}
@@ -145,15 +151,17 @@ const ItemCard = (props: Props) => {
                         ? 1 + " left"
                         : `${1}`}
                     </option>
-                    <option disabled key={2} value="">
-                      {"("}
-                      {props.item.variants[0].stock} {"left)"}
-                    </option>
                   </>
                 ) : (
                   <option value={0}>Out of stock</option>
                 )}
               </select>
+            {props.item.variants[0].stock <= 20 && (
+              <p className="hidden md:block text-sm pl-2 font-quicksand text-gray-300 self-center">
+                      {"(only "}
+                      {props.item.variants[0].stock} {"left)"}
+              </p>
+            )}
             </div>
           )}
         <select
@@ -193,7 +201,7 @@ const ItemCard = (props: Props) => {
                       disabled={variant.stock === 0}
                     >
                       {variant.size}
-                      {variant.stock > 20 && " (20+ in stock)"}
+                      {/* {variant.stock > 20 && " (20+ in stock)"} */}
                       {variant.stock <= 20 &&
                         variant.stock > 0 &&
                         " (only " + variant.stock + " left)"}

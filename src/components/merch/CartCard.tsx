@@ -156,9 +156,7 @@ const CartCard = ({ item }: Props) => {
                 "text-gray-500"
               } mb-2 max-w-[164px] 2xl:max-w-[212px]`}
             >
-              {
-                item.name
-              }
+              {item.name}
             </p>
             <div className="flex flex-col">
               <div
@@ -188,15 +186,16 @@ const CartCard = ({ item }: Props) => {
                           disabled={variant.stock === 0}
                         >
                           {variant.size}
-                          {variant.stock <= 20 &&
+                          {/* {variant.stock <= 20 &&
                             variant.stock > 0 &&
-                            " (only " + variant.stock + " left)"}
+                            " (only " + variant.stock + " left)"} */}
                         </option>
                       ))}
                     </>
                   )}
                 </select>
               </div>
+
               <div className="flex flex-row">
                 <div
                   className={`pr-2 text-sm ${
@@ -219,18 +218,30 @@ const CartCard = ({ item }: Props) => {
                       <option key={1} value={1}>
                         {1 === product.variant.stock ? 1 + " left" : `${1}`}
                       </option>
-                      {product?.variants.length === 1 && (
+                      {/* {product?.variants.length === 1 && (
                         <option disabled key={2} value="">
                           {product.variant.size + " ("}
                           {product.variant.stock} {"left)"}
                         </option>
-                      )}
+                      )} */}
                     </>
                   ) : (
                     <option value={0}>Out of stock</option>
                   )}
                 </select>
+                {product.variants.length > 1 && item.variant.stock <= 20 && (
+                <p className="md:block text-sm hidden font-quicksand text-gray-300 min-w-max">
+                  {"( "}
+                  {item.variant.stock} {"left)"}
+                </p>
+              )}
               </div>
+              {product.variants.length === 1 && item.variant.stock <= 20 && (
+                <p className="md:block text-sm hidden font-quicksand text-gray-300">
+                  {"(only "}
+                  {item.variant.stock} {"left)"}
+                </p>
+              )}
             </div>
           </div>
         </div>

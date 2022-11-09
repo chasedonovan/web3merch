@@ -280,6 +280,12 @@ export default function ItemDetailsModal({
                             <div className="pr-2 mb-2 font-quicksand self-center hidden ">
                               Quantity
                             </div>
+                            {item.variants[0].stock <= 20 && (
+                              <p className="block text-sm md:hidden font-quicksand text-gray-300 self-center">
+                                {"(only "}
+                                {item.variants[0].stock} {"left)"}
+                              </p>
+                            )}
                             <select
                               disabled={item.variants[0].stock === 0}
                               autoFocus
@@ -296,10 +302,10 @@ export default function ItemDetailsModal({
                                       ? 1 + " left"
                                       : `${1}`}
                                   </option>
-                                  <option disabled key={2} value="">
+                                  {/* <option disabled key={2} value="">
                                     {"("}
                                     {item.variants[0].stock} {"left)"}
-                                  </option>
+                                  </option> */}
                                 </>
                               ) : (
                                 <option value={0}>Out of stock</option>
@@ -340,7 +346,7 @@ export default function ItemDetailsModal({
                                   disabled={variant.stock === 0}
                                 >
                                   {variant.size}
-                                  {variant.stock > 20 && " (20+ in stock)"}
+                                  {/* {variant.stock > 20 && " (20+ in stock)"} */}
                                   {variant.stock <= 20 &&
                                     variant.stock > 0 &&
                                     " (only " + variant.stock + " left)"}
@@ -465,8 +471,14 @@ export default function ItemDetailsModal({
                             item.variants[0].size === "OneSize" && (
                               <div className="flex flex-row pr-4">
                                 <div className="pr-2 font-quicksand self-center hidden">
-                                  Quantity
+                                  Quantity:
                                 </div>
+                                {item.variants[0].stock <= 20 && (
+                              <p className="md:block text-sm hidden font-quicksand text-gray-300 self-center">
+                                {"(only "}
+                                {item.variants[0].stock} {"left)"}
+                              </p>
+                            )}
                                 <select
                                   disabled={item.variants[0].stock === 0}
                                   autoFocus
@@ -483,10 +495,10 @@ export default function ItemDetailsModal({
                                           ? 1 + " left"
                                           : `${1}`}
                                       </option>
-                                      <option disabled key={2} value="">
+                                      {/* <option disabled key={2} value="">
                                         {"("}
                                         {item.variants[0].stock} {"left)"}
-                                      </option>
+                                      </option> */}
                                     </>
                                   ) : (
                                     <option value={0}>Out of stock</option>
@@ -530,7 +542,7 @@ export default function ItemDetailsModal({
                                       disabled={variant.stock === 0}
                                     >
                                       {variant.size}
-                                      {variant.stock > 20 && " (20+ in stock)"}
+                                      {/* {variant.stock > 20 && " (20+ in stock)"} */}
                                       {variant.stock <= 20 &&
                                         variant.stock > 0 &&
                                         " (only " + variant.stock + " left)"}
