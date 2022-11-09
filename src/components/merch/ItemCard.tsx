@@ -132,7 +132,7 @@ const ItemCard = (props: Props) => {
                 Quantity 
                 {props.item.variants[0].stock <= 20 && (
               <p className="block text-sm md:hidden font-quicksand text-gray-300 self-center">
-                      {"( "}
+                      {"("}
                       {props.item.variants[0].stock} {"left)"}
               </p>
             )}
@@ -158,7 +158,7 @@ const ItemCard = (props: Props) => {
               </select>
             {props.item.variants[0].stock <= 20 && (
               <p className="hidden md:block text-sm pl-2 font-quicksand text-gray-300 self-center">
-                      {"( "}
+                      {"("}
                       {props.item.variants[0].stock} {"left)"}
               </p>
             )}
@@ -204,7 +204,7 @@ const ItemCard = (props: Props) => {
                       {/* {variant.stock > 20 && " (20+ in stock)"} */}
                       {variant.stock <= 20 &&
                         variant.stock > 0 &&
-                        " ( " + variant.stock + " left)"}
+                        " (" + variant.stock + " left)"}
                       {variant.stock === 0 && " (sold out)"}
                     </option>
                   ))                }

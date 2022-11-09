@@ -282,7 +282,7 @@ export default function ItemDetailsModal({
                             </div>
                             {item.variants[0].stock <= 20 && (
                               <p className="block text-sm md:hidden font-quicksand text-gray-300 self-center">
-                                {"( "}
+                                {"("}
                                 {item.variants[0].stock} {"left)"}
                               </p>
                             )}
@@ -349,7 +349,7 @@ export default function ItemDetailsModal({
                                   {/* {variant.stock > 20 && " (20+ in stock)"} */}
                                   {variant.stock <= 20 &&
                                     variant.stock > 0 &&
-                                    " ( " + variant.stock + " left)"}
+                                    " (" + variant.stock + " left)"}
                                   {variant.stock === 0 && " (sold out)"}
                                 </option>
                               ))}
@@ -475,7 +475,7 @@ export default function ItemDetailsModal({
                                 </div>
                                 {item.variants[0].stock <= 20 && (
                               <p className="md:block text-sm hidden font-quicksand text-gray-300 self-center">
-                                {"( "}
+                                {"("}
                                 {item.variants[0].stock} {"left)"}
                               </p>
                             )}
@@ -545,7 +545,7 @@ export default function ItemDetailsModal({
                                       {/* {variant.stock > 20 && " (20+ in stock)"} */}
                                       {variant.stock <= 20 &&
                                         variant.stock > 0 &&
-                                        " ( " + variant.stock + " left)"}
+                                        " (" + variant.stock + " left)"}
                                       {variant.stock === 0 && " (sold out)"}
                                     </option>
                                   ))}
