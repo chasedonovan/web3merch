@@ -188,7 +188,7 @@ const CartCard = ({ item }: Props) => {
                           {variant.size}
                           {/* {variant.stock <= 20 &&
                             variant.stock > 0 &&
-                            " (only " + variant.stock + " left)"} */}
+                            " ( " + variant.stock + " left)"} */}
                         </option>
                       ))}
                     </>
@@ -238,7 +238,7 @@ const CartCard = ({ item }: Props) => {
               </div>
               {product.variants.length === 1 && item.variant.stock <= 20 && (
                 <p className="md:block text-sm hidden font-quicksand text-gray-300">
-                  {"(only "}
+                  {"( "}
                   {item.variant.stock} {"left)"}
                 </p>
               )}
