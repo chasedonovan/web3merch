@@ -11,13 +11,14 @@ type Item = {
   name: string;
   variant: Variant;
   quantity: number;
+  variant_id: number;
 };
 
 type Props = {
   item: Item;
 };
 
-const CartCard = (props: Props) => {
+const CartCard = ({ item }: Props) => {
   const [size, setSize] = React.useState("");
   const [quantity, setQuantity] = React.useState(1);
   const { products, cart, setCart } = useMerchContext();
@@ -35,65 +36,78 @@ const CartCard = (props: Props) => {
   } as any);
 
   useEffect(() => {
-    const product = products.find((p) => p.name === props.item.name);
+    const product = products.find((p) => p.name === item.name);
     if (product) {
       setProduct({
         ...product,
-        variant: product.variants.find(
-          (v) => v.size === props.item.variant.size
-        ),
+        variant: product.variants.find((v) => v.size === item.variant.size),
       });
     }
-  }, [products, props.item.name]);
+  }, [products, item.name]);
 
   useEffect(() => {
-    setSize(props.item.variant.size);
+    setSize(item.variant.size);
   }, []);
 
   useEffect(() => {
-    setQuantity(props.item.quantity);
-  }, [props.item.quantity]);
+    setQuantity(item.quantity);
+  }, [item.quantity]);
 
   const removeItem = () => {
     //remove only selected item from cart and avoid removing all items with same name
     const newCart = cart.cartItems.filter(
-      (item) => item.variant.variant_id !== props.item.variant.variant_id
+      (item) => item.variant.variant_id !== item.variant.variant_id
     );
     setCart({ ...cart, cartItems: newCart });
   };
 
   const handleSizeChange = (e: any) => {
-    const newCart = cart.cartItems.map((item) => {
-      if (item.name === props.item.name) {
+    setSize(e.target.value);
+    const newCart = cart.cartItems.map((p) => {
+      if (p.name === item.name) {
         return {
-          ...item,
-          variant: product.variants.find(
-            (variant: any) => variant.size === e.target.value
-          ),
-          quantity: 1,
+          ...p,
+          variant: product.variants.find((v: any) => v.size === e.target.value),
+          variant_id: product.variants.find(
+            (v: any) => v.size === e.target.value
+          ).variant_id,
         };
       }
-      return item;
+      return p;
     });
     setCart({ ...cart, cartItems: newCart });
-
-    setSize(e.target.value);
   };
+
+  // const newCart = cart.cartItems.map((p) => {
+  //   if (p.name === item.name) {
+  //     return {
+  //       ...p,
+  //       variant: product.variants.find(
+  //         (variant: any) => variant.size === e.target.value
+  //       ),
+  //       quantity: 1,
+  //     };
+  //   }
+  //   return p;
+  // });
+  // setCart({ ...cart, cartItems: newCart });
+
+  // setSize(e.target.value);
 
   const handleQuantityChange = (e: any) => {
     setCart({
       ...cart,
-      cartItems: cart.cartItems.map((item) => {
+      cartItems: cart.cartItems.map((p) => {
         if (
-          item.variant.variant_id === props.item.variant.variant_id &&
-          item.name === props.item.name
+          p.variant.variant_id === item.variant.variant_id &&
+          p.name === item.name
         ) {
           return {
-            ...item,
+            ...p,
             quantity: Number(e.target.value),
           };
         }
-        return item;
+        return p;
       }),
     });
   };
@@ -101,7 +115,7 @@ const CartCard = (props: Props) => {
   return (
     <div
       className={`relative flex flex-col w-full py-2 md:py-4 md:px-4 md:pr-6 border-b border-[#2C2D33]/50 ${
-        product?.name === props.item.name &&
+        product?.name === item.name &&
         product?.variants.find((variant: any) => variant.size === size)
           .stock === 0 &&
         " border-red-900"
@@ -109,7 +123,7 @@ const CartCard = (props: Props) => {
     >
       {
         //find matching product and if out of stock, render out of stock
-        product?.name === props.item.name &&
+        product?.name === item.name &&
           product?.variants.find((variant: any) => variant.size === size)
             .stock === 0 && (
             <p className=" top-1 self-center text-center text-xs md:text-sm pb-1 text-[#FF0000] min-w-max">
@@ -125,7 +139,7 @@ const CartCard = (props: Props) => {
               src={product?.image}
               alt=""
               className={`${
-                product?.name === props.item.name &&
+                product?.name === item.name &&
                 product?.variants.find((variant: any) => variant.size === size)
                   .stock === 0 &&
                 "opacity-50"
@@ -135,31 +149,34 @@ const CartCard = (props: Props) => {
           <div className="flex flex-col font-quicksand justify-start">
             <p
               className={`${
-                product?.name === props.item.name &&
+                product?.name === item.name &&
                 product?.variants.find((variant: any) => variant.size === size)
                   .stock === 0 &&
                 "text-gray-500"
               } mb-2 max-w-[164px] 2xl:max-w-[212px]`}
             >
-              {props.item.name + " " + props.item.variant.size          +           " (id:" +
-                                  item.variant_id +
-                                  ")" +}
+              {
+                item.name + " " + item.variant.size
+                // +     " (id:" +
+                //                     item.variant_id +
+                //                     ")"
+              }
             </p>
             <div className="flex flex-col">
               <div
                 className={`flex flex-row ${
-                  props.item.variant.size === "OneSize" && "hidden"
+                  item.variant.size === "OneSize" && "hidden"
                 }`}
               >
                 <div className="pr-2 self-center text-sm">Size</div>
                 <select
                   autoFocus
-                  disabled={props.item.variant.size === "OneSize"}
+                  disabled={item.variant.size === "OneSize"}
                   className={`self-center bg-black hover:cursor-pointer font-quicksand focus:outline-none text-sm`}
                   value={size}
                   onChange={handleSizeChange}
                 >
-                  {props.item.variant.size === "OneSize" ? (
+                  {item.variant.size === "OneSize" ? (
                     <option value="OneSize">One Size</option>
                   ) : (
                     <>
@@ -173,7 +190,7 @@ const CartCard = (props: Props) => {
                           disabled={variant.stock === 0}
                         >
                           {variant.size}
-                          {variant.stock <= 10 &&
+                          {variant.stock <= 20 &&
                             variant.stock > 0 &&
                             " (only " + variant.stock + " left)"}
                         </option>
@@ -204,10 +221,12 @@ const CartCard = (props: Props) => {
                       <option key={1} value={1}>
                         {1 === product.variant.stock ? 1 + " left" : `${1}`}
                       </option>
-                      <option disabled key={2} value="">
-                        {product.variant.size + " ("}
-                        {product.variant.stock} {"left)"}
-                      </option>
+                      {product?.variants.length === 1 && (
+                        <option disabled key={2} value="">
+                          {product.variant.size + " ("}
+                          {product.variant.stock} {"left)"}
+                        </option>
+                      )}
                     </>
                   ) : (
                     <option value={0}>Out of stock</option>
@@ -222,7 +241,7 @@ const CartCard = (props: Props) => {
             {product.original_price !== product.price ? (
               <p
                 className={`${
-                  product?.name === props.item.name &&
+                  product?.name === item.name &&
                   product?.variants.find(
                     (variant: any) => variant.size === size
                   ).stock === 0 &&
@@ -236,7 +255,7 @@ const CartCard = (props: Props) => {
             )}
             <p
               className={`${
-                product?.name === props.item.name &&
+                product?.name === item.name &&
                 product?.variants.find((variant: any) => variant.size === size)
                   .stock === 0 &&
                 "text-gray-500"
