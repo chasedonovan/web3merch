@@ -11,7 +11,7 @@ type Item = {
   name: string;
   variant: Variant;
   quantity: number;
-  variant_id: number;
+  variant_id: string;
 };
 
 type Props = {
