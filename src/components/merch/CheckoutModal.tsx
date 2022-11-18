@@ -200,7 +200,17 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
           stake_key: connectedWallet.stakeAddress,
           cartItems: cart.cartItems,
           paymentMethod: cart.paymentMethod,
-          address: orderAddress,
+          address: {
+            ...orderAddress,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            street_address: data.address,
+            postal_code: data.postalCode,
+            country: data.country,
+            email: data.email,
+            phone: phone,
+            state: data.state,
+          }
         },
       }),
     })
