@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import Crypto from "crypto";
-import emailjs from "emailjs-com";
 
 export default async function handler(
   req: NextApiRequest,
@@ -60,47 +59,28 @@ export default async function handler(
 }
 
 async function sendOrderConfirmationEmail(cart: any) {
-  // try {
-  //   const items = cart.cartItems.map((item: any) => {
-  //     return `
-  //         <img src="https://merch.uniscroll.io/${item.image}" alt="${
-  //       item.name
-  //     }" />
-  //         <p>${item.name} ${item.variant.size} ${item.price} ${item.quantity} ${
-  //       item.price * item.quantity
-  //     }</p>
-  //         `;
-  //   });
-  //   emailjs
-  //     .send(
-  //       `${process.env.EMAIL_KEY}`,
-  //       `${process.env.EMAIL_TEMPLATE}`,
-  //       {
-  //         to_name: cart.address.first_name + " " + cart.address.last_name,
-  //         to_email: cart.address.email,
-  //         address: cart.address.street_address,
-  //         postal: cart.address.postal_code,
-  //         country: cart.address.country,
-  //         items: items,
-  //         subtotal: `${cart.subtotal_price}`,
-  //         shipping: `${cart.shipping_price}`,
-  //         total: `${cart.total_price}`,
-  //         date_time: new Date().toLocaleString(),
-  //       },
-  //       `${process.env.EMAIL_PUBLIC_KEY}`
-  //     )
-  //     .then(
-  //       (result: any) => {
-  //         console.log(result.text);
-  //       },
-  //       (error: any) => {
-  //         console.log(error.text);
-  //       }
-  //     );
-  // } catch (error: any) {
-  //   console.log(error);
-  //   throw error;
-  // }
+  
+  try {
+        const formData = {
+          to_name: cart.address.first_name + " " + cart.address.last_name,
+          to_email: cart.address.email,
+          address: cart.address.street_address,
+          postal: cart.address.postal_code,
+          country: cart.address.country,
+          items: cart.cartItems,
+          subtotal: `${cart.subtotal_price}`,
+          shipping: `${cart.shipping_price}`,
+          total: `${cart.total_price}`,
+          date_time: new Date().toLocaleString(),
+        }
+      await fetch('/api/mail', {
+        method: 'POST',
+        body: JSON.stringify(formData)
+      });
+  } catch (error: any) {
+    console.log(error);
+    throw error;
+  }
 }
 
 async function check_ipn_request_is_valid(
@@ -122,7 +102,7 @@ async function check_ipn_request_is_valid(
   const signature = hmac.digest("hex");
 
   //TODO: remove log
-  console.log("check_ipn_request_is_valid", nowpaymentsSig, signature);
+  // console.log("check_ipn_request_is_valid", nowpaymentsSig, signature);
   if (nowpaymentsSig == signature) return true;
 
   return false;
