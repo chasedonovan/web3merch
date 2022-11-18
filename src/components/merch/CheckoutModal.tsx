@@ -594,9 +594,6 @@ export default function CheckoutModal({ showModal, setShowModal }: Props) {
                                   item.name +
                                   " (" +
                                   item.variant.size +
-                                  " (id:" +
-                                  item.variant_id +
-                                  ")" +
                                   ")"}
                               </p>
                             ))}
