@@ -8,7 +8,7 @@ export default async (req:any, res:any) => {
   const mailContent = {
     to: body.to_email,
     from: {
-      email: 'noreply@uniscroll.io',
+      email: 'no-reply@uniscroll.io',
       name: 'Uniscroll x Goat Tribe',
     },
     templateId: process.env.SG_TEMPLATE_ID,
