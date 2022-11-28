@@ -73,7 +73,7 @@ async function sendOrderConfirmationEmail(cart: any) {
           total: `${cart.total_price}`,
           date_time: new Date().toLocaleString(),
         }
-      await fetch('/api/mail', {
+      await fetch('/api/sendgrid', {
         method: 'POST',
         body: JSON.stringify(formData)
       });
