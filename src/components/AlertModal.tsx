@@ -72,7 +72,7 @@ export default function AlertModal({
                         as="h3"
                         className="text-lg font-medium leading-6 text-white"
                       >
-                        Attention:
+                        Attention: 
                       </Dialog.Title>
                       <div className="mt-2 overflow-scroll scrollbar-hide">
                         <p className="max-w-screen text-sm text-gray-400 whitespace-normal overflow-scroll scrollbar-hide">
